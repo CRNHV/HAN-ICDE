@@ -1,0 +1,37 @@
+﻿@model ICDE.Lib.Dto.Opdracht.LeverOpdrachtInDto
+
+@{
+    ViewData["Title"] = "LeverOpdrachtIn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>LeverOpdrachtIn</h1>
+
+<h4>LeverOpdrachtIn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form enctype="multipart/form-data" asp-action="LeverOpdrachtIn">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="OpdrachtId" class="form-control" value="@Model.OpdrachtId" hidden />
+            <div class="form-group">
+                <label asp-for="Naam" class="control-label"></label>
+                <input asp-for="Naam" class="form-control" />
+                <span asp-validation-for="Naam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bestand" class="control-label"></label>
+                <input type="file" asp-for="Bestand" class="form-control" />
+                <span asp-validation-for="Bestand" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

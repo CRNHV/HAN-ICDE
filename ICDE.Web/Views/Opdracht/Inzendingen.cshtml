@@ -1,0 +1,32 @@
+﻿@model List<ICDE.Lib.Dto.Opdracht.IngeleverdeOpdrachtDto>
+
+@{
+    ViewData["Title"] = "Maak opdracht";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk inzendingen</h1>
+
+<h4>Bekijk inzendingen</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Naam</td>
+                        <td><a href="/opdrachten/inzending/@item.Id/beoordeel">Beoordeel</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
