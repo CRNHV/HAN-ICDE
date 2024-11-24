@@ -12,6 +12,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IFileManager, FileManager>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IOpdrachtService, OpdrachtService>();
+        services.AddScoped<ILeeruitkomstService, LeeruitkomstService>();
 
         return services;
     }

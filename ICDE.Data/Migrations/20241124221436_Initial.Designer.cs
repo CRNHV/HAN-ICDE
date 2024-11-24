@@ -4,6 +4,7 @@ using ICDE.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICDE.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124221436_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace ICDE.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BeoordelingCritereaLeeruitkomst", b =>
-                {
-                    b.Property<int>("BeoordelingCritereaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LeeruitkomstenId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BeoordelingCritereaId", "LeeruitkomstenId");
-
-                    b.HasIndex("LeeruitkomstenId");
-
-                    b.ToTable("BeoordelingCritereaLeeruitkomst");
-                });
 
             modelBuilder.Entity("CursusVak", b =>
                 {
@@ -216,6 +204,9 @@ namespace ICDE.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BeoordelingCritereaId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Beschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -228,6 +219,8 @@ namespace ICDE.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BeoordelingCritereaId");
 
                     b.ToTable("leeruitkomstsen");
                 });
@@ -568,21 +561,6 @@ namespace ICDE.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BeoordelingCritereaLeeruitkomst", b =>
-                {
-                    b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.BeoordelingCriterea", null)
-                        .WithMany()
-                        .HasForeignKey("BeoordelingCritereaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Leeruitkomst", null)
-                        .WithMany()
-                        .HasForeignKey("LeeruitkomstenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CursusVak", b =>
                 {
                     b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Cursus", null)
@@ -616,6 +594,13 @@ namespace ICDE.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Planning");
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Leeruitkomst", b =>
+                {
+                    b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.BeoordelingCriterea", null)
+                        .WithMany("Leeruitkomsten")
+                        .HasForeignKey("BeoordelingCritereaId");
                 });
 
             modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.PlanningItem", b =>
@@ -749,6 +734,11 @@ namespace ICDE.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.BeoordelingCriterea", b =>
+                {
+                    b.Navigation("Leeruitkomsten");
                 });
 
             modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Opleiding", b =>

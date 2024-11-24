@@ -1,5 +1,6 @@
 ﻿using ICDE.Data.Repositories;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Data.Repositories.Luk;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ICDE.Data.Extensions;
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IOpdrachtRepository, OpdrachtRepository>();
+        services.AddScoped<ILeeruitkomstRepository, LeeruitkomstRepository>();
 
         return services;
     }

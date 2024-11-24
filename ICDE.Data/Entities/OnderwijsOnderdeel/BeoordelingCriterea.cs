@@ -8,4 +8,6 @@ public class BeoordelingCriterea : IOnderwijsOnderdeel
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
     public int VersieNummer { get; set; }
+    public List<Leeruitkomst> Leeruitkomsten { get; set; }
+    public int OpdrachtId { get; internal set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace ICDE.Data.Entities.Opdracht;
+﻿namespace ICDE.Data.Entities.Opdrachten;
 public enum OpdrachtType
 {
     Toets,

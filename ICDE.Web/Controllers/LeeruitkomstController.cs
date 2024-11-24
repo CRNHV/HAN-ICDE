@@ -8,10 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace ICDE.Web.Controllers;
 
 [Route("leeruitkomst")]
-[Authorize(Roles = UserRole.Auteur)]
 public class LeeruitkomstController : ControllerBase
 {
     private readonly ILeeruitkomstService _leeruitkomstService;
+
+    public LeeruitkomstController(ILeeruitkomstService leeruitkomstService)
+    {
+        _leeruitkomstService = leeruitkomstService;
+    }
 
     /// <summary>
     /// UC14

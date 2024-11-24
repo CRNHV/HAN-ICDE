@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ICDE.Data.Entities.OnderwijsOnderdeel;
 public class Cursus : IOnderwijsOnderdeel
@@ -7,7 +8,6 @@ public class Cursus : IOnderwijsOnderdeel
     public int Id { get; set; }
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
-    public int VersieNummer { get; set; }
-    public List<Leeruitkomst> Leeruitkomsten { get; set; }
-    public List<Les> Lessen { get; set; }
+    public int VersieNummer { get; set; }  
+    public Planning Planning { get; set; }
 }

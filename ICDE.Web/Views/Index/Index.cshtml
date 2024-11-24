@@ -1,18 +1,49 @@
-﻿@model ICDE.Web.Models.Authentication.LoginViewModel
+﻿@using System.Security.Claims
+@using ICDE.Lib.Domain.User
+@using ICDE.Web.ViewHelper
+@model ICDE.Web.Models.Authentication.LoginViewModel
 
 @{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var role = ClaimsParser.GetUserRole(User.Identity);
+
 }
 
 <h1>Home</h1>
 
-<h4>Home</h4>
+<h4>Hallo @role</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <h1> Opdrachten </h1>
-        <p><a href="/opdrachten/bekijkalle">Bekijk alle opdrachten</a></p>
-        <p><a href="/opdrachten/maak">Maak opdracht</a></p>
+
+@if (role == UserRole.Auteur)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <h1> Opdrachten </h1>
+            <p><a href="/opdrachten/bekijkalle">Bekijk alle opdrachten</a></p>
+            <p><a href="/opdrachten/maak">Maak opdracht</a></p>
+        </div
+        <div class="col-md-4">
+            <h1> Leeruitkomsten </h1>
+            <p><a href="/leeruitkomst/bekijkalle">Bekijk alle leeruitkomsten</a></p>
+            <p><a href="/leeruitkomst/maak">Maak leeruitkomst</a></p>
+        </div>
     </div>
-</div>
+}
+else if (role == UserRole.Docent)
+{
+
+}
+else if (role == UserRole.Student)
+{
+
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <p><a href="/auth/login">Login</a></p>
+        </div>
+    </div>
+}

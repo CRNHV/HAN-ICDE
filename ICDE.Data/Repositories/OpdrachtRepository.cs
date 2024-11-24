@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities.Opdracht;
+﻿using ICDE.Data.Entities.Opdrachten;
 using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ICDE.Data.Entities.Opdracht;
+namespace ICDE.Data.Entities.Opdrachten;
 public class IngeleverdeOpdracht
 {
     public int Id { get; set; }

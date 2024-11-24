@@ -35,7 +35,7 @@ public class AuthenticationController : Controller
         if (HttpContext.Request.Method == "POST")
         {
             var result = await _authService.Login(request.Username, request.Password);
-            return result ? View() : Unauthorized();
+            return result ? Redirect("/") : Redirect("/auth/login");
         }
 
         return View();

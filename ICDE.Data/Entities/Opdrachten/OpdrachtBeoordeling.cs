@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ICDE.Data.Entities.Opdracht;
+namespace ICDE.Data.Entities.Opdrachten;
 public class OpdrachtBeoordeling
 {
     [Key]
