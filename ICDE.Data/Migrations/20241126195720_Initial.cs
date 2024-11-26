@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -307,16 +308,17 @@ namespace ICDE.Data.Migrations
                 name: "Vakken",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VersieNummer = table.Column<int>(type: "int", nullable: false),
                     GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpleidingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vakken", x => new { x.Id, x.VersieNummer });
+                    table.PrimaryKey("PK_Vakken", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Vakken_Opleidingen_OpleidingId",
                         column: x => x.OpleidingId,
@@ -429,17 +431,16 @@ namespace ICDE.Data.Migrations
                 columns: table => new
                 {
                     LeeruitkomstenId = table.Column<int>(type: "int", nullable: false),
-                    VakId = table.Column<int>(type: "int", nullable: false),
-                    VakVersieNummer = table.Column<int>(type: "int", nullable: false)
+                    VakId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VakLeeruitkomsten", x => new { x.LeeruitkomstenId, x.VakId, x.VakVersieNummer });
+                    table.PrimaryKey("PK_VakLeeruitkomsten", x => new { x.LeeruitkomstenId, x.VakId });
                     table.ForeignKey(
-                        name: "FK_VakLeeruitkomsten_Vakken_VakId_VakVersieNummer",
-                        columns: x => new { x.VakId, x.VakVersieNummer },
+                        name: "FK_VakLeeruitkomsten_Vakken_VakId",
+                        column: x => x.VakId,
                         principalTable: "Vakken",
-                        principalColumns: new[] { "Id", "VersieNummer" },
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_VakLeeruitkomsten_leeruitkomstsen_LeeruitkomstenId",
@@ -454,12 +455,11 @@ namespace ICDE.Data.Migrations
                 columns: table => new
                 {
                     CursussenId = table.Column<int>(type: "int", nullable: false),
-                    VakId = table.Column<int>(type: "int", nullable: false),
-                    VakVersieNummer = table.Column<int>(type: "int", nullable: false)
+                    VakId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VakCursussenLeeruitkomsten", x => new { x.CursussenId, x.VakId, x.VakVersieNummer });
+                    table.PrimaryKey("PK_VakCursussenLeeruitkomsten", x => new { x.CursussenId, x.VakId });
                     table.ForeignKey(
                         name: "FK_VakCursussenLeeruitkomsten_Cursussen_CursussenId",
                         column: x => x.CursussenId,
@@ -467,10 +467,10 @@ namespace ICDE.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_VakCursussenLeeruitkomsten_Vakken_VakId_VakVersieNummer",
-                        columns: x => new { x.VakId, x.VakVersieNummer },
+                        name: "FK_VakCursussenLeeruitkomsten_Vakken_VakId",
+                        column: x => x.VakId,
                         principalTable: "Vakken",
-                        principalColumns: new[] { "Id", "VersieNummer" },
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -559,9 +559,9 @@ namespace ICDE.Data.Migrations
                 column: "PlanningId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VakCursussenLeeruitkomsten_VakId_VakVersieNummer",
+                name: "IX_VakCursussenLeeruitkomsten_VakId",
                 table: "VakCursussenLeeruitkomsten",
-                columns: new[] { "VakId", "VakVersieNummer" });
+                column: "VakId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vakken_OpleidingId",
@@ -569,9 +569,9 @@ namespace ICDE.Data.Migrations
                 column: "OpleidingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VakLeeruitkomsten_VakId_VakVersieNummer",
+                name: "IX_VakLeeruitkomsten_VakId",
                 table: "VakLeeruitkomsten",
-                columns: new[] { "VakId", "VakVersieNummer" });
+                column: "VakId");
         }
 
         /// <inheritdoc />

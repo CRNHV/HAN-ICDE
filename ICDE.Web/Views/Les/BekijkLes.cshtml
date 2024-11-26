@@ -11,10 +11,7 @@
     <div class="col-md-4">
         <h2> Maak les </h2>
         <form method="post" enctype="multipart/form-data" asp-action="MaakLes">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input name="Id" class="form-control" hidden value="@Model.Les.Id" />
-            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>            
             <div class="form-group">
                 <label name="Naam" class="control-label">Naam</label>
                 <input name="Naam" class="form-control" value="@Model.Les.Naam" />
@@ -23,10 +20,7 @@
                 <label name="Beschrijving" class="control-label">Beschrijving</label>
                 <input name="Beschrijving" class="form-control" value="@Model.Les.Beschrijving" />
             </div>
-            <div class="form-group">
-                <label name="VersieNummer" class="control-label">Versie</label>
-                <input name="VersieNummer" class="form-control" value="@Model.Les.VersieNummer" readonly />
-            </div>
+            <button type="submit">Maak</button>
         </form>
     </div>
     <div class="col-md-4">

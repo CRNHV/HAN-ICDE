@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICDE.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241125182159_Initial")]
+    [Migration("20241126195720_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -48,12 +48,9 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("VakId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VakVersieNummer")
-                        .HasColumnType("int");
+                    b.HasKey("CursussenId", "VakId");
 
-                    b.HasKey("CursussenId", "VakId", "VakVersieNummer");
-
-                    b.HasIndex("VakId", "VakVersieNummer");
+                    b.HasIndex("VakId");
 
                     b.ToTable("VakCursussenLeeruitkomsten", (string)null);
                 });
@@ -352,10 +349,10 @@ namespace ICDE.Data.Migrations
             modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Vak", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("VersieNummer")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Beschrijving")
                         .IsRequired()
@@ -371,7 +368,10 @@ namespace ICDE.Data.Migrations
                     b.Property<int?>("OpleidingId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id", "VersieNummer");
+                    b.Property<int>("VersieNummer")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("OpleidingId");
 
@@ -482,12 +482,9 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("VakId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VakVersieNummer")
-                        .HasColumnType("int");
+                    b.HasKey("LeeruitkomstenId", "VakId");
 
-                    b.HasKey("LeeruitkomstenId", "VakId", "VakVersieNummer");
-
-                    b.HasIndex("VakId", "VakVersieNummer");
+                    b.HasIndex("VakId");
 
                     b.ToTable("VakLeeruitkomsten", (string)null);
                 });
@@ -620,7 +617,7 @@ namespace ICDE.Data.Migrations
 
                     b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Vak", null)
                         .WithMany()
-                        .HasForeignKey("VakId", "VakVersieNummer")
+                        .HasForeignKey("VakId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -722,7 +719,7 @@ namespace ICDE.Data.Migrations
 
                     b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Vak", null)
                         .WithMany()
-                        .HasForeignKey("VakId", "VakVersieNummer")
+                        .HasForeignKey("VakId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

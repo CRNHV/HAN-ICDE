@@ -1,4 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ICDE.Lib.Dto.Vak;
+using ICDE.Lib.Services.Interfaces;
+using ICDE.Web.Models.Vakken;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers;
@@ -6,31 +11,55 @@ namespace ICDE.Web.Controllers;
 [Route("vak")]
 public class VakController : Controller
 {
-    /// <summary>
-    /// UC7
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> VoegLesToe()
+    private readonly IVakService _vakService;
+    private readonly ILeeruitkomstService _leeruitkomstService;
+    private readonly ICursusService _cursusService;
+
+    public VakController(IVakService vakService, ILeeruitkomstService leeruitkomstService, ICursusService cursusService)
     {
-        return null;
+        _vakService = vakService;
+        _leeruitkomstService = leeruitkomstService;
+        _cursusService = cursusService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        List<VakDto> vakken = await _vakService.GetAll();
+        return View(new VakIndexViewModel()
+        {
+            Vakken = vakken
+        });
     }
 
     /// <summary>
     /// UC9
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> MaakVak()
+    [HttpPost("maak")]
+    public async Task<IActionResult> MaakVak([FromForm] MaakVakViewModel request)
     {
-        return null;
+        Guid groupId = await _vakService.CreateCourse(request.Naam, request.Beschrijving);
+        return Redirect($"get/{groupId}");
     }
 
     /// <summary>
     /// UC9
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> BekijkVak()
+    [HttpGet("get/{vakGroupId}")]
+    public async Task<IActionResult> BekijkVak([FromRoute] Guid vakGroupId)
     {
-        return null;
+        var luks = await _leeruitkomstService.GetAll();
+        var cursussen = await _cursusService.GetAll();
+        var vak = await _vakService.GetByGroupId(vakGroupId);
+
+        return View(new BekijkVakViewModel()
+        {
+            Vak = vak,
+            Cursussen = cursussen,
+            Leeruitkomsten = luks
+        });
     }
 
     /// <summary>
@@ -39,7 +68,7 @@ public class VakController : Controller
     /// <returns></returns>
     public async Task<IActionResult> VerwijderVak()
     {
-        return null;
+        return View();
     }
 
     /// <summary>
@@ -48,15 +77,28 @@ public class VakController : Controller
     /// <returns></returns>
     public async Task<IActionResult> UpdateVak()
     {
-        return null;
+        return View();
     }
 
     /// <summary>
     /// UC13
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> KoppelOnderwijsOnderdeel()
+    [HttpGet("koppelcursus/{vakGroupId}/{cursusGroupId}")]
+    public async Task<IActionResult> KoppelCursuskomst([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
     {
-        return null;
+        await _vakService.KoppelCursus(vakGroupId, cursusGroupId);
+        return Redirect($"/vak/get/{vakGroupId}");
+    }
+
+    /// <summary>
+    /// UC13
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("koppelluk/{vakGroupId}/{lukGroupId}")]
+    public async Task<IActionResult> KoppelLeeruitkomst([FromRoute] Guid vakGroupId, [FromRoute] Guid lukGroupId)
+    {
+        await _vakService.KoppelLeeruitkomst(vakGroupId, lukGroupId);
+        return Redirect($"/vak/get/{vakGroupId}");
     }
 }

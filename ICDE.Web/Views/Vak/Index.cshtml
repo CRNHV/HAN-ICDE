@@ -1,0 +1,55 @@
+﻿@model ICDE.Web.Models.Vakken.VakIndexViewModel
+@{
+    ViewData["Title"] = "Bekijk les";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Vakken</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h2> Maak vak </h2>
+        <form method="post" enctype="multipart/form-data" asp-action="MaakVak">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label for="Naam" class="control-label"></label>
+                <input name="Naam" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="Beschrijving" class="control-label"></label>
+                <input name="Beschrijving" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Maak" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <h2> Vakken </h2>
+        @if (Model.Vakken.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Vakken)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/vak/get/@item.GroupId">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</div>
+

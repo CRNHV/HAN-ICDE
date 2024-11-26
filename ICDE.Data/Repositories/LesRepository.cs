@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ICDE.Data.Entities.OnderwijsOnderdeel;
+﻿using ICDE.Data.Entities.OnderwijsOnderdeel;
 using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
