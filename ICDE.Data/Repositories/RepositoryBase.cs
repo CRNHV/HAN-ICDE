@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
 public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
@@ -36,8 +37,14 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
         return result > 0;
     }
 
-    public virtual async Task GetList(Expression<Func<T, bool>> predicate)
+    public virtual async Task<List<T>> GetList(Expression<Func<T, bool>> predicate)
     {
-        var result = _context.Set<T>().Where(predicate);
+        var result = await _context.Set<T>().Where(predicate).ToListAsync();
+        return result;
+    }
+
+    public virtual async Task<List<T>> GetList()
+    {
+        return await _context.Set<T>().ToListAsync();
     }
 }

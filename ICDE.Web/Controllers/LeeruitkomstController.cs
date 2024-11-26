@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using ICDE.Lib.Domain.User;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using ICDE.Lib.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers;
@@ -35,13 +36,34 @@ public class LeeruitkomstController : ControllerBase
         return View();
     }
 
+    [HttpGet("bekijkalle")]
+    public async Task<IActionResult> BekijkLeeruitkomsten()
+    {
+        List<LeeruitkomstDto> leeruitkomsten = await _leeruitkomstService.GetAll();
+        return View(leeruitkomsten);
+    }
+
     /// <summary>
     /// UC14
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> BekijkLeeruitkomst()
+    [HttpGet("bekijk/{groupId}")]
+    public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId)
     {
-        return null;
+        var leeruitkomst = await _leeruitkomstService.GetEntityWithEarlierVersions(groupId);
+        return View(leeruitkomst);
+
+    }
+
+    [HttpGet("bekijkversie/{groupId}/{versieId}")]
+    public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
+    {
+        LeeruitkomstDto leeruitkomst = await _leeruitkomstService.GetVersion(groupId, versieId);
+        return View(new LeeruitkomstMetEerdereVersies()
+        {
+            Leeruitkomst = leeruitkomst,
+        });
+
     }
 
     /// <summary>
@@ -57,42 +79,18 @@ public class LeeruitkomstController : ControllerBase
     /// UC14
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> UpdateLeeruitkomst([FromForm] LeeruitkomstDto request)
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateLeeruitkomst([FromForm] LukUpdateDto request)
     {
         if (IsRequestMethod("POST"))
         {
             LeeruitkomstDto result = await _leeruitkomstService.UpdateLeeruitkomst(request);
             if (result is null)
                 return BadRequest();
+
+            return Redirect($"/leeruitkomst/bekijk/{result.GroupId}");
         }
 
-        return View();
-    }
-
-    /// <summary>
-    /// UC15
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> KoppelLeeruitkomst()
-    {
-        return null;
-    }
-
-    /// <summary>
-    /// UC16
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> ControlleerLeeruitkomsten()
-    {
-        return null;
-    }
-
-    /// <summary>
-    /// UC17
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> GenereerLeeruitkomstOverzicht()
-    {
-        return null;
+        return Redirect("leeruitkomst/bekijkalle");
     }
 }

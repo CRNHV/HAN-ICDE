@@ -13,6 +13,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IOpdrachtService, OpdrachtService>();
         services.AddScoped<ILeeruitkomstService, LeeruitkomstService>();
+        services.AddScoped<ILesService, LesService>();
 
         return services;
     }

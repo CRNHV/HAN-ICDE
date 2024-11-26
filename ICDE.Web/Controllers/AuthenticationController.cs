@@ -22,7 +22,7 @@ public class AuthenticationController : Controller
         if (HttpContext.Request.Method == "POST")
         {
             var result = await _authService.Register(request.Username, request.Password, request.Role);
-            return result ? View() : Unauthorized();
+            return result ? Redirect("/auth/login") : Unauthorized();
         }
 
         return View();

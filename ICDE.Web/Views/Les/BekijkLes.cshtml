@@ -1,0 +1,115 @@
+﻿@model ICDE.Web.Models.Lessen.BekijkLesViewModel
+@{
+    ViewData["Title"] = "Bekijk les";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Lessen</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h2> Maak les </h2>
+        <form method="post" enctype="multipart/form-data" asp-action="MaakLes">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input name="Id" class="form-control" hidden value="@Model.Les.Id" />
+            </div>
+            <div class="form-group">
+                <label name="Naam" class="control-label">Naam</label>
+                <input name="Naam" class="form-control" value="@Model.Les.Naam" />
+            </div>
+            <div class="form-group">
+                <label name="Beschrijving" class="control-label">Beschrijving</label>
+                <input name="Beschrijving" class="form-control" value="@Model.Les.Beschrijving" />
+            </div>
+            <div class="form-group">
+                <label name="VersieNummer" class="control-label">Versie</label>
+                <input name="VersieNummer" class="form-control" value="@Model.Les.VersieNummer" readonly />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <h2>Andere versies</h2>
+        @if (Model.LesList.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LesList)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>@item.VersieNummer</td>
+                            <td><a href="/les/get/@item.GroupId/@item.VersieNummer">Voeg toe</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Gekoppelde leeruitkomsten</h2>
+        @if (Model.LesLeeruitkomsten.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LesLeeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>@item.VersieNummer</td>
+                            <td>
+                                <a href="/les/ontkoppelluk/@Model.Les.GroupId/@item.GroupId">Verwijder</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Voeg LUK toe</h2>
+        @if (Model.BeschrikbareLeeruitkomsten.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.BeschrikbareLeeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/les/koppelluk/@Model.Les.GroupId/@item.GroupId">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</div>
+

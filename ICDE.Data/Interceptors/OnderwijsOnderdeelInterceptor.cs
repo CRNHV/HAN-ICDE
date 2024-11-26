@@ -1,6 +1,6 @@
 ﻿using ICDE.Data.Entities.OnderwijsOnderdeel;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ICDE.Data.Interceptors;
 public class OnderwijsOnderdeelInterceptor : SaveChangesInterceptor
@@ -9,7 +9,7 @@ public class OnderwijsOnderdeelInterceptor : SaveChangesInterceptor
     {
         var context = eventData.Context;
 
-        if (context == null) 
+        if (context == null)
             return await base.SavingChangesAsync(eventData, result);
 
         var entries = context.ChangeTracker.Entries()
@@ -18,8 +18,11 @@ public class OnderwijsOnderdeelInterceptor : SaveChangesInterceptor
         foreach (var entry in entries)
         {
             var entity = (IOnderwijsOnderdeel)entry.Entity;
+            if (entity.RelationshipChanged)
+                continue;
             var newEntity = context.Entry(entity).CurrentValues.ToObject();
-            ((IOnderwijsOnderdeel)newEntity).VersieNummer++;
+            ((IOnderwijsOnderdeel)newEntity).VersieNummer = entity.VersieNummer + 1;
+            ((IOnderwijsOnderdeel)newEntity).Id = 0;
             entry.State = EntityState.Detached;
             context.Add(newEntity);
         }

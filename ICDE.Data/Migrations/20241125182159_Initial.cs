@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -53,6 +52,22 @@ namespace ICDE.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "leeruitkomstsen",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_leeruitkomstsen", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Lessen",
                 columns: table => new
                 {
@@ -60,7 +75,8 @@ namespace ICDE.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VersieNummer = table.Column<int>(type: "int", nullable: false)
+                    VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,6 +92,7 @@ namespace ICDE.Data.Migrations
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -91,7 +108,8 @@ namespace ICDE.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VersieNummer = table.Column<int>(type: "int", nullable: false)
+                    VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -218,6 +236,30 @@ namespace ICDE.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LesLeeruitkomsten",
+                columns: table => new
+                {
+                    LeeruitkomstenId = table.Column<int>(type: "int", nullable: false),
+                    LesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LesLeeruitkomsten", x => new { x.LeeruitkomstenId, x.LesId });
+                    table.ForeignKey(
+                        name: "FK_LesLeeruitkomsten_Lessen_LesId",
+                        column: x => x.LesId,
+                        principalTable: "Lessen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LesLeeruitkomsten_leeruitkomstsen_LeeruitkomstenId",
+                        column: x => x.LeeruitkomstenId,
+                        principalTable: "leeruitkomstsen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BeoordelingCritereas",
                 columns: table => new
                 {
@@ -226,6 +268,7 @@ namespace ICDE.Data.Migrations
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpdrachtId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -264,16 +307,16 @@ namespace ICDE.Data.Migrations
                 name: "Vakken",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    VersieNummer = table.Column<int>(type: "int", nullable: false),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpleidingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vakken", x => x.Id);
+                    table.PrimaryKey("PK_Vakken", x => new { x.Id, x.VersieNummer });
                     table.ForeignKey(
                         name: "FK_Vakken_Opleidingen_OpleidingId",
                         column: x => x.OpleidingId,
@@ -290,6 +333,7 @@ namespace ICDE.Data.Migrations
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VersieNummer = table.Column<int>(type: "int", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PlanningId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -336,24 +380,27 @@ namespace ICDE.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "leeruitkomstsen",
+                name: "BeoordelingCritereaLeeruitkomst",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VersieNummer = table.Column<int>(type: "int", nullable: false),
-                    BeoordelingCritereaId = table.Column<int>(type: "int", nullable: true)
+                    BeoordelingCritereaId = table.Column<int>(type: "int", nullable: false),
+                    LeeruitkomstenId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_leeruitkomstsen", x => x.Id);
+                    table.PrimaryKey("PK_BeoordelingCritereaLeeruitkomst", x => new { x.BeoordelingCritereaId, x.LeeruitkomstenId });
                     table.ForeignKey(
-                        name: "FK_leeruitkomstsen_BeoordelingCritereas_BeoordelingCritereaId",
+                        name: "FK_BeoordelingCritereaLeeruitkomst_BeoordelingCritereas_BeoordelingCritereaId",
                         column: x => x.BeoordelingCritereaId,
                         principalTable: "BeoordelingCritereas",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BeoordelingCritereaLeeruitkomst_leeruitkomstsen_LeeruitkomstenId",
+                        column: x => x.LeeruitkomstenId,
+                        principalTable: "leeruitkomstsen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -378,15 +425,41 @@ namespace ICDE.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VakLeeruitkomsten",
+                columns: table => new
+                {
+                    LeeruitkomstenId = table.Column<int>(type: "int", nullable: false),
+                    VakId = table.Column<int>(type: "int", nullable: false),
+                    VakVersieNummer = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VakLeeruitkomsten", x => new { x.LeeruitkomstenId, x.VakId, x.VakVersieNummer });
+                    table.ForeignKey(
+                        name: "FK_VakLeeruitkomsten_Vakken_VakId_VakVersieNummer",
+                        columns: x => new { x.VakId, x.VakVersieNummer },
+                        principalTable: "Vakken",
+                        principalColumns: new[] { "Id", "VersieNummer" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VakLeeruitkomsten_leeruitkomstsen_LeeruitkomstenId",
+                        column: x => x.LeeruitkomstenId,
+                        principalTable: "leeruitkomstsen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VakCursussenLeeruitkomsten",
                 columns: table => new
                 {
                     CursussenId = table.Column<int>(type: "int", nullable: false),
-                    VakId = table.Column<int>(type: "int", nullable: false)
+                    VakId = table.Column<int>(type: "int", nullable: false),
+                    VakVersieNummer = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VakCursussenLeeruitkomsten", x => new { x.CursussenId, x.VakId });
+                    table.PrimaryKey("PK_VakCursussenLeeruitkomsten", x => new { x.CursussenId, x.VakId, x.VakVersieNummer });
                     table.ForeignKey(
                         name: "FK_VakCursussenLeeruitkomsten_Cursussen_CursussenId",
                         column: x => x.CursussenId,
@@ -394,58 +467,10 @@ namespace ICDE.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_VakCursussenLeeruitkomsten_Vakken_VakId",
-                        column: x => x.VakId,
+                        name: "FK_VakCursussenLeeruitkomsten_Vakken_VakId_VakVersieNummer",
+                        columns: x => new { x.VakId, x.VakVersieNummer },
                         principalTable: "Vakken",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LesLeeruitkomsten",
-                columns: table => new
-                {
-                    LeeruitkomstenId = table.Column<int>(type: "int", nullable: false),
-                    LesId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LesLeeruitkomsten", x => new { x.LeeruitkomstenId, x.LesId });
-                    table.ForeignKey(
-                        name: "FK_LesLeeruitkomsten_Lessen_LesId",
-                        column: x => x.LesId,
-                        principalTable: "Lessen",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LesLeeruitkomsten_leeruitkomstsen_LeeruitkomstenId",
-                        column: x => x.LeeruitkomstenId,
-                        principalTable: "leeruitkomstsen",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VakLeeruitkomsten",
-                columns: table => new
-                {
-                    LeeruitkomstenId = table.Column<int>(type: "int", nullable: false),
-                    VakId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VakLeeruitkomsten", x => new { x.LeeruitkomstenId, x.VakId });
-                    table.ForeignKey(
-                        name: "FK_VakLeeruitkomsten_Vakken_VakId",
-                        column: x => x.VakId,
-                        principalTable: "Vakken",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_VakLeeruitkomsten_leeruitkomstsen_LeeruitkomstenId",
-                        column: x => x.LeeruitkomstenId,
-                        principalTable: "leeruitkomstsen",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "VersieNummer" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -489,6 +514,11 @@ namespace ICDE.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BeoordelingCritereaLeeruitkomst_LeeruitkomstenId",
+                table: "BeoordelingCritereaLeeruitkomst",
+                column: "LeeruitkomstenId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BeoordelingCritereas_OpdrachtId",
                 table: "BeoordelingCritereas",
                 column: "OpdrachtId");
@@ -502,11 +532,6 @@ namespace ICDE.Data.Migrations
                 name: "IX_IngeleverdeOpdrachten_OpdrachtId",
                 table: "IngeleverdeOpdrachten",
                 column: "OpdrachtId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_leeruitkomstsen_BeoordelingCritereaId",
-                table: "leeruitkomstsen",
-                column: "BeoordelingCritereaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LesLeeruitkomsten_LesId",
@@ -534,9 +559,9 @@ namespace ICDE.Data.Migrations
                 column: "PlanningId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VakCursussenLeeruitkomsten_VakId",
+                name: "IX_VakCursussenLeeruitkomsten_VakId_VakVersieNummer",
                 table: "VakCursussenLeeruitkomsten",
-                column: "VakId");
+                columns: new[] { "VakId", "VakVersieNummer" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vakken_OpleidingId",
@@ -544,9 +569,9 @@ namespace ICDE.Data.Migrations
                 column: "OpleidingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VakLeeruitkomsten_VakId",
+                name: "IX_VakLeeruitkomsten_VakId_VakVersieNummer",
                 table: "VakLeeruitkomsten",
-                column: "VakId");
+                columns: new[] { "VakId", "VakVersieNummer" });
         }
 
         /// <inheritdoc />
@@ -566,6 +591,9 @@ namespace ICDE.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BeoordelingCritereaLeeruitkomst");
 
             migrationBuilder.DropTable(
                 name: "LesLeeruitkomsten");
@@ -589,6 +617,9 @@ namespace ICDE.Data.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "BeoordelingCritereas");
+
+            migrationBuilder.DropTable(
                 name: "IngeleverdeOpdrachten");
 
             migrationBuilder.DropTable(
@@ -604,16 +635,13 @@ namespace ICDE.Data.Migrations
                 name: "leeruitkomstsen");
 
             migrationBuilder.DropTable(
+                name: "Opdrachten");
+
+            migrationBuilder.DropTable(
                 name: "Plannings");
 
             migrationBuilder.DropTable(
                 name: "Opleidingen");
-
-            migrationBuilder.DropTable(
-                name: "BeoordelingCritereas");
-
-            migrationBuilder.DropTable(
-                name: "Opdrachten");
         }
     }
 }

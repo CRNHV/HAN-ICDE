@@ -6,10 +6,11 @@ namespace ICDE.Data.Entities.OnderwijsOnderdeel;
 public class PlanningItem
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     public int PlanningId { get; set; }
-    public Planning Planning { get; set; } 
+    public Planning Planning { get; set; }
 
     public int? OpdrachtId { get; set; }
     public Opdracht Opdracht { get; set; }

@@ -45,9 +45,12 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("VakId")
                         .HasColumnType("int");
 
-                    b.HasKey("CursussenId", "VakId");
+                    b.Property<int>("VakVersieNummer")
+                        .HasColumnType("int");
 
-                    b.HasIndex("VakId");
+                    b.HasKey("CursussenId", "VakId", "VakVersieNummer");
+
+                    b.HasIndex("VakId", "VakVersieNummer");
 
                     b.ToTable("VakCursussenLeeruitkomsten", (string)null);
                 });
@@ -162,6 +165,9 @@ namespace ICDE.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Naam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -190,6 +196,9 @@ namespace ICDE.Data.Migrations
                     b.Property<string>("Beschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -220,6 +229,9 @@ namespace ICDE.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Naam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -244,6 +256,9 @@ namespace ICDE.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Naam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -267,6 +282,9 @@ namespace ICDE.Data.Migrations
                     b.Property<string>("Beschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -331,14 +349,17 @@ namespace ICDE.Data.Migrations
             modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Vak", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("VersieNummer")
+                        .HasColumnType("int");
 
                     b.Property<string>("Beschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -347,10 +368,7 @@ namespace ICDE.Data.Migrations
                     b.Property<int?>("OpleidingId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VersieNummer")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "VersieNummer");
 
                     b.HasIndex("OpleidingId");
 
@@ -394,6 +412,9 @@ namespace ICDE.Data.Migrations
                     b.Property<string>("Beschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -458,9 +479,12 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("VakId")
                         .HasColumnType("int");
 
-                    b.HasKey("LeeruitkomstenId", "VakId");
+                    b.Property<int>("VakVersieNummer")
+                        .HasColumnType("int");
 
-                    b.HasIndex("VakId");
+                    b.HasKey("LeeruitkomstenId", "VakId", "VakVersieNummer");
+
+                    b.HasIndex("VakId", "VakVersieNummer");
 
                     b.ToTable("VakLeeruitkomsten", (string)null);
                 });
@@ -593,7 +617,7 @@ namespace ICDE.Data.Migrations
 
                     b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Vak", null)
                         .WithMany()
-                        .HasForeignKey("VakId")
+                        .HasForeignKey("VakId", "VakVersieNummer")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -695,7 +719,7 @@ namespace ICDE.Data.Migrations
 
                     b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Vak", null)
                         .WithMany()
-                        .HasForeignKey("VakId")
+                        .HasForeignKey("VakId", "VakVersieNummer")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -2,6 +2,7 @@ using System;
 using ICDE.Data;
 using ICDE.Data.Entities.Identity;
 using ICDE.Data.Extensions;
+using ICDE.Data.Interceptors;
 using ICDE.Lib.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -43,11 +44,15 @@ public class Program
             .AddDefaultTokenProviders()
             .AddSignInManager();
 
-        builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer("Server=localhost;Database=ICDE;Trusted_Connection=True;Encrypt=False"));
+        builder.Services.AddDbContext<AppDbContext>(opt =>
+        {
+            opt.UseSqlServer("Server=localhost;Database=ICDE;Trusted_Connection=True;Encrypt=False");
+            opt.AddInterceptors(new OnderwijsOnderdeelInterceptor());
+        });
 
         builder.Services.ConfigureApplicationCookie(options =>
         {
-            options.LoginPath = "/Account/Login";
+            options.LoginPath = "/auth/login";
         });
 
         var app = builder.Build();

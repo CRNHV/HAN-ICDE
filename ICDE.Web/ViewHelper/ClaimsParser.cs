@@ -1,8 +1,6 @@
-﻿using ICDE.Data.Entities.Identity;
+﻿using System.Linq;
 using System.Security.Claims;
-using ICDE.Lib.Domain.User;
 using System.Security.Principal;
-using System.Linq;
 
 namespace ICDE.Web.ViewHelper;
 

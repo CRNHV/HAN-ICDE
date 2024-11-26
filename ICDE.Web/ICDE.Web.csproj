@@ -21,4 +21,11 @@
 		<ProjectReference Include="..\ICDE.Lib\ICDE.Lib.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Update="Views\Leeruitkomst\BekijkLeeruitkomst.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+
 </Project>
