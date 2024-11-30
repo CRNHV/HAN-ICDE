@@ -49,7 +49,7 @@ namespace ICDE.Data.Migrations
 
                     b.HasIndex("VakId");
 
-                    b.ToTable("VakCursussenLeeruitkomsten", (string)null);
+                    b.ToTable("VakCursussen", (string)null);
                 });
 
             modelBuilder.Entity("ICDE.Data.Entities.Identity.Role", b =>
@@ -201,7 +201,7 @@ namespace ICDE.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PlanningId")
+                    b.Property<int?>("PlanningId")
                         .HasColumnType("int");
 
                     b.Property<int>("VersieNummer")
@@ -226,6 +226,9 @@ namespace ICDE.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CursusId")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uniqueidentifier");
 
@@ -237,6 +240,8 @@ namespace ICDE.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CursusId");
 
                     b.ToTable("leeruitkomstsen");
                 });
@@ -632,11 +637,16 @@ namespace ICDE.Data.Migrations
                 {
                     b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Planning", "Planning")
                         .WithMany()
-                        .HasForeignKey("PlanningId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PlanningId");
 
                     b.Navigation("Planning");
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Leeruitkomst", b =>
+                {
+                    b.HasOne("ICDE.Data.Entities.OnderwijsOnderdeel.Cursus", null)
+                        .WithMany("Leeruitkomsten")
+                        .HasForeignKey("CursusId");
                 });
 
             modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.PlanningItem", b =>
@@ -770,6 +780,11 @@ namespace ICDE.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Cursus", b =>
+                {
+                    b.Navigation("Leeruitkomsten");
                 });
 
             modelBuilder.Entity("ICDE.Data.Entities.OnderwijsOnderdeel.Opleiding", b =>

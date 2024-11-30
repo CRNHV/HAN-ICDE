@@ -32,7 +32,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<Vak>()
            .HasMany(e => e.Cursussen)
            .WithMany()
-           .UsingEntity(j => j.ToTable("VakCursussenLeeruitkomsten"));
+           .UsingEntity(j => j.ToTable("VakCursussen"));
 
         modelBuilder.Entity<Vak>()
           .HasMany(e => e.Leeruitkomsten)

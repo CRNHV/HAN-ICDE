@@ -10,7 +10,9 @@ public class OnderwijsOnderdeelInterceptor : SaveChangesInterceptor
         var context = eventData.Context;
 
         if (context == null)
+        {
             return await base.SavingChangesAsync(eventData, result);
+        }
 
         var entries = context.ChangeTracker.Entries()
             .Where(e => e.Entity is IOnderwijsOnderdeel && e.State == EntityState.Modified);

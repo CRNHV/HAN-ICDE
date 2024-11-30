@@ -38,6 +38,7 @@ public class AuthenticationService : IAuthenticationService
         await _userRepository.AddUserClaim(dbUser, "Id", dbUser.Id.ToString());
         await _userRepository.AddUserClaim(dbUser, "Role", rol);
 
+        await _userRepository.AddUserRole(dbUser, rol);
         return true;
     }
 }
