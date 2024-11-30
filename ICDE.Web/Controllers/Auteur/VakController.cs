@@ -26,7 +26,7 @@ public class VakController : Controller
     public async Task<IActionResult> Index()
     {
         List<VakDto> vakken = await _vakService.GetAll();
-        return View(new VakIndexViewModel()
+        return View("Views/Auteur/Vak/Index.cshtml", new VakIndexViewModel()
         {
             Vakken = vakken
         });
@@ -54,7 +54,7 @@ public class VakController : Controller
         var cursussen = await _cursusService.GetAll();
         var vak = await _vakService.GetByGroupId(vakGroupId);
 
-        return View(new BekijkVakViewModel()
+        return View("Views/Auteur/Vak/BekijkVak.cshtml", new BekijkVakViewModel()
         {
             Vak = vak,
             Cursussen = cursussen,
@@ -88,7 +88,7 @@ public class VakController : Controller
     public async Task<IActionResult> KoppelCursus([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
     {
         await _vakService.KoppelCursus(vakGroupId, cursusGroupId);
-        return Redirect($"/vak/get/{vakGroupId}");
+        return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 
     /// <summary>
@@ -99,6 +99,6 @@ public class VakController : Controller
     public async Task<IActionResult> KoppelLeeruitkomst([FromRoute] Guid vakGroupId, [FromRoute] Guid lukGroupId)
     {
         await _vakService.KoppelLeeruitkomst(vakGroupId, lukGroupId);
-        return Redirect($"/vak/get/{vakGroupId}");
+        return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 }

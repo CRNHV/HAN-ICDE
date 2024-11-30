@@ -25,7 +25,7 @@ internal sealed class OpdrachtService : IOpdrachtService
         return new OpdrachtDto(dbOpdracht.Type == OpdrachtType.Toets)
         {
             Beschrijving = dbOpdracht.Beschrijving,
-            Id = dbOpdracht.Id,
+            GroupId = dbOpdracht.GroupId,
             Naam = dbOpdracht.Naam,
         };
     }
@@ -37,8 +37,9 @@ internal sealed class OpdrachtService : IOpdrachtService
         return dbOpdrachten.ConvertAll(x => new OpdrachtDto(x.Type == OpdrachtType.Toets)
         {
             Beschrijving = x.Beschrijving,
-            Id = x.Id,
+            GroupId = x.GroupId,
             Naam = x.Naam,
+
         });
     }
 
