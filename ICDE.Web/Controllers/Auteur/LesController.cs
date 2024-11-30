@@ -28,7 +28,7 @@ public class LesController : Controller
     {
         LesIndexViewModel viewModel = new LesIndexViewModel();
         viewModel.Lessen = await _lesService.GetAllUniqueLessons();
-        return View(viewModel);
+        return View("/Views/Auteur/Les/Index.cshtml", viewModel);
     }
 
 
@@ -51,7 +51,7 @@ public class LesController : Controller
     public async Task<IActionResult> BekijkLes([FromRoute] Guid groupId)
     {
         LesMetEerdereVersies lmev = await _lesService.GetLessonWithPreviousVersions(groupId);
-        return View(new BekijkLesViewModel()
+        return View("/Views/Auteur/Les/BekijkLes.cshtml", new BekijkLesViewModel()
         {
             Les = lmev.Les,
             LesList = lmev.LesList,
@@ -98,7 +98,7 @@ public class LesController : Controller
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {
         await _lesService.KoppelLukAanLes(lesGroupId, lukGroupId);
-        return Redirect($"/les/get/{lesGroupId}");
+        return Redirect($"/auteur/les/get/{lesGroupId}");
     }
 
     /// <summary>
@@ -109,6 +109,6 @@ public class LesController : Controller
     public async Task<IActionResult> OntkoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {
         await _lesService.OntkoppelLukAanLes(lesGroupId, lukGroupId);
-        return Redirect($"/les/get/{lesGroupId}");
+        return Redirect($"/auteur/les/get/{lesGroupId}");
     }
 }
