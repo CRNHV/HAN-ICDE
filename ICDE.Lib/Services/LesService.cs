@@ -1,4 +1,5 @@
-﻿using ICDE.Data.Entities;
+﻿using AutoMapper;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
@@ -10,11 +11,13 @@ internal class LesService : ILesService
 {
     private readonly ILesRepository _lesRepository;
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
+    private readonly IMapper _mapper;
 
-    public LesService(ILesRepository lesRepository, ILeeruitkomstRepository leeruitkomstRepository)
+    public LesService(ILesRepository lesRepository, ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper)
     {
         _lesRepository = lesRepository;
         _leeruitkomstRepository = leeruitkomstRepository;
+        _mapper = mapper;
     }
 
     public async Task<LesDto> CreateLesson(string naam, string beschrijving)
@@ -26,27 +29,13 @@ internal class LesService : ILesService
             GroupId = Guid.NewGuid(),
         });
 
-        return new LesDto()
-        {
-            Beschrijving = result.Beschrijving,
-            Id = result.Id,
-            Naam = result.Naam,
-            GroupId = result.GroupId,
-            VersieNummer = result.VersieNummer,
-        };
+        return _mapper.Map<LesDto>(result);
     }
 
     public async Task<List<LesDto>> GetAllUniqueLessons()
     {
         var lessons = await _lesRepository.GetList();
-        return lessons.ConvertAll(x => new LesDto()
-        {
-            Beschrijving = x.Beschrijving,
-            GroupId = x.GroupId,
-            Id = x.Id,
-            Naam = x.Naam,
-            VersieNummer = x.VersieNummer
-        });
+        return _mapper.Map<List<LesDto>>(lessons);
     }
 
     public async Task<LesMetEerdereVersies> GetLessonWithPreviousVersions(Guid groupId)
@@ -56,30 +45,9 @@ internal class LesService : ILesService
 
         return new LesMetEerdereVersies()
         {
-            Les = new LesDto()
-            {
-                Beschrijving = currentVersion.Beschrijving,
-                GroupId = currentVersion.GroupId,
-                Id = currentVersion.Id,
-                Naam = currentVersion.Naam,
-                VersieNummer = currentVersion.VersieNummer
-            },
-            LesList = otherVersions.ConvertAll(x => new LesDto()
-            {
-                Beschrijving = x.Beschrijving,
-                GroupId = x.GroupId,
-                Id = x.Id,
-                Naam = x.Naam,
-                VersieNummer = x.VersieNummer
-            }),
-            LesLeeruitkomsten = currentVersion.Leeruitkomsten.ConvertAll(x => new LeeruitkomstDto()
-            {
-                Beschrijving = x.Beschrijving,
-                GroupId = x.GroupId,
-                Id = x.Id,
-                Naam = x.Naam,
-                VersieNummer = x.VersieNummer
-            })
+            Les = _mapper.Map<LesDto>(currentVersion),
+            LesList = _mapper.Map<List<LesDto>>(otherVersions),
+            LesLeeruitkomsten = _mapper.Map<List<LeeruitkomstDto>>(currentVersion.Leeruitkomsten)
         };
     }
 

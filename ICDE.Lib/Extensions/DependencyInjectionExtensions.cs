@@ -1,4 +1,6 @@
 ﻿
+using System.Reflection;
+using ICDE.Lib.AutoMapper;
 using ICDE.Lib.IO;
 using ICDE.Lib.Services;
 using ICDE.Lib.Services.Interfaces;
@@ -9,6 +11,8 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddLib(this IServiceCollection services)
     {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
         services.AddScoped<IFileManager, FileManager>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IOpdrachtService, OpdrachtService>();

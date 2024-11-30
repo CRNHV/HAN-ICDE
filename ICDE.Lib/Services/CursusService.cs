@@ -1,4 +1,5 @@
-﻿using ICDE.Data.Repositories.Interfaces;
+﻿using AutoMapper;
+using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Domain;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Dto.Leeruitkomst;
@@ -9,26 +10,24 @@ namespace ICDE.Lib.Services;
 internal class CursusService : ICursusService
 {
     private readonly ICursusRepository _cursusRepository;
+    private readonly IMapper _mapper;
 
-    public CursusService(ICursusRepository cursusRepository)
+    public CursusService(ICursusRepository cursusRepository, IMapper mapper)
     {
         _cursusRepository = cursusRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<CursusDto>> GetAll()
     {
         var cursussen = await _cursusRepository.GetList();
-        return cursussen.ConvertAll(x => new CursusDto
-        {
-            Beschrijving = x.Beschrijving,
-            Naam = x.Naam,
-            GroupId = x.GroupId,
-        });
+
+        return _mapper.Map<List<CursusDto>>(cursussen);
     }
 
     public async Task<CursusMetPlanningDto> GetFullCursusByGroupId(Guid cursusGroupId)
     {
-        var cursus = await _cursusRepository.GetFulLCursusData(cursusGroupId);
+        var cursus = await _cursusRepository.GetFullCursusData(cursusGroupId);
         List<PlanningItemDto> planningItems = new();
         if (cursus.Planning != null)
         {
@@ -40,12 +39,7 @@ internal class CursusService : ICursusService
             Id = cursus.Id,
             Beschrijving = cursus.Beschrijving,
             Naam = cursus.Naam,
-            Leeruitkomsten = cursus.Leeruitkomsten.ConvertAll(x => new LeeruitkomstDto
-            {
-                Beschrijving = x.Beschrijving,
-                Naam = x.Naam,
-                GroupId = x.GroupId,
-            }),
+            Leeruitkomsten = _mapper.Map<List<LeeruitkomstDto>>(cursus.Leeruitkomsten),
             Planning = new PlanningDto()
             {
                 Naam = cursus.Planning.Name,
@@ -57,12 +51,6 @@ internal class CursusService : ICursusService
     public async Task<List<CursusDto>> GetEarlierVersionsByGroupId(Guid groupId, int exceptId)
     {
         var cursussen = await _cursusRepository.GetList(x => x.GroupId == groupId && x.Id != exceptId);
-        return cursussen.ConvertAll(x => new CursusDto()
-        {
-            Beschrijving = x.Beschrijving,
-            GroupId = x.GroupId,
-            Naam = x.Naam,
-            VersieNummer = x.VersieNummer,
-        });
+        return _mapper.Map<List<CursusDto>>(cursussen);
     }
 }

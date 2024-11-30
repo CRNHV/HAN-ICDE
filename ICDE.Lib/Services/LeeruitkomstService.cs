@@ -1,4 +1,5 @@
-﻿using ICDE.Data.Entities;
+﻿using AutoMapper;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Interfaces;
@@ -8,10 +9,12 @@ namespace ICDE.Lib.Services;
 internal class LeeruitkomstService : ILeeruitkomstService
 {
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
+    private readonly IMapper _mapper;
 
-    public LeeruitkomstService(ILeeruitkomstRepository leeruitkomstRepository)
+    public LeeruitkomstService(ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper)
     {
         _leeruitkomstRepository = leeruitkomstRepository;
+        _mapper = mapper;
     }
 
     public async Task<LeeruitkomstMetEerdereVersies> GetEntityWithEarlierVersions(Guid leeruitkomstId)
@@ -19,37 +22,17 @@ internal class LeeruitkomstService : ILeeruitkomstService
         LeeruitkomstMetEerdereVersies luk = new LeeruitkomstMetEerdereVersies();
 
         var leeruitkomst = await _leeruitkomstRepository.GetLatestByGroupId(leeruitkomstId);
-        luk.Leeruitkomst = new LeeruitkomstDto()
-        {
-            Id = leeruitkomst.Id,
-            Beschrijving = leeruitkomst!.Beschrijving,
-            GroupId = leeruitkomst.GroupId,
-            Naam = leeruitkomst.Naam,
-        };
-
         var eerdereVersies = await _leeruitkomstRepository.GetList(x => x.GroupId == leeruitkomst.GroupId && x.Id != leeruitkomst.Id);
-        luk.EerdereVersies = eerdereVersies.ConvertAll(x => new LeeruitkomstDto
-        {
-            Id = x.Id,
-            GroupId = x.GroupId,
-            Beschrijving = x.Beschrijving,
-            Naam = x.Naam,
-            VersieNummer = x.VersieNummer,
-        });
 
+        luk.Leeruitkomst = _mapper.Map<LeeruitkomstDto>(leeruitkomst);
+        luk.EerdereVersies = _mapper.Map<List<LeeruitkomstDto>>(eerdereVersies);
         return luk;
     }
 
     public async Task<List<LeeruitkomstDto>> GetAll()
     {
         var dbLuks = await _leeruitkomstRepository.GetList();
-        return dbLuks.ConvertAll(x => new LeeruitkomstDto
-        {
-            Id = x.Id,
-            Beschrijving = x.Beschrijving,
-            Naam = x.Naam,
-            GroupId = x.GroupId,
-        });
+        return _mapper.Map<List<LeeruitkomstDto>>(dbLuks);
     }
 
     public async Task<LeeruitkomstDto?> MaakLeeruitkomst(MaakLeeruitkomstDto request)
@@ -65,13 +48,7 @@ internal class LeeruitkomstService : ILeeruitkomstService
         if (result is null)
             return null;
 
-        return new LeeruitkomstDto()
-        {
-            Beschrijving = result.Beschrijving,
-            Naam = result.Naam,
-            GroupId = result.GroupId,
-            VersieNummer = result.VersieNummer,
-        };
+        return _mapper.Map<LeeruitkomstDto>(result);
     }
 
     public async Task<LeeruitkomstDto?> UpdateLeeruitkomst(LukUpdateDto request)
@@ -84,25 +61,13 @@ internal class LeeruitkomstService : ILeeruitkomstService
         leeruitkomstToUpdate.Beschrijving = request.Beschrijving;
 
         var result = await _leeruitkomstRepository.Update(leeruitkomstToUpdate);
-        return result != null ? new LeeruitkomstDto()
-        {
-            Beschrijving = result.Beschrijving,
-            Naam = result.Naam,
-            GroupId = result.GroupId,
-            Id = result.Id,
-        } : null;
+        return result != null ? _mapper.Map<LeeruitkomstDto>(result) : null;
     }
 
     public async Task<LeeruitkomstDto> GetVersion(Guid groupId, int versieId)
     {
         var dbLuks = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
         var luk = dbLuks.FirstOrDefault();
-        return new LeeruitkomstDto
-        {
-            Id = luk.Id,
-            Beschrijving = luk.Beschrijving,
-            Naam = luk.Naam,
-            GroupId = luk.GroupId,
-        };
+        return _mapper.Map<LeeruitkomstDto>(luk);
     }
 }

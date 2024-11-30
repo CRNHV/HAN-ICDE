@@ -21,7 +21,7 @@ internal class CursusRepository : RepositoryBase<Cursus>, ICursusRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Cursus?> GetFulLCursusData(Guid groupId)
+    public async Task<Cursus?> GetFullCursusData(Guid groupId)
     {
         return await _context.Cursussen
             .AsSplitQuery()

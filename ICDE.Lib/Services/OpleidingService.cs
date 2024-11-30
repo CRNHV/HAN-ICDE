@@ -1,4 +1,5 @@
-﻿using ICDE.Data.Entities;
+﻿using AutoMapper;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Vak;
@@ -9,6 +10,7 @@ internal class OpleidingService : IOpleidingService
 {
     private readonly IOpleidingRepository _opleidingRepository;
     private readonly IVakRepository _vakRepository;
+    private readonly IMapper _mapper;
 
     public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository)
     {
