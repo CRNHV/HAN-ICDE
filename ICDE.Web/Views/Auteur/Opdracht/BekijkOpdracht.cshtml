@@ -1,0 +1,33 @@
+﻿@model ICDE.Lib.Dto.Opdracht.OpdrachtDto
+
+@{
+    ViewData["Title"] = "Bekijk opdracht";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk opdracht</h1>
+
+<h4>Bekijk opdracht</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Naam</td>
+                    <td>@Model.Beschrijving</td>
+                    <td>@Model.Type</td>
+                </tr>
+            </tbody>            
+        </table>
+        <p><a href="/opdrachten/@Model.Id/leverin">Lever iets in</a></p>
+        <p><a href="/opdrachten/@Model.Id/inzendingen">Bekijk inleveringen</a></p>
+    </div>
+</div>
