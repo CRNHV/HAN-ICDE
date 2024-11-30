@@ -1,0 +1,38 @@
+﻿@model List<ICDE.Lib.Dto.Opleidingen.OpleidingDto>
+
+@{
+    ViewData["Title"] = "Bekijk opleidingen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk opleidingen</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Naam</td>
+                        <td>@item.Beschrijving</td>
+                        <td><a href="/auteur/opleiding/bekijk/@item.GroupId">Bekijk</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
