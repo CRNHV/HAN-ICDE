@@ -1,4 +1,5 @@
-﻿using ICDE.Data.Entities;
+﻿using System.Text.RegularExpressions;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,22 @@ internal class CursusRepository : RepositoryBase<Cursus>, ICursusRepository
     public async Task<Cursus?> GetLatestByGroupId(Guid groupId)
     {
         return await _context.Cursussen
+            .Where(x => x.GroupId == groupId)
+            .OrderByDescending(x => x.VersieNummer)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Cursus?> GetFulLCursusData(Guid groupId)
+    {
+        return await _context.Cursussen
+            .AsSplitQuery()
+            .Include(x => x.Leeruitkomsten)
+            .Include(x => x.Planning)
+            .ThenInclude(x => x.PlanningItems)
+            .ThenInclude(x => x.Les)
+            .Include(x => x.Planning)
+            .ThenInclude(x => x.PlanningItems)
+            .ThenInclude(x => x.Opdracht)
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();

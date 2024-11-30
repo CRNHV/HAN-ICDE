@@ -16,6 +16,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ILesService, LesService>();
         services.AddScoped<IVakService, VakService>();
         services.AddScoped<ICursusService, CursusService>();
+        services.AddScoped<IOpleidingService, OpleidingService>();
 
         return services;
     }

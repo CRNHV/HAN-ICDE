@@ -26,7 +26,7 @@ public class VakController : Controller
     public async Task<IActionResult> Index()
     {
         List<VakDto> vakken = await _vakService.GetAll();
-        return View("Views/Auteur/Vak/Index.cshtml", new VakIndexViewModel()
+        return View("/Views/Auteur/Vak/Index.cshtml", new VakIndexViewModel()
         {
             Vakken = vakken
         });
@@ -54,7 +54,7 @@ public class VakController : Controller
         var cursussen = await _cursusService.GetAll();
         var vak = await _vakService.GetByGroupId(vakGroupId);
 
-        return View("Views/Auteur/Vak/BekijkVak.cshtml", new BekijkVakViewModel()
+        return View("/Views/Auteur/Vak/BekijkVak.cshtml", new BekijkVakViewModel()
         {
             Vak = vak,
             Cursussen = cursussen,
