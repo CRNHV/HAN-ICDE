@@ -1,15 +1,16 @@
-﻿@model ICDE.Web.Models.Vakken.VakIndexViewModel
+﻿@using ICDE.Lib.Dto.Cursus
+@model List<CursusDto>
 @{
-    ViewData["Title"] = "Bekijk vak";
+    ViewData["Title"] = "Bekijk cursussen";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Vakken</h1>
+<h1>cursussen</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <h2> Maak vak </h2>
+        <h2> Maak cursus </h2>
         <form method="post" enctype="multipart/form-data" asp-action="MaakVak">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -26,8 +27,8 @@
         </form>
     </div>
     <div class="col-md-4">
-        <h2> Vakken </h2>
-        @if (Model.Vakken.Count > 0)
+        <h2> Cursussen </h2>
+        @if (Model.Count > 0)
         {
             <table class="table">
                 <thead>
@@ -38,12 +39,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Vakken)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
-                            <td><a href="/auteur/vak/get/@item.GroupId">Bekijk</a></td>
+                            <td><a href="/auteur/cursus/get/@item.GroupId">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>

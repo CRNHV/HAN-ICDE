@@ -1,0 +1,110 @@
+﻿@model ICDE.Web.Models.Cursus.BekijkCursusViewModel;
+
+@{
+    ViewData["Title"] = "Bekijk cursus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk & update cursus</h1>
+
+<h4>Bekijk & update cursus</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" enctype="multipart/form-data" asp-action="UpdateLeeruitkomst">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <input name="Id" class="form-control" value="@Model.Opleiding.Id" hidden /> *@
+            <div class="form-group">
+                <label name="Naam" class="control-label"></label>
+                <input name="Naam" class="form-control" value="@Model.Cursus.Naam" />
+                <span name="Naam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label name="Beschrijving" class="control-label"></label>
+                <input name="Beschrijving" class="form-control" value="@Model.Cursus.Beschrijving" />
+                <span name="Beschrijving" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h4> Leeruitkomsten</h4>
+        @if (Model.Cursus.Leeruitkomsten.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Cursus.Leeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>@item.VersieNummer</td>
+                            <td><a href="/auteur/leeruitkomst/bekijkversie/@item.GroupId/@item.VersieNummer">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4> Eerdere versies</h4>
+        @if (Model.EerderVersies.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.EerderVersies)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>@item.VersieNummer</td>
+                            <td><a href="/auteur/leeruitkomst/bekijkversie/@item.GroupId/@item.VersieNummer">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4> Planning </h4>
+        @if (Model.Cursus.Planning != null && Model.Cursus.Planning.Items.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Naam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Cursus.Planning.Items.OrderBy(x => x.Index))
+                    {
+                        <tr>
+                            <td>@item.Index</td>
+                            <td>@item.PlanningItemNaam</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+

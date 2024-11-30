@@ -29,7 +29,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Views\Auteur\Cursus\" />
 	  <Folder Include="Views\Auteur\Rapportage\" />
 	  <Folder Include="Views\Auteur\Planning\" />
 	  <Folder Include="Views\Student\Cursus\" />
