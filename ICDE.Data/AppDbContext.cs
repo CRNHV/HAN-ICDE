@@ -1,6 +1,5 @@
-﻿using ICDE.Data.Entities.Identity;
-using ICDE.Data.Entities.OnderwijsOnderdeel;
-using ICDE.Data.Entities.Opdrachten;
+﻿using ICDE.Data.Entities;
+using ICDE.Data.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-﻿namespace ICDE.Data.Entities.OnderwijsOnderdeel;
+﻿namespace ICDE.Data.Entities;
 internal interface IOnderwijsOnderdeel
 {
     public int Id { get; set; }

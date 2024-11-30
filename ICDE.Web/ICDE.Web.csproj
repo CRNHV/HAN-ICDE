@@ -22,10 +22,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="Views\Leeruitkomst\BekijkLeeruitkomst.cshtml">
+	  <Content Update="Views\Auteur\Leeruitkomst\BekijkLeeruitkomst.cshtml">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Views\Auteur\Cursus\" />
+	  <Folder Include="Views\Auteur\Rapportage\" />
+	  <Folder Include="Views\Auteur\Planning\" />
+	  <Folder Include="Views\Auteur\Opleiding\" />
+	  <Folder Include="Views\Student\Cursus\" />
 	</ItemGroup>
 
 </Project>

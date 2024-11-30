@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ICDE.Data.Entities.OnderwijsOnderdeel;
+namespace ICDE.Data.Entities;
 
-public class Les : IOnderwijsOnderdeel
+public class Opdracht : IOnderwijsOnderdeel
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,7 +12,10 @@ public class Les : IOnderwijsOnderdeel
     public string Beschrijving { get; set; }
     public int VersieNummer { get; set; }
     public Guid GroupId { get; set; }
-    public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
+    public OpdrachtType Type { get; set; }
+
+    public ICollection<BeoordelingCriterea> BeoordelingCritereas { get; set; }
+    public ICollection<IngeleverdeOpdracht> IngeleverdeOpdrachten { get; set; }
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }

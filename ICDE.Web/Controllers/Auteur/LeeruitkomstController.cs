@@ -6,9 +6,9 @@ using ICDE.Lib.Services.Interfaces;
 using ICDE.Lib.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ICDE.Web.Controllers;
+namespace ICDE.Web.Controllers.Auteur;
 
-[Route("leeruitkomst")]
+[Route("auteur/leeruitkomst")]
 public class LeeruitkomstController : ControllerBase
 {
     private readonly ILeeruitkomstService _leeruitkomstService;

@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities.Opdrachten;
+﻿using ICDE.Data.Entities;
 
 namespace ICDE.Data.Repositories.Interfaces;
 public interface IOpdrachtRepository

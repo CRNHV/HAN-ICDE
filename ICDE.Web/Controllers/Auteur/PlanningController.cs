@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ICDE.Web.Controllers;
+namespace ICDE.Web.Controllers.Auteur;
 
-[Route("planning")]
-public class PlanningController : Controller
+[Route("auteur/planning")]
+public class PlanningController : ControllerBase
 {
     public async Task<IActionResult> MaakPlanning()
     {
@@ -26,14 +26,21 @@ public class PlanningController : Controller
         return null;
     }
 
+    /// <summary>
+    /// UC22
+    /// </summary>
+    /// <returns></returns>
     public async Task<IActionResult> VoegOnderwijsonderdeelToeAanPlanning()
     {
         return null;
     }
 
+    /// <summary>
+    /// UC22
+    /// </summary>
+    /// <returns></returns>
     public async Task<IActionResult> VerwijderOnderwijsOnderdeelVanPlanning()
     {
         return null;
     }
-
 }

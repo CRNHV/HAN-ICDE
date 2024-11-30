@@ -11,5 +11,4 @@ public class BekijkVakViewModel
     public List<VakDto> EerdereVersies { get; set; } = new();
     public List<LeeruitkomstDto> Leeruitkomsten { get; set; } = new();
     public List<CursusDto> Cursussen { get; set; } = new();
-
 }

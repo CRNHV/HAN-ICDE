@@ -6,9 +6,9 @@ using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Vakken;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ICDE.Web.Controllers;
+namespace ICDE.Web.Controllers.Auteur;
 
-[Route("vak")]
+[Route("auteur/vak")]
 public class VakController : Controller
 {
     private readonly IVakService _vakService;
@@ -85,7 +85,7 @@ public class VakController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet("koppelcursus/{vakGroupId}/{cursusGroupId}")]
-    public async Task<IActionResult> KoppelCursuskomst([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
+    public async Task<IActionResult> KoppelCursus([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
     {
         await _vakService.KoppelCursus(vakGroupId, cursusGroupId);
         return Redirect($"/vak/get/{vakGroupId}");

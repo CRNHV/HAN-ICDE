@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
-namespace ICDE.Data.Entities.OnderwijsOnderdeel;
+namespace ICDE.Data.Entities;
 
-public class Vak : IOnderwijsOnderdeel
+public class Leeruitkomst : IOnderwijsOnderdeel
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,8 +12,6 @@ public class Vak : IOnderwijsOnderdeel
     public string Beschrijving { get; set; }
     public int VersieNummer { get; set; }
     public Guid GroupId { get; set; }
-    public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
-    public List<Cursus> Cursussen { get; set; } = new();
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }

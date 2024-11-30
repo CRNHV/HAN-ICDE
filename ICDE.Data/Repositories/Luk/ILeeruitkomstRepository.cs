@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities.OnderwijsOnderdeel;
+﻿using ICDE.Data.Entities;
 
 namespace ICDE.Data.Repositories.Luk;
 public interface ILeeruitkomstRepository : IRepositoryBase<Leeruitkomst>

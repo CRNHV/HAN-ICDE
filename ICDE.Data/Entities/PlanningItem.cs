@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ICDE.Data.Entities.Opdrachten;
 
-namespace ICDE.Data.Entities.OnderwijsOnderdeel;
+namespace ICDE.Data.Entities;
 public class PlanningItem
 {
     [Key]

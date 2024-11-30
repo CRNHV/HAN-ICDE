@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities.OnderwijsOnderdeel;
+﻿using ICDE.Data.Entities;
 
 namespace ICDE.Data.Repositories.Interfaces;
 public interface ILesRepository : IRepositoryBase<Les>

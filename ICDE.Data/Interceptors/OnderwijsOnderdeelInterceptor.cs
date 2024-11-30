@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities.OnderwijsOnderdeel;
+﻿using ICDE.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 

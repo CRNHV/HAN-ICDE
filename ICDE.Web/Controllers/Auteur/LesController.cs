@@ -5,9 +5,9 @@ using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Lessen;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ICDE.Web.Controllers;
+namespace ICDE.Web.Controllers.Auteur;
 
-[Route("les")]
+[Route("auteur/les")]
 public class LesController : Controller
 {
     private readonly ILesService _lesService;
