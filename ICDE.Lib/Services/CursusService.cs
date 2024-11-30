@@ -29,8 +29,12 @@ internal class CursusService : ICursusService
     public async Task<CursusMetPlanningDto> GetFullCursusByGroupId(Guid cursusGroupId)
     {
         var cursus = await _cursusRepository.GetFulLCursusData(cursusGroupId);
+        List<PlanningItemDto> planningItems = new();
+        if (cursus.Planning != null)
+        {
+            planningItems = cursus.Planning.PlanningItems.ConvertAll(x => PlanningItemMapper.MapPlanningItemToDto(x));
+        }
 
-        var planningItems = cursus.Planning.PlanningItems.ConvertAll(x => PlanningItemMapper.MapPlanningItemToDto(x));
         return new CursusMetPlanningDto()
         {
             Id = cursus.Id,
