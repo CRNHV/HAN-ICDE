@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using ICDE.Data.Repositories.Interfaces;
-using ICDE.Lib.Domain;
 using ICDE.Lib.Dto.Cursus;
-using ICDE.Lib.Dto.Leeruitkomst;
-using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;
@@ -28,24 +25,7 @@ internal class CursusService : ICursusService
     public async Task<CursusMetPlanningDto> GetFullCursusByGroupId(Guid cursusGroupId)
     {
         var cursus = await _cursusRepository.GetFullCursusData(cursusGroupId);
-        List<PlanningItemDto> planningItems = new();
-        if (cursus.Planning != null)
-        {
-            planningItems = cursus.Planning.PlanningItems.ConvertAll(x => PlanningItemMapper.MapPlanningItemToDto(x));
-        }
-
-        return new CursusMetPlanningDto()
-        {
-            Id = cursus.Id,
-            Beschrijving = cursus.Beschrijving,
-            Naam = cursus.Naam,
-            Leeruitkomsten = _mapper.Map<List<LeeruitkomstDto>>(cursus.Leeruitkomsten),
-            Planning = new PlanningDto()
-            {
-                Naam = cursus.Planning.Name,
-                Items = planningItems,
-            }
-        };
+        return _mapper.Map<CursusMetPlanningDto>(cursus);
     }
 
     public async Task<List<CursusDto>> GetEarlierVersionsByGroupId(Guid groupId, int exceptId)

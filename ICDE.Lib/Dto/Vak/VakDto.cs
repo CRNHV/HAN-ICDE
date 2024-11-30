@@ -1,5 +1,8 @@
-﻿using ICDE.Lib.Dto.Cursus;
-using ICDE.Lib.Dto.Leeruitkomst;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ICDE.Lib.Dto.Vak;
 public class VakDto
@@ -7,8 +10,4 @@ public class VakDto
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
     public Guid GroupId { get; set; }
-    public int VersieNummer { get; set; }
-
-    public List<LeeruitkomstDto> Leeruitkomsten { get; set; } = new();
-    public List<CursusDto> Cursussen { get; set; } = new();
 }
