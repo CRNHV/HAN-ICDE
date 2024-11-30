@@ -8,7 +8,7 @@
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2> Vak </h2>
         <form method="post" enctype="multipart/form-data" asp-action="MaakVak">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -23,7 +23,7 @@
             <button type="submit">Maak</button>
         </form>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Andere versies</h2>
         @if (Model.EerdereVersies.Count > 0)
         {
@@ -42,14 +42,14 @@
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
-                            <td><a href="/les/get/@item.GroupId/@item.VersieNummer">Voeg toe</a></td>
+                            <td><a href="/auteur/vak/bekijkversie/@item.GroupId/@item.VersieNummer">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Gekoppelde leeruitkomsten</h2>
         @if (Model.Vak.Leeruitkomsten.Count > 0)
         {
@@ -58,7 +58,6 @@
                     <tr>
                         <th>Naam</th>
                         <th>Beschrijving</th>
-                        <th>VersieNummer</th>
                         <th>URL</th>
                     </tr>
                 </thead>
@@ -69,7 +68,7 @@
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
                             <td>
-                                <a href="/les/ontkoppelluk/@Model.Vak.GroupId/@item.GroupId">Verwijder</a>
+                                <a href="/auteur/vak/ontkoppelluk/@Model.Vak.GroupId/@item.GroupId">Verwijder</a>
                             </td>
                         </tr>
                     }
@@ -77,7 +76,7 @@
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Gekoppelde cursussen</h2>
         @if (Model.Vak.Cursussen.Count > 0)
         {
@@ -86,7 +85,6 @@
                     <tr>
                         <th>Naam</th>
                         <th>Beschrijving</th>
-                        <th>VersieNummer</th>
                         <th>URL</th>
                     </tr>
                 </thead>
@@ -97,7 +95,7 @@
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
                             <td>
-                                <a href="/les/ontkoppelluk/@Model.Vak.GroupId/@item.GroupId">Verwijder</a>
+                                <a href="/auteur/vak/ontkoppelcursus/@Model.Vak.GroupId/@item.GroupId">Verwijder</a>
                             </td>
                         </tr>
                     }
@@ -105,7 +103,7 @@
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Voeg LUK toe</h2>
         @if (Model.Leeruitkomsten.Count > 0)
         {
@@ -123,14 +121,14 @@
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
-                            <td><a href="/vak/koppelluk/@Model.Vak.GroupId/@item.GroupId">Bekijk</a></td>
+                            <td><a href="/auteur/vak/koppelluk/@Model.Vak.GroupId/@item.GroupId">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Voeg cursus toe</h2>
         @if (Model.Cursussen.Count > 0)
         {
@@ -143,12 +141,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Leeruitkomsten)
+                    @foreach (var item in Model.Cursussen)
                     {
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
-                            <td><a href="/vak/koppelluk/@Model.Vak.GroupId/@item.GroupId">Bekijk</a></td>
+                            <td><a href="/auteur/vak/koppelcursus/@Model.Vak.GroupId/@item.GroupId">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>
