@@ -1,0 +1,160 @@
+﻿@model ICDE.Web.Models.Vakken.BekijkVakViewModel
+@{
+    ViewData["Title"] = "Bekijk les";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk vak</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h2> Vak </h2>
+        <form method="post" enctype="multipart/form-data" asp-action="MaakVak">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label name="Naam" class="control-label">Naam</label>
+                <input name="Naam" class="form-control" value="@Model.Vak.Naam" />
+            </div>
+            <div class="form-group">
+                <label name="Beschrijving" class="control-label">Beschrijving</label>
+                <input name="Beschrijving" class="form-control" value="@Model.Vak.Beschrijving" />
+            </div>
+            <button type="submit">Maak</button>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <h2>Andere versies</h2>
+        @if (Model.EerdereVersies.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.EerdereVersies)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/les/get/@item.GroupId/@item.VersieNummer">Voeg toe</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Gekoppelde leeruitkomsten</h2>
+        @if (Model.Vak.Leeruitkomsten.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Vak.Leeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>
+                                <a href="/les/ontkoppelluk/@Model.Vak.GroupId/@item.GroupId">Verwijder</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Gekoppelde cursussen</h2>
+        @if (Model.Vak.Cursussen.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>VersieNummer</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Vak.Cursussen)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>
+                                <a href="/les/ontkoppelluk/@Model.Vak.GroupId/@item.GroupId">Verwijder</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Voeg LUK toe</h2>
+        @if (Model.Leeruitkomsten.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Leeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/vak/koppelluk/@Model.Vak.GroupId/@item.GroupId">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Voeg cursus toe</h2>
+        @if (Model.Cursussen.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Leeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/vak/koppelluk/@Model.Vak.GroupId/@item.GroupId">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</div>
+

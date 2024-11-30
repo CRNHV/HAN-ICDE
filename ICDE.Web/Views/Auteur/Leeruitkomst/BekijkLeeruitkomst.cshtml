@@ -1,0 +1,58 @@
+﻿@model ICDE.Lib.ViewModels.LeeruitkomstMetEerdereVersies
+
+@{
+    ViewData["Title"] = "Bekijk leeruitkomst";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk & update leeruitkomst</h1>
+
+<h4>Bekijk & update leeruitkomst</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data" asp-action="UpdateLeeruitkomst">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input name="Id" class="form-control" value="@Model.Leeruitkomst.Id" hidden />
+            <div class="form-group">
+                <label asp-for="Leeruitkomst.Naam" class="control-label"></label>
+                <input name="Naam" class="form-control" value="@Model.Leeruitkomst.Naam" />
+                <span asp-validation-for="Leeruitkomst.Naam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Leeruitkomst.Beschrijving" class="control-label"></label>
+                <input name="Beschrijving" class="form-control" value="@Model.Leeruitkomst.Beschrijving" />
+                <span asp-validation-for="Leeruitkomst.Beschrijving" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <h4> Eerdere versies</h4>
+    @if (Model.EerdereVersies.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>VersieNummer</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.EerdereVersies)
+                {
+                    <tr>
+                        <td>@item.Naam</td>
+                        <td>@item.Beschrijving</td>
+                        <td>@item.VersieNummer</td>
+                        <td><a href="/leeruitkomst/bekijkversie/@item.GroupId/@item.VersieNummer">Bekijk</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
