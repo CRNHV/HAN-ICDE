@@ -33,14 +33,14 @@ public class LeeruitkomstController : ControllerBase
                 return BadRequest();
         }
 
-        return View();
+        return View("/Views/Auteur/Leeruitkomst/MaakLeeruitkomst.cshtml");
     }
 
     [HttpGet("bekijkalle")]
     public async Task<IActionResult> BekijkLeeruitkomsten()
     {
         List<LeeruitkomstDto> leeruitkomsten = await _leeruitkomstService.GetAll();
-        return View(leeruitkomsten);
+        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomsten.cshtml", leeruitkomsten);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class LeeruitkomstController : ControllerBase
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId)
     {
         var leeruitkomst = await _leeruitkomstService.GetEntityWithEarlierVersions(groupId);
-        return View(leeruitkomst);
+        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", leeruitkomst);
 
     }
 
@@ -59,7 +59,7 @@ public class LeeruitkomstController : ControllerBase
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
         LeeruitkomstDto leeruitkomst = await _leeruitkomstService.GetVersion(groupId, versieId);
-        return View(new LeeruitkomstMetEerdereVersies()
+        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", new LeeruitkomstMetEerdereVersies()
         {
             Leeruitkomst = leeruitkomst,
         });
@@ -88,9 +88,9 @@ public class LeeruitkomstController : ControllerBase
             if (result is null)
                 return BadRequest();
 
-            return Redirect($"/leeruitkomst/bekijk/{result.GroupId}");
+            return Redirect($"/auteur/leeruitkomst/bekijk/{result.GroupId}");
         }
 
-        return Redirect("leeruitkomst/bekijkalle");
+        return Redirect("/auteur/leeruitkomst/bekijkalle");
     }
 }
