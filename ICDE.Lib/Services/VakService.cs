@@ -41,12 +41,7 @@ internal class VakService : IVakService
     public async Task<List<VakDto>> GetAll()
     {
         var vakken = await _vakRepository.GetList();
-        return vakken.ConvertAll(x => new VakDto()
-        {
-            Beschrijving = x.Beschrijving,
-            Naam = x.Naam,
-            GroupId = x.GroupId,
-        });
+        return _mapper.Map<List<VakDto>>(vakken);
     }
 
     public async Task<VakMetOnderwijsOnderdelenDto> HaalVolledigeVakDataOp(Guid vakGroupId)
@@ -54,23 +49,6 @@ internal class VakService : IVakService
         var vak = await _vakRepository.GetLatestByGroupId(vakGroupId);
 
         return _mapper.Map<VakMetOnderwijsOnderdelenDto>(vak);
-        //return new VakMetOnderwijsOnderdelenDto()
-        //{
-        //    Beschrijving = vak.Beschrijving,
-        //    Naam = vak.Naam,
-        //    GroupId = vak.GroupId,
-        //    VersieNummer = vak.VersieNummer,
-        //    Leeruitkomsten = vak.Leeruitkomsten.ConvertAll(x => new LeeruitkomstDto
-        //    {
-        //        Beschrijving = x.Beschrijving,
-        //        Naam = x.Naam,
-        //    }),
-        //    Cursussen = vak.Cursussen.ConvertAll(x => new CursusDto
-        //    {
-        //        Beschrijving = x.Beschrijving,
-        //        Naam = x.Naam,
-        //    }),
-        //};
     }
 
     public async Task KoppelCursus(Guid vakGroupId, Guid cursusGroupId)

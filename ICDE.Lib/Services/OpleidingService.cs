@@ -25,12 +25,6 @@ internal class OpleidingService : IOpleidingService
         var opleidingen = await _opleidingRepository.GetList();
 
         return _mapper.Map<List<OpleidingDto>>(opleidingen);
-        //return opleidingen.ConvertAll(x => new OpleidingDto
-        //{
-        //    Beschrijving = x.Beschrijving,
-        //    GroupId = x.GroupId,
-        //    Naam = x.Naam,
-        //});
     }
 
     public async Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId)

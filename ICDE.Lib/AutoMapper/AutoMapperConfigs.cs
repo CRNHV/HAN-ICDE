@@ -17,6 +17,7 @@ internal class AutoMapperConfigs : Profile
         CreateSimpleDtoMappings();
         CreateVakMappings();
         CreateOpleidingMappings();
+        CreatePlanningMappings();
     }
 
     private void CreateVakMappings()
@@ -24,13 +25,11 @@ internal class AutoMapperConfigs : Profile
         CreateMap<Vak, VakDto>().ReverseMap();
         CreateMap<Vak, VakMetOnderwijsOnderdelenDto>();
     }
-
     private void CreateOpleidingMappings()
     {
         CreateMap<Opleiding, OpleidingDto>().ReverseMap();
         CreateMap<Opleiding, OpleidingMetVakkenDto>();
     }
-
     private void CreatePlanningMappings()
     {
         CreateMap<Planning, PlanningDto>()
@@ -41,7 +40,6 @@ internal class AutoMapperConfigs : Profile
             .ForMember(dest => dest.PlanningItemNaam, opt => opt.MapFrom(src =>
                 src.Les != null ? $"Les: {src.Les.Naam}" : $"Opdracht: {src.Opdracht.Naam}"));
     }
-
     private void CreateCursusMappings()
     {
         CreateMap<Cursus, CursusDto>().ReverseMap();
