@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ICDE.Web.Controllers.Auteur;
 
 
-[Route("auteur/opdrachten")]
+[Route("auteur/opdracht")]
 public class OpdrachtController : ControllerBase
 {
     private readonly IOpdrachtService _opdrachtService;
@@ -37,7 +37,7 @@ public class OpdrachtController : ControllerBase
             await _opdrachtService.MaakOpdracht(request);
         }
 
-        return View();
+        return View("/Views/Auteur/Opdracht/MaakOpdracht.cshtml");
     }
 
     /// <summary>
