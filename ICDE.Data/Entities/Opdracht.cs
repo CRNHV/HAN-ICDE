@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ICDE.Data.Entities;
 
-public class Opdracht : IOnderwijsOnderdeel
+public class Opdracht : IVersionable
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

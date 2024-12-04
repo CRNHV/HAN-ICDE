@@ -1,5 +1,5 @@
 ﻿namespace ICDE.Data.Entities;
-internal interface IOnderwijsOnderdeel
+internal interface IVersionable
 {
     public int Id { get; set; }
     public string Naam { get; set; }
