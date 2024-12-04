@@ -2,8 +2,6 @@
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
-using ICDE.Lib.Dto.Cursus;
-using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Interfaces;
 

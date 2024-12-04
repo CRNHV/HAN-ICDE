@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
@@ -12,5 +11,5 @@ public class Opleiding : OnderwijsOnderdeel, IVersionable
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }
-    
+
 }

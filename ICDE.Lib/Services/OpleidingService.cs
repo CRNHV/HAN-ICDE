@@ -3,7 +3,6 @@ using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Planning;
-using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;

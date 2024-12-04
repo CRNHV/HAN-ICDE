@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ICDE.Lib.Dto.Planning;
+﻿using ICDE.Lib.Dto.Planning;
 
 namespace ICDE.Lib.Services.Interfaces;
 public interface IPlanningService

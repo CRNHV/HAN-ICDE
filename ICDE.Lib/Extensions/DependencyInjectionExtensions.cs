@@ -1,6 +1,5 @@
 ﻿
 using System.Reflection;
-using ICDE.Lib.AutoMapper;
 using ICDE.Lib.IO;
 using ICDE.Lib.Services;
 using ICDE.Lib.Services.Interfaces;

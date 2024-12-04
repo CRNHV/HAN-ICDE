@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Services.Interfaces;
