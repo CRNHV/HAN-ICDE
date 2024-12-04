@@ -32,6 +32,8 @@ internal class AutoMapperConfigs : Profile
     }
     private void CreatePlanningMappings()
     {
+
+        CreateMap<Planning, PlanningZonderItemsDto>();
         CreateMap<Planning, PlanningDto>()
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.PlanningItems));
 
