@@ -87,11 +87,13 @@ public class Program
         app.Run();
     }
 
-    private static void SeedDatabase(WebApplication app)
+    private static async void SeedDatabase(WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
             if (!dbContext.Roles.Any())
             {
@@ -197,7 +199,7 @@ public class Program
                         },
                         new PlanningItem()
                         {
-                            Index = 3,
+                            Index = 2,
                             Opdracht = new Opdracht()
                             {
                                  GroupId = Guid.NewGuid(),

@@ -27,7 +27,7 @@ public class LesController : Controller
     public async Task<IActionResult> Index()
     {
         LesIndexViewModel viewModel = new LesIndexViewModel();
-        viewModel.Lessen = await _lesService.GetAllUniqueLessons();
+        viewModel.Lessen = await _lesService.GetAll();
         return View("/Views/Auteur/Les/Index.cshtml", viewModel);
     }
 

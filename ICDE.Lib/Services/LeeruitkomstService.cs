@@ -3,7 +3,6 @@ using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Interfaces;
-using ICDE.Lib.ViewModels;
 
 namespace ICDE.Lib.Services;
 internal class LeeruitkomstService : ILeeruitkomstService
@@ -17,9 +16,9 @@ internal class LeeruitkomstService : ILeeruitkomstService
         _mapper = mapper;
     }
 
-    public async Task<LeeruitkomstMetEerdereVersies> GetEntityWithEarlierVersions(Guid leeruitkomstId)
+    public async Task<LeeruitkomstMetEerdereVersiesDto> GetEntityWithEarlierVersions(Guid leeruitkomstId)
     {
-        LeeruitkomstMetEerdereVersies luk = new LeeruitkomstMetEerdereVersies();
+        LeeruitkomstMetEerdereVersiesDto luk = new LeeruitkomstMetEerdereVersiesDto();
 
         var leeruitkomst = await _leeruitkomstRepository.GetLatestByGroupId(leeruitkomstId);
         var eerdereVersies = await _leeruitkomstRepository.GetList(x => x.GroupId == leeruitkomst.GroupId && x.Id != leeruitkomst.Id);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Interfaces;
-using ICDE.Lib.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
@@ -59,7 +58,7 @@ public class LeeruitkomstController : ControllerBase
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
         LeeruitkomstDto leeruitkomst = await _leeruitkomstService.GetVersion(groupId, versieId);
-        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", new LeeruitkomstMetEerdereVersies()
+        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", new LeeruitkomstMetEerdereVersiesDto()
         {
             Leeruitkomst = leeruitkomst,
         });

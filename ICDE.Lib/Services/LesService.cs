@@ -32,7 +32,7 @@ internal class LesService : ILesService
         return _mapper.Map<LesDto>(result);
     }
 
-    public async Task<List<LesDto>> GetAllUniqueLessons()
+    public async Task<List<LesDto>> GetAll()
     {
         var lessons = await _lesRepository.GetList();
         return _mapper.Map<List<LesDto>>(lessons);
