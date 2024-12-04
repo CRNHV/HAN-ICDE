@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities;
+﻿using ICDE.Data.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 

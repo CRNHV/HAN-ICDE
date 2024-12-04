@@ -1,19 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
 
-public class Cursus : IVersionable
+public class Cursus : OnderwijsOnderdeel, IVersionable
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-    public string Naam { get; set; }
-    public string Beschrijving { get; set; }
-    public int VersieNummer { get; set; }
-    public Guid GroupId { get; set; }
     public Planning? Planning { get; set; }
     public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
+
+    public int VersieNummer { get; set; }
+    public Guid GroupId { get; set; }
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }
