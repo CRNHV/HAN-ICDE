@@ -3,7 +3,7 @@ using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
 
-public class Cursus : OnderwijsOnderdeel, IVersionable
+public class Cursus : OnderwijsOnderdeel, IVersionable, IHeeftLeeruitkomsten
 {
     public Planning? Planning { get; set; }
     public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
