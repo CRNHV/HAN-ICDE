@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ICDE.Data.Repositories;
+namespace ICDE.Data.Repositories.Base;
 public interface IRepositoryBase<T> where T : class
 {
     Task<T?> Create(T entity);
