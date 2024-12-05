@@ -118,6 +118,13 @@ public class Program
                     GroupId = Guid.NewGuid(),
                 };
 
+                var leeruitkomst4 = new Leeruitkomst()
+                {
+                    Naam = "Heeft er nog zin in",
+                    Beschrijving = "Moet het wel allemaal kunnen opbrengen eh.",
+                    GroupId = Guid.NewGuid(),
+                };
+
 
                 var opleiding = new Opleiding()
                 {
@@ -134,7 +141,8 @@ public class Program
                     Leeruitkomsten = new List<Leeruitkomst>()
                     {
                         leeruitkomst1,
-                        leeruitkomst2
+                        leeruitkomst2,
+                        leeruitkomst4,
                     }
                 };
 
@@ -146,7 +154,8 @@ public class Program
                     Leeruitkomsten = new List<Leeruitkomst>()
                     {
                         leeruitkomst1,
-                        leeruitkomst2
+                        leeruitkomst2,
+                        leeruitkomst4,
                     }
                 };
 
@@ -179,6 +188,7 @@ public class Program
                                 GroupId = Guid.NewGuid(),
                                 Leeruitkomsten = new List<Leeruitkomst>()
                                 {
+                                    leeruitkomst1,
                                     leeruitkomst2
                                 }
                             }
