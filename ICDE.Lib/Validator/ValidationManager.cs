@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ICDE.Lib.Validator.Interfaces;
 
 namespace ICDE.Lib.Validator;
-public class ValidationManager
+public class ValidationManager : IValidationManager
 {
     private readonly List<IValidator> _validators;
 

@@ -9,7 +9,7 @@ public class Planning : ICloneable
     public int Id { get; set; }
     public string Name { get; set; }
 
-    public List<PlanningItem> PlanningItems { get; set; }
+    public List<PlanningItem> PlanningItems { get; set; } = new();
 
     public object Clone()
     {

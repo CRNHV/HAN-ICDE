@@ -1,5 +1,6 @@
 ﻿using ICDE.Data.Entities;
 using ICDE.Lib.Validator;
+using ICDE.Lib.Validator.Interfaces;
 
 public class VakValidator : IValidator
 {
@@ -12,34 +13,32 @@ public class VakValidator : IValidator
 
     public ValidationResult Validate()
     {
-        // Collect all Leeruitkomsten from all Cursussen
         var allCursusLeeruitkomsten = _vak.Cursussen
             .SelectMany(c => c.Leeruitkomsten)
             .Distinct()
             .ToList();
 
-        // Ensure there are no extra Leeruitkomsten in Cursussen that aren't in the Vak
         if (allCursusLeeruitkomsten.Any(l => !_vak.Leeruitkomsten.Contains(l)))
         {
             return new ValidationResult()
             {
                 Success = false,
-                Message = $"There are extra leeruitkomsten in the cursussen for vak {_vak.Naam} which aren't in the vak."
+                Message = $"Vak: {_vak.Naam}'s cursussen has leeruitkomsten which aren't expected in the vak."
             };
         }
 
-        // Check if all Leeruitkomsten in the Vak are covered by the Cursussen
         if (!_vak.Leeruitkomsten.All(l => allCursusLeeruitkomsten.Contains(l)))
         {
             return new ValidationResult()
             {
                 Success = false,
-                Message = $"There are leeruitkomsten in vak {_vak.Naam} that are not covered by any cursus."
+                Message = $"Vak: {_vak.Naam}'s leeruitkomsten are not covered by all cursussen.",
             };
         }
 
         return new ValidationResult()
         {
+            Message = $"Vak: {_vak.Naam} has passed the validation.",
             Success = true,
         };
     }

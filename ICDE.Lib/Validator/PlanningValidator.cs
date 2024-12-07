@@ -1,4 +1,5 @@
 ﻿using ICDE.Data.Entities;
+using ICDE.Lib.Validator.Interfaces;
 
 namespace ICDE.Lib.Validator;
 public class PlanningValidator : IValidator
@@ -37,7 +38,7 @@ public class PlanningValidator : IValidator
                             return new ValidationResult()
                             {
                                 Success = false,
-                                Message = $"The leeruitkomst {leeruitkomst.Naam} is tested before it is covered by any of the lessons."
+                                Message = $"Planning: {_planning.Name} has a test for {leeruitkomst.Naam} before it is covered by a lesson."
                             };
                         }
                     }
@@ -47,6 +48,7 @@ public class PlanningValidator : IValidator
 
         return new ValidationResult()
         {
+            Message = $"Planning: {_planning.Name} has passed validation.",
             Success = true,
         };
     }

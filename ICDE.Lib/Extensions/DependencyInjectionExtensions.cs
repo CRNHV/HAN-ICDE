@@ -3,6 +3,8 @@ using System.Reflection;
 using ICDE.Lib.IO;
 using ICDE.Lib.Services;
 using ICDE.Lib.Services.Interfaces;
+using ICDE.Lib.Validator;
+using ICDE.Lib.Validator.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ICDE.Lib.Extensions;
@@ -21,7 +23,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ICursusService, CursusService>();
         services.AddScoped<IOpleidingService, OpleidingService>();
         services.AddScoped<IPlanningService, PlanningService>();
-
+        services.AddScoped<IRapportageService, RapportageService>();
+        services.AddTransient<IValidationManager, ValidationManager>();
         return services;
     }
 }

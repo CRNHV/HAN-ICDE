@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using ICDE.Data.Repositories.Interfaces;
-using ICDE.Lib.Validator;
+using ICDE.Lib.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
@@ -10,22 +8,17 @@ namespace ICDE.Web.Controllers.Auteur;
 [Route("auteur/rapportage")]
 public class RapportageController : ControllerBase
 {
-    private readonly IOpleidingRepository _opleidingRepository;
+    private readonly IRapportageService _rapportageService;
 
-    public RapportageController(IOpleidingRepository opleidingRepository)
+    public RapportageController(IRapportageService rapportageService)
     {
-        _opleidingRepository = opleidingRepository;
+        _rapportageService = rapportageService;
     }
 
     [HttpGet("generate/{opleidingGuid}")]
     public async Task<IActionResult> GenerateReport([FromRoute] Guid opleidingGuid)
     {
-        var opleiding = await _opleidingRepository.GetFullObjectTreeByGroupId(opleidingGuid);
-
-        var res = new OpleidingValidator()
-            .ValidateOpleiding(opleiding)
-            .Where(x => !x.Success)
-            .ToList();
+        var result = await _rapportageService.ValidateOpleiding(opleidingGuid);
         return Ok();
     }
 }

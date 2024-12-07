@@ -1,5 +1,6 @@
 ﻿using ICDE.Data.Entities;
 using ICDE.Lib.Validator;
+using ICDE.Lib.Validator.Interfaces;
 
 public class CursusValidator : IValidator
 {
@@ -16,11 +17,11 @@ public class CursusValidator : IValidator
         {
             return new ValidationResult()
             {
-                Success = true,
+                Message = $"Cursus: {_cursus.Naam} does not have a planning.",
+                Success = false,
             };
         }
 
-        // Collect all Leeruitkomsten from PlanningItems (Les or Opdracht)
         var allPlanningItemsLeeruitkomsten = _cursus.Planning.PlanningItems
             .SelectMany(pi => pi.Opdracht != null
                 ? pi.Opdracht.BeoordelingCritereas.SelectMany(bc => bc.Leeruitkomsten)
@@ -28,39 +29,37 @@ public class CursusValidator : IValidator
             .Distinct()
             .ToList();
 
-        // Check if all Leeruitkomsten in PlanningItems are in the Cursus
         if (!allPlanningItemsLeeruitkomsten.All(l => _cursus.Leeruitkomsten.Contains(l)))
         {
             return new ValidationResult()
             {
                 Success = false,
-                Message = $"Not all required leeruitkomsten are covered by the planning in the cursus {_cursus.Naam}"
+                Message = $"Cursus: {_cursus.Naam}'s planning does not cover all leeruitkomsten expected.",
             };
         }
 
-        // Ensure there are no extra Leeruitkomsten in PlanningItems that aren't in the Cursus
         if (allPlanningItemsLeeruitkomsten.Any(l => !_cursus.Leeruitkomsten.Contains(l)))
         {
             return new ValidationResult()
             {
                 Success = false,
-                Message = $"There are extra leeruitkomsten planned in the planning of {_cursus.Naam} which aren't in the cursus itself."
+                Message = $"Cursus: {_cursus.Naam}'s planning has extra leeruitkomsten which aren't expected by the cursus."
             };
         }
 
-        // Check if all Leeruitkomsten in the Cursus are covered by the PlanningItems
         var cursusLeeruitkomsten = _cursus.Leeruitkomsten.ToList();
         if (!cursusLeeruitkomsten.All(l => allPlanningItemsLeeruitkomsten.Contains(l)))
         {
             return new ValidationResult()
             {
                 Success = false,
-                Message = $"There are leeruitkomsten in cursus {_cursus.Naam} that are not covered by the planning items."
+                Message = $"Cursus: {_cursus.Naam}'s planning does not cover all leeruitkomsten expected.",
             };
         }
 
         return new ValidationResult()
         {
+            Message = $"Cursus: {_cursus.Naam} has passed validation.",
             Success = true,
         };
     }
