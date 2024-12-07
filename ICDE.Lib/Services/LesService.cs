@@ -20,7 +20,7 @@ internal class LesService : ILesService
         _mapper = mapper;
     }
 
-    public async Task<LesDto> CreateLesson(string naam, string beschrijving)
+    public async Task<LesDto?> CreateLesson(string naam, string beschrijving)
     {
         var result = await _lesRepository.Create(new Les()
         {
@@ -29,20 +29,33 @@ internal class LesService : ILesService
             GroupId = Guid.NewGuid(),
         });
 
+        if (result is null)
+        {
+            return null;
+        }
+
         return _mapper.Map<LesDto>(result);
     }
 
     public async Task<List<LesDto>> GetAll()
     {
         var lessons = await _lesRepository.GetList();
+        if (lessons.Count == 0)
+        {
+            return new List<LesDto>();
+        }
         return _mapper.Map<List<LesDto>>(lessons);
     }
 
-    public async Task<LesMetEerdereVersies> GetLessonWithPreviousVersions(Guid groupId)
+    public async Task<LesMetEerdereVersies?> GetLessonWithPreviousVersions(Guid groupId)
     {
         var currentVersion = await _lesRepository.GetLatestByGroupId(groupId);
-        var otherVersions = await _lesRepository.GetList(x => x.GroupId == groupId && x.Id != currentVersion.Id);
+        if (currentVersion is null)
+        {
+            return null;
+        }
 
+        var otherVersions = await _lesRepository.GetList(x => x.GroupId == groupId && x.Id != currentVersion.Id);
         return new LesMetEerdereVersies()
         {
             Les = _mapper.Map<LesDto>(currentVersion),
@@ -51,10 +64,19 @@ internal class LesService : ILesService
         };
     }
 
-    public async Task KoppelLukAanLes(Guid lesGroupId, Guid lukGroupId)
+    public async Task<bool> KoppelLukAanLes(Guid lesGroupId, Guid lukGroupId)
     {
         var lessen = await _lesRepository.GetLessonsWithLearningGoals(lesGroupId);
+        if (lessen.Count == 0)
+        {
+            return false;
+        }
+
         var luk = await _leeruitkomstRepository.GetLatestByGroupId(lukGroupId);
+        if (luk is null)
+        {
+            return false;
+        }
 
         foreach (var item in lessen)
         {
@@ -65,16 +87,25 @@ internal class LesService : ILesService
             item.RelationshipChanged = true;
             await _lesRepository.Update(item);
         }
+
+        return true;
     }
 
-    public async Task OntkoppelLukAanLes(Guid lesGroupId, Guid lukGroupId)
+    public async Task<bool> OntkoppelLukAanLes(Guid lesGroupId, Guid lukGroupId)
     {
         var lessen = await _lesRepository.GetLessonsWithLearningGoals(lesGroupId);
+        if (lessen.Count == 0)
+        {
+            return false;
+        }
+
         foreach (var item in lessen)
         {
             item.Leeruitkomsten.RemoveAll(x => x.GroupId == lukGroupId);
             item.RelationshipChanged = true;
             await _lesRepository.Update(item);
         }
+
+        return true;
     }
 }
