@@ -5,7 +5,7 @@ namespace ICDE.Data.Entities;
 
 public class BeoordelingCriterea : OnderwijsOnderdeel, IVersionable
 {
-    public List<Leeruitkomst> Leeruitkomsten { get; set; }
+    public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
     public int OpdrachtId { get; internal set; }
 
     public int VersieNummer { get; set; }
