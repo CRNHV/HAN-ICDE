@@ -33,6 +33,10 @@ internal sealed class OpdrachtService : IOpdrachtService
     public async Task<List<OpdrachtDto>> GetAll()
     {
         var dbOpdrachten = await _opdrachtRepository.HaalAlleOp();
+        if (dbOpdrachten.Count == 0)
+        {
+            return new List<OpdrachtDto>();
+        }
 
         return dbOpdrachten.ConvertAll(x => new OpdrachtDto(x.Type == OpdrachtType.Toets)
         {
@@ -46,6 +50,10 @@ internal sealed class OpdrachtService : IOpdrachtService
     public async Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(int opdrachtId)
     {
         List<IngeleverdeOpdracht> dbInzendingen = await _opdrachtRepository.HaalInzendingenOp(opdrachtId);
+        if (dbInzendingen.Count == 0)
+        {
+            return new List<IngeleverdeOpdrachtDto>();
+        }
         return dbInzendingen.ConvertAll(x => new IngeleverdeOpdrachtDto()
         {
             Id = x.Id,
@@ -53,13 +61,17 @@ internal sealed class OpdrachtService : IOpdrachtService
         });
     }
 
-    public async Task LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
+    public async Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
     {
         var dbOpdracht = await _opdrachtRepository.GetById(opdracht.OpdrachtId);
         if (dbOpdracht is null)
-            return;
+            return false;
 
         var bestandsLocatie = await _fileManager.SlaBestandOp(opdracht.Bestand.FileName, opdracht.Bestand);
+        if (bestandsLocatie is null)
+        {
+            return false;
+        }
 
         var ingeleverdeOpdracht = new IngeleverdeOpdracht()
         {
@@ -70,6 +82,7 @@ internal sealed class OpdrachtService : IOpdrachtService
         };
 
         await _opdrachtRepository.SlaIngeleverdeOpdrachtOp(ingeleverdeOpdracht);
+        return true;
     }
 
     public async Task MaakOpdracht(MaakOpdrachtDto opdracht)
@@ -77,14 +90,14 @@ internal sealed class OpdrachtService : IOpdrachtService
         await _opdrachtRepository.MaakOpdracht(opdracht.Naam, opdracht.Beschrijving, opdracht.IsToets);
     }
 
-    public async Task SlaBeoordelingOp(OpdrachtBeoordelingDto request)
+    public async Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request)
     {
         if (request.Beoordeling <= 0 || request.Beoordeling >= 11)
-            return;
+            return false;
 
         var dbIngeleverdeOpdracht = await _opdrachtRepository.HaalInzendingOp(request.InzendingId);
         if (dbIngeleverdeOpdracht is null)
-            return;
+            return false;
 
         await _opdrachtRepository.SlaBeoordelingOp(new OpdrachtBeoordeling()
         {
@@ -92,5 +105,7 @@ internal sealed class OpdrachtService : IOpdrachtService
             Feedback = request.Feedback,
             IngeleverdeOpdracht = dbIngeleverdeOpdracht
         });
+
+        return true;
     }
 }
