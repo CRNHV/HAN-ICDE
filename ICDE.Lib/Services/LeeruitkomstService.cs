@@ -16,21 +16,33 @@ internal class LeeruitkomstService : ILeeruitkomstService
         _mapper = mapper;
     }
 
-    public async Task<LeeruitkomstMetEerdereVersiesDto> GetEntityWithEarlierVersions(Guid leeruitkomstId)
+    public async Task<LeeruitkomstMetEerdereVersiesDto?> GetEntityWithEarlierVersions(Guid leeruitkomstId)
     {
-        LeeruitkomstMetEerdereVersiesDto luk = new LeeruitkomstMetEerdereVersiesDto();
+        LeeruitkomstMetEerdereVersiesDto luk = new();
 
         var leeruitkomst = await _leeruitkomstRepository.GetLatestByGroupId(leeruitkomstId);
-        var eerdereVersies = await _leeruitkomstRepository.GetList(x => x.GroupId == leeruitkomst.GroupId && x.Id != leeruitkomst.Id);
-
+        if (leeruitkomst is null)
+        {
+            return null;
+        }
         luk.Leeruitkomst = _mapper.Map<LeeruitkomstDto>(leeruitkomst);
-        luk.EerdereVersies = _mapper.Map<List<LeeruitkomstDto>>(eerdereVersies);
+
+        var eerdereVersies = await _leeruitkomstRepository.GetList(x => x.GroupId == leeruitkomst.GroupId && x.Id != leeruitkomst.Id);
+        if (eerdereVersies.Count > 0)
+        {
+            luk.EerdereVersies = _mapper.Map<List<LeeruitkomstDto>>(eerdereVersies);
+        }
+
         return luk;
     }
 
     public async Task<List<LeeruitkomstDto>> GetAll()
     {
         var dbLuks = await _leeruitkomstRepository.GetList();
+        if (dbLuks.Count == 0)
+        {
+            return new List<LeeruitkomstDto>();
+        }
         return _mapper.Map<List<LeeruitkomstDto>>(dbLuks);
     }
 
@@ -63,10 +75,14 @@ internal class LeeruitkomstService : ILeeruitkomstService
         return result != null ? _mapper.Map<LeeruitkomstDto>(result) : null;
     }
 
-    public async Task<LeeruitkomstDto> GetVersion(Guid groupId, int versieId)
+    public async Task<LeeruitkomstDto?> GetVersion(Guid groupId, int versieId)
     {
         var dbLuks = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
+        if (dbLuks.Count == 0)
+        {
+            return null;
+        }
         var luk = dbLuks.FirstOrDefault();
-        return _mapper.Map<LeeruitkomstDto>(luk);
+        return _mapper.Map<LeeruitkomstDto?>(luk);
     }
 }
