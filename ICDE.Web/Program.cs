@@ -87,11 +87,13 @@ public class Program
         app.Run();
     }
 
-    private static void SeedDatabase(WebApplication app)
+    private static async void SeedDatabase(WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
             if (!dbContext.Roles.Any())
             {
@@ -116,6 +118,13 @@ public class Program
                     GroupId = Guid.NewGuid(),
                 };
 
+                var leeruitkomst4 = new Leeruitkomst()
+                {
+                    Naam = "Heeft er nog zin in",
+                    Beschrijving = "Moet het wel allemaal kunnen opbrengen eh.",
+                    GroupId = Guid.NewGuid(),
+                };
+
 
                 var opleiding = new Opleiding()
                 {
@@ -132,7 +141,8 @@ public class Program
                     Leeruitkomsten = new List<Leeruitkomst>()
                     {
                         leeruitkomst1,
-                        leeruitkomst2
+                        leeruitkomst2,
+                        leeruitkomst4,
                     }
                 };
 
@@ -144,7 +154,8 @@ public class Program
                     Leeruitkomsten = new List<Leeruitkomst>()
                     {
                         leeruitkomst1,
-                        leeruitkomst2
+                        leeruitkomst2,
+                        leeruitkomst4,
                     }
                 };
 
@@ -177,6 +188,7 @@ public class Program
                                 GroupId = Guid.NewGuid(),
                                 Leeruitkomsten = new List<Leeruitkomst>()
                                 {
+                                    leeruitkomst1,
                                     leeruitkomst2
                                 }
                             }
@@ -197,7 +209,7 @@ public class Program
                         },
                         new PlanningItem()
                         {
-                            Index = 3,
+                            Index = 2,
                             Opdracht = new Opdracht()
                             {
                                  GroupId = Guid.NewGuid(),

@@ -1,7 +1,8 @@
-﻿using ICDE.Data.Entities;
+﻿using AutoMapper;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Opleidingen;
-using ICDE.Lib.Dto.Vak;
+using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;
@@ -9,22 +10,20 @@ internal class OpleidingService : IOpleidingService
 {
     private readonly IOpleidingRepository _opleidingRepository;
     private readonly IVakRepository _vakRepository;
+    private readonly IMapper _mapper;
 
-    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository)
+    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository, IMapper mapper)
     {
         _opleidingRepository = opleidingRepository;
         _vakRepository = vakRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<OpleidingDto>> GetAllUnique()
     {
         var opleidingen = await _opleidingRepository.GetList();
-        return opleidingen.ConvertAll(x => new OpleidingDto
-        {
-            Beschrijving = x.Beschrijving,
-            GroupId = x.GroupId,
-            Naam = x.Naam,
-        });
+
+        return _mapper.Map<List<OpleidingDto>>(opleidingen);
     }
 
     public async Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId)
@@ -49,25 +48,8 @@ internal class OpleidingService : IOpleidingService
 
         return new OpleidingMetEerdereVersiesDto()
         {
-            OpleidingDto = new OpleidingDto()
-            {
-                Naam = opleiding.Naam,
-                Beschrijving = opleiding.Beschrijving,
-                GroupId = opleiding.GroupId,
-                VersieNummer = opleiding.VersieNummer,
-                Vakken = opleiding.Vakken.ConvertAll(x => new VakDto
-                {
-                    Naam = x.Naam,
-                    Beschrijving = x.Beschrijving,
-                })
-            },
-            EerdereVersies = eerdereVersies.ConvertAll(x => new OpleidingDto()
-            {
-                Naam = x.Naam,
-                Beschrijving = x.Beschrijving,
-                GroupId = x.GroupId,
-                VersieNummer = x.VersieNummer,
-            })
+            OpleidingDto = _mapper.Map<OpleidingMetVakkenDto>(opleiding),
+            EerdereVersies = _mapper.Map<List<OpleidingDto>>(eerdereVersies)
         };
     }
 }

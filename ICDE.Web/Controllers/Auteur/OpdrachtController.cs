@@ -20,7 +20,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("bekijkalle")]
     public async Task<IActionResult> BekijkAlle()
     {
-        List<OpdrachtDto> opdrachten = await _opdrachtService.HaalAlleOp();
+        List<OpdrachtDto> opdrachten = await _opdrachtService.GetAll();
         return View("/Views/Auteur/Opdracht/BekijkAlle.cshtml", opdrachten);
     }
 

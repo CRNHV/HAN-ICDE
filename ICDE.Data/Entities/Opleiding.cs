@@ -1,19 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
 
-public class Opleiding : IOnderwijsOnderdeel
+public class Opleiding : OnderwijsOnderdeel, IVersionable
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-    public string Naam { get; set; }
-    public string Beschrijving { get; set; }
-    public int VersieNummer { get; set; }
-    public Guid GroupId { get; set; }
     public List<Vak> Vakken { get; set; } = new();
+    public Guid GroupId { get; set; }
+    public int VersieNummer { get; set; }
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }
+
 }

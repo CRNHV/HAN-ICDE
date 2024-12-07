@@ -1,4 +1,4 @@
-﻿using ICDE.Data.Entities;
+﻿using ICDE.Data.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -15,16 +15,16 @@ public class OnderwijsOnderdeelInterceptor : SaveChangesInterceptor
         }
 
         var entries = context.ChangeTracker.Entries()
-            .Where(e => e.Entity is IOnderwijsOnderdeel && e.State == EntityState.Modified);
+            .Where(e => e.Entity is IVersionable && e.State == EntityState.Modified);
 
         foreach (var entry in entries)
         {
-            var entity = (IOnderwijsOnderdeel)entry.Entity;
+            var entity = (IVersionable)entry.Entity;
             if (entity.RelationshipChanged)
                 continue;
             var newEntity = context.Entry(entity).CurrentValues.ToObject();
-            ((IOnderwijsOnderdeel)newEntity).VersieNummer = entity.VersieNummer + 1;
-            ((IOnderwijsOnderdeel)newEntity).Id = 0;
+            ((IVersionable)newEntity).VersieNummer = entity.VersieNummer + 1;
+            ((IVersionable)newEntity).Id = 0;
             entry.State = EntityState.Detached;
             context.Add(newEntity);
         }

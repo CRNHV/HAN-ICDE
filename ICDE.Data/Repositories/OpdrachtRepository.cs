@@ -22,7 +22,7 @@ public class OpdrachtRepository : IOpdrachtRepository
         return _context.IngeleverdeOpdrachten.Where(x => x.OpdrachtId == opdrachtId).ToListAsync();
     }
 
-    public async Task<Opdracht?> HaalOpdrachtOp(int opdrachtId)
+    public async Task<Opdracht?> GetById(int opdrachtId)
     {
         return await _context.Opdrachten.FirstOrDefaultAsync(x => x.Id == opdrachtId);
     }
@@ -55,5 +55,13 @@ public class OpdrachtRepository : IOpdrachtRepository
     public async Task<IngeleverdeOpdracht> HaalInzendingOp(int inzendingId)
     {
         return await _context.IngeleverdeOpdrachten.Where(x => x.Id == inzendingId).FirstOrDefaultAsync();
+    }
+
+    public async Task<Opdracht?> GetLatestByGroupId(Guid groupId)
+    {
+        return await _context.Opdrachten
+            .Where(x => x.GroupId == groupId)
+            .OrderByDescending(x => x.VersieNummer)
+            .FirstOrDefaultAsync();
     }
 }

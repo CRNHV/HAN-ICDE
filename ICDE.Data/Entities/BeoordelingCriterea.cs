@@ -1,19 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
 
-public class BeoordelingCriterea : IOnderwijsOnderdeel
+public class BeoordelingCriterea : OnderwijsOnderdeel, IVersionable, IHeeftLeeruitkomsten
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-    public string Naam { get; set; }
-    public string Beschrijving { get; set; }
-    public int VersieNummer { get; set; }
-    public Guid GroupId { get; set; }
     public List<Leeruitkomst> Leeruitkomsten { get; set; }
     public int OpdrachtId { get; internal set; }
+
+    public int VersieNummer { get; set; }
+    public Guid GroupId { get; set; }
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }
