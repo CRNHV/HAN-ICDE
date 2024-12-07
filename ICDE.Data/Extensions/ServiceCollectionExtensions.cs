@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVakRepository, VakRepository>();
         services.AddScoped<ICursusRepository, CursusRepository>();
         services.AddScoped<IOpleidingRepository, OpleidingRepository>();
+        services.AddScoped<IPlanningRepository, PlanningRepository>();
 
         return services;
     }

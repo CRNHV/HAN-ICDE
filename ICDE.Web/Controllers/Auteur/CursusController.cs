@@ -22,7 +22,6 @@ public class CursusController : ControllerBase
     public async Task<IActionResult> Index()
     {
         List<CursusDto> cursussen = await _cursusService.GetAll();
-
         return View("/Views/Auteur/Cursus/Index.cshtml", cursussen);
     }
 
@@ -34,7 +33,7 @@ public class CursusController : ControllerBase
         return View("/Views/Auteur/Cursus/BekijkCursus.cshtml", new BekijkCursusViewModel()
         {
             Cursus = cursus,
-            EerderVersies = eerdereVersies
+            EerderVersies = eerdereVersies,
         });
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
-namespace ICDE.Data.Repositories;
+namespace ICDE.Data.Repositories.Base;
 public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {
     private readonly AppDbContext _context;

@@ -18,7 +18,7 @@ internal sealed class OpdrachtService : IOpdrachtService
 
     public async Task<OpdrachtDto?> Bekijk(int opdrachtId)
     {
-        var dbOpdracht = await _opdrachtRepository.HaalOpdrachtOp(opdrachtId);
+        var dbOpdracht = await _opdrachtRepository.GetById(opdrachtId);
         if (dbOpdracht is null)
             return null;
 
@@ -30,7 +30,7 @@ internal sealed class OpdrachtService : IOpdrachtService
         };
     }
 
-    public async Task<List<OpdrachtDto>> HaalAlleOp()
+    public async Task<List<OpdrachtDto>> GetAll()
     {
         var dbOpdrachten = await _opdrachtRepository.HaalAlleOp();
 
@@ -55,7 +55,7 @@ internal sealed class OpdrachtService : IOpdrachtService
 
     public async Task LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
     {
-        var dbOpdracht = await _opdrachtRepository.HaalOpdrachtOp(opdracht.OpdrachtId);
+        var dbOpdracht = await _opdrachtRepository.GetById(opdracht.OpdrachtId);
         if (dbOpdracht is null)
             return;
 

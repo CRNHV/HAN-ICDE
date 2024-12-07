@@ -30,7 +30,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Views\Auteur\Rapportage\" />
-	  <Folder Include="Views\Auteur\Planning\" />
 	  <Folder Include="Views\Student\Cursus\" />
 	</ItemGroup>
 

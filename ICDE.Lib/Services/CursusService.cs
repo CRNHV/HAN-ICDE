@@ -1,68 +1,49 @@
-﻿using ICDE.Data.Repositories.Interfaces;
-using ICDE.Lib.Domain;
+﻿using AutoMapper;
+using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Cursus;
-using ICDE.Lib.Dto.Leeruitkomst;
-using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;
 internal class CursusService : ICursusService
 {
     private readonly ICursusRepository _cursusRepository;
+    private readonly IPlanningRepository _planningRepository;
+    private readonly IMapper _mapper;
 
-    public CursusService(ICursusRepository cursusRepository)
+    public CursusService(ICursusRepository cursusRepository, IMapper mapper, IPlanningRepository planningRepository)
     {
         _cursusRepository = cursusRepository;
+        _mapper = mapper;
+        _planningRepository = planningRepository;
     }
 
     public async Task<List<CursusDto>> GetAll()
     {
         var cursussen = await _cursusRepository.GetList();
-        return cursussen.ConvertAll(x => new CursusDto
-        {
-            Beschrijving = x.Beschrijving,
-            Naam = x.Naam,
-            GroupId = x.GroupId,
-        });
+
+        return _mapper.Map<List<CursusDto>>(cursussen);
     }
 
     public async Task<CursusMetPlanningDto> GetFullCursusByGroupId(Guid cursusGroupId)
     {
-        var cursus = await _cursusRepository.GetFulLCursusData(cursusGroupId);
-        List<PlanningItemDto> planningItems = new();
-        if (cursus.Planning != null)
-        {
-            planningItems = cursus.Planning.PlanningItems.ConvertAll(x => PlanningItemMapper.MapPlanningItemToDto(x));
-        }
-
-        return new CursusMetPlanningDto()
-        {
-            Id = cursus.Id,
-            Beschrijving = cursus.Beschrijving,
-            Naam = cursus.Naam,
-            Leeruitkomsten = cursus.Leeruitkomsten.ConvertAll(x => new LeeruitkomstDto
-            {
-                Beschrijving = x.Beschrijving,
-                Naam = x.Naam,
-                GroupId = x.GroupId,
-            }),
-            Planning = new PlanningDto()
-            {
-                Naam = cursus.Planning.Name,
-                Items = planningItems,
-            }
-        };
+        var cursus = await _cursusRepository.GetFullCursusData(cursusGroupId);
+        return _mapper.Map<CursusMetPlanningDto>(cursus);
     }
 
     public async Task<List<CursusDto>> GetEarlierVersionsByGroupId(Guid groupId, int exceptId)
     {
         var cursussen = await _cursusRepository.GetList(x => x.GroupId == groupId && x.Id != exceptId);
-        return cursussen.ConvertAll(x => new CursusDto()
-        {
-            Beschrijving = x.Beschrijving,
-            GroupId = x.GroupId,
-            Naam = x.Naam,
-            VersieNummer = x.VersieNummer,
-        });
+        return _mapper.Map<List<CursusDto>>(cursussen);
+    }
+
+    public async Task VoegPlanningToeAanCursus(Guid cursusGroupId, int planningId)
+    {
+        var cursus = await _cursusRepository.GetLatestByGroupId(cursusGroupId);
+        var planning = await _planningRepository.CreateCloneOf(planningId);
+
+        cursus.RelationshipChanged = true;
+        cursus.Planning = planning;
+
+        await _cursusRepository.Update(cursus);
     }
 }

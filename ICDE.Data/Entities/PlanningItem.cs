@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ICDE.Data.Entities;
-public class PlanningItem
+public class PlanningItem : ICloneable
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,5 +18,16 @@ public class PlanningItem
     public Les Les { get; set; }
 
     public int Index { get; set; }
-}
 
+    public object Clone()
+    {
+        return new PlanningItem()
+        {
+            Index = this.Index,
+            Les = this.Les,
+            LesId = this.LesId,
+            Opdracht = this.Opdracht,
+            OpdrachtId = this.OpdrachtId,
+        };
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using ICDE.Data.Entities;
+using ICDE.Data.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories.Luk;

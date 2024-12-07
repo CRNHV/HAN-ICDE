@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\OnderwijsOnderdeel\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

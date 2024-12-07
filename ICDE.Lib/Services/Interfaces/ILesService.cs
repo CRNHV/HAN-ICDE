@@ -4,7 +4,7 @@ namespace ICDE.Lib.Services.Interfaces;
 public interface ILesService
 {
     Task<LesDto> CreateLesson(string naam, string beschrijving);
-    Task<List<LesDto>> GetAllUniqueLessons();
+    Task<List<LesDto>> GetAll();
     Task<LesMetEerdereVersies> GetLessonWithPreviousVersions(Guid groupId);
     Task KoppelLukAanLes(Guid lesGroupId, Guid lukGroupId);
     Task OntkoppelLukAanLes(Guid lesGroupId, Guid lukGroupId);
