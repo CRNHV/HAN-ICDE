@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Opleiding;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/opleiding")]
+[Authorize(Roles = UserRole.Auteur)]
 public class OpleidingController : Controller
 {
     private readonly IOpleidingService _opleidingService;

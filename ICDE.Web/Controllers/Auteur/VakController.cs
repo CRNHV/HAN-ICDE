@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Vakken;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/vak")]
+[Authorize(Roles = UserRole.Auteur)]
 public class VakController : Controller
 {
     private readonly IVakService _vakService;

@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Planning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/planning")]
+[Authorize(Roles = UserRole.Auteur)]
 public class PlanningController : ControllerBase
 {
     private readonly IPlanningService _planningService;

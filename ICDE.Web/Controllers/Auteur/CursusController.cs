@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Cursus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/cursus")]
+[Authorize(Roles = UserRole.Auteur)]
 public class CursusController : ControllerBase
 {
     private readonly ICursusService _cursusService;

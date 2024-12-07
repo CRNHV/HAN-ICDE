@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Lessen;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/les")]
+[Authorize(Roles = UserRole.Auteur)]
 public class LesController : Controller
 {
     private readonly ILesService _lesService;

@@ -68,7 +68,7 @@ internal sealed class OpdrachtService : IOpdrachtService
             return false;
 
         var bestandsLocatie = await _fileManager.SlaBestandOp(opdracht.Bestand.FileName, opdracht.Bestand);
-        if (bestandsLocatie is null)
+        if (string.IsNullOrEmpty(bestandsLocatie))
         {
             return false;
         }
