@@ -8,5 +8,5 @@ public class CursusMetPlanningDto
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
     public List<LeeruitkomstDto> Leeruitkomsten { get; set; } = new();
-    public PlanningDto Planning { get; set; }
+    public PlanningDto? Planning { get; set; }
 }
