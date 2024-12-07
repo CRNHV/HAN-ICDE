@@ -50,14 +50,21 @@ public class LeeruitkomstController : ControllerBase
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId)
     {
         var leeruitkomst = await _leeruitkomstService.GetEntityWithEarlierVersions(groupId);
+        if (leeruitkomst is null)
+        {
+            return NotFound();
+        }
         return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", leeruitkomst);
-
     }
 
     [HttpGet("bekijkversie/{groupId}/{versieId}")]
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
-        LeeruitkomstDto leeruitkomst = await _leeruitkomstService.GetVersion(groupId, versieId);
+        var leeruitkomst = await _leeruitkomstService.GetVersion(groupId, versieId);
+        if (leeruitkomst is null)
+        {
+            return NotFound();
+        }
         return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", new LeeruitkomstMetEerdereVersiesDto()
         {
             Leeruitkomst = leeruitkomst,

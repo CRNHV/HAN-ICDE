@@ -21,14 +21,18 @@ public class CursusController : ControllerBase
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
-        List<CursusDto> cursussen = await _cursusService.GetAll();
+        var cursussen = await _cursusService.GetAll();
         return View("/Views/Auteur/Cursus/Index.cshtml", cursussen);
     }
 
     [HttpGet("get/{cursusGroupId}")]
     public async Task<IActionResult> BekijkCursus([FromRoute] Guid cursusGroupId)
     {
-        CursusMetPlanningDto cursus = await _cursusService.GetFullCursusByGroupId(cursusGroupId);
+        var cursus = await _cursusService.GetFullCursusByGroupId(cursusGroupId);
+        if (cursus is null)
+        {
+            return NotFound();
+        }
         List<CursusDto> eerdereVersies = await _cursusService.GetEarlierVersionsByGroupId(cursusGroupId, cursus.Id);
         return View("/Views/Auteur/Cursus/BekijkCursus.cshtml", new BekijkCursusViewModel()
         {

@@ -40,6 +40,11 @@ public class VakController : Controller
     public async Task<IActionResult> MaakVak([FromForm] MaakVakViewModel request)
     {
         Guid groupId = await _vakService.CreateCourse(request.Naam, request.Beschrijving);
+        if (groupId == Guid.Empty)
+        {
+            return BadRequest();
+        }
+
         return Redirect($"get/{groupId}");
     }
 
@@ -50,9 +55,14 @@ public class VakController : Controller
     [HttpGet("get/{vakGroupId}")]
     public async Task<IActionResult> BekijkVak([FromRoute] Guid vakGroupId)
     {
+        var vak = await _vakService.HaalVolledigeVakDataOp(vakGroupId);
+        if (vak is null)
+        {
+            return NotFound();
+        }
+
         var luks = await _leeruitkomstService.GetAll();
         var cursussen = await _cursusService.GetAll();
-        var vak = await _vakService.HaalVolledigeVakDataOp(vakGroupId);
 
         return View("Views/Auteur/Vak/BekijkVak.cshtml", new BekijkVakViewModel()
         {
@@ -87,7 +97,11 @@ public class VakController : Controller
     [HttpGet("koppelcursus/{vakGroupId}/{cursusGroupId}")]
     public async Task<IActionResult> KoppelCursus([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
     {
-        await _vakService.KoppelCursus(vakGroupId, cursusGroupId);
+        var result = await _vakService.KoppelCursus(vakGroupId, cursusGroupId);
+        if (result is false)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 
@@ -98,7 +112,11 @@ public class VakController : Controller
     [HttpGet("koppelluk/{vakGroupId}/{lukGroupId}")]
     public async Task<IActionResult> KoppelLeeruitkomst([FromRoute] Guid vakGroupId, [FromRoute] Guid lukGroupId)
     {
-        await _vakService.KoppelLeeruitkomst(vakGroupId, lukGroupId);
+        var result = await _vakService.KoppelLeeruitkomst(vakGroupId, lukGroupId);
+        if (result is false)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 }
