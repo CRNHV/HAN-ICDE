@@ -22,10 +22,13 @@ public class AuthenticationController : Controller
         if (HttpContext.Request.Method == "POST")
         {
             var result = await _authService.Register(request.Username, request.Password, request.Role);
-            return result ? Redirect("/auth/login") : Unauthorized();
+            return result ? Redirect("/auth/login") : View(new RegisterViewModel()
+            {
+                Message = "Unable to register. Try again."
+            });
         }
 
-        return View();
+        return View(new RegisterViewModel());
     }
 
     [HttpGet("login")]
@@ -35,9 +38,12 @@ public class AuthenticationController : Controller
         if (HttpContext.Request.Method == "POST")
         {
             var result = await _authService.Login(request.Username, request.Password);
-            return result ? Redirect("/") : Redirect("/auth/login");
+            return result ? Redirect("/") : View(new LoginViewModel()
+            {
+                Message = "Unable to login. Try again."
+            });
         }
 
-        return View();
+        return View(new LoginViewModel());
     }
 }
