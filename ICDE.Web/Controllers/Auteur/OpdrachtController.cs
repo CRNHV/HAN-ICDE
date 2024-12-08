@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
+using ICDE.Web.Models.Opdrachten;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ICDE.Web.Controllers.Auteur;
@@ -14,10 +15,12 @@ namespace ICDE.Web.Controllers.Auteur;
 public class OpdrachtController : ControllerBase
 {
     private readonly IOpdrachtService _opdrachtService;
+    private readonly IBeoordelingCritereaService _beoordeilngCritereaService;
 
-    public OpdrachtController(IOpdrachtService opdrachtService)
+    public OpdrachtController(IOpdrachtService opdrachtService, IBeoordelingCritereaService beoordeilngCritereaService)
     {
         _opdrachtService = opdrachtService;
+        _beoordeilngCritereaService = beoordeilngCritereaService;
     }
 
     [HttpGet("bekijkalle")]
@@ -35,7 +38,7 @@ public class OpdrachtController : ControllerBase
     [HttpPost("maak")]
     public async Task<IActionResult> MaakOpdracht([FromForm] MaakOpdrachtDto request)
     {
-        if (HttpContext.Request.Method == "POST")
+        if (IsRequestMethod("POST"))
         {
             await _opdrachtService.MaakOpdracht(request);
         }
@@ -43,45 +46,43 @@ public class OpdrachtController : ControllerBase
         return View("/Views/Auteur/Opdracht/MaakOpdracht.cshtml");
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("verwijder")]
-    [HttpDelete("verwijder")]
-    public async Task<IActionResult> VerwijderOpdracht()
+    [HttpGet("bekijk/{opdrachtGroupId}")]
+    public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
-        return null;
+        var opdrachtData = await _opdrachtService.GetFullDataByGroupId(opdrachtGroupId);
+        if (opdrachtData is null)
+        {
+            return NotFound();
+        }
+
+        var beoordelingCritereas = await _beoordeilngCritereaService.GetAllUnique();
+
+        return View("/Views/Auteur/Opdracht/BekijkOpdracht.cshtml", new AuteurBekijkOpdrachtViewModel()
+        {
+            Opdracht = opdrachtData,
+            BeoordelingCritereas = beoordelingCritereas
+        });
     }
 
     /// <summary>
     /// UC8
     /// </summary>
     /// <returns></returns>
-    [HttpGet("update")]
-    [HttpPut("update")]
-    public async Task<IActionResult> UpdateOpdracht()
+    [HttpGet("{opdrachtGroupId}/verwijder")]
+    public async Task<IActionResult> VerwijderOpdracht([FromRoute] Guid opdrachtGroupId)
     {
-        return null;
+        await _opdrachtService.VerwijderOpdracht(opdrachtGroupId);
+        return Redirect("/auteur/opdracht/bekijkalle");
     }
 
     /// <summary>
-    /// UC15
+    /// UC8
     /// </summary>
     /// <returns></returns>
-    [HttpGet("koppelluk/{lesGroupId}/{lukGroupId}")]
-    public async Task<IActionResult> KoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateOpdracht([FromForm] OpdrachtUpdateDto request)
     {
-        return View();
-    }
-
-    /// <summary>
-    /// UC15
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("ontkoppelluk/{lesGroupId}/{lukGroupId}")]
-    public async Task<IActionResult> OntkoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
-    {
-        return View();
+        await _opdrachtService.UpdateOpdracht(request);
+        return Redirect($"/auteur/opdracht/bekijk/{request.GroupId}");
     }
 }

@@ -1,5 +1,7 @@
-﻿using ICDE.Data.Entities;
+﻿using AutoMapper;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.IO;
 using ICDE.Lib.Services.Interfaces;
@@ -9,16 +11,18 @@ internal sealed class OpdrachtService : IOpdrachtService
 {
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly IFileManager _fileManager;
+    private readonly IMapper _mapper;
 
-    public OpdrachtService(IOpdrachtRepository opdrachtRepository, IFileManager fileManager)
+    public OpdrachtService(IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IMapper mapper)
     {
         _opdrachtRepository = opdrachtRepository;
         _fileManager = fileManager;
+        _mapper = mapper;
     }
 
-    public async Task<OpdrachtDto?> Bekijk(int opdrachtId)
+    public async Task<OpdrachtDto?> Bekijk(Guid opdrachtId)
     {
-        var dbOpdracht = await _opdrachtRepository.GetById(opdrachtId);
+        var dbOpdracht = await _opdrachtRepository.GetLatestByGroupId(opdrachtId);
         if (dbOpdracht is null)
             return null;
 
@@ -27,6 +31,23 @@ internal sealed class OpdrachtService : IOpdrachtService
             Beschrijving = dbOpdracht.Beschrijving,
             GroupId = dbOpdracht.GroupId,
             Naam = dbOpdracht.Naam,
+        };
+    }
+
+    public async Task<OpdrachtVolledigeDataDto?> GetFullDataByGroupId(Guid opdrachtGroupId)
+    {
+        var opdracht = await _opdrachtRepository.GetFullDataByGroupId(opdrachtGroupId);
+        if (opdracht is null)
+        {
+            return null;
+        }
+
+        var earlierVersions = await _opdrachtRepository.GetEarlierVersions(opdrachtGroupId, opdracht.Id);
+        return new OpdrachtVolledigeDataDto()
+        {
+            BeoordelingCritereas = _mapper.Map<List<BeoordelingCritereaDto>>(opdracht.BeoordelingCritereas),
+            EerdereVersies = _mapper.Map<List<OpdrachtDto>>(earlierVersions),
+            Opdracht = _mapper.Map<OpdrachtDto>(opdracht),
         };
     }
 
@@ -47,65 +68,31 @@ internal sealed class OpdrachtService : IOpdrachtService
         });
     }
 
-    public async Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(int opdrachtId)
-    {
-        List<IngeleverdeOpdracht> dbInzendingen = await _opdrachtRepository.HaalInzendingenOp(opdrachtId);
-        if (dbInzendingen.Count == 0)
-        {
-            return new List<IngeleverdeOpdrachtDto>();
-        }
-        return dbInzendingen.ConvertAll(x => new IngeleverdeOpdrachtDto()
-        {
-            Id = x.Id,
-            Naam = x.Naam,
-        });
-    }
-
-    public async Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
-    {
-        var dbOpdracht = await _opdrachtRepository.GetById(opdracht.OpdrachtId);
-        if (dbOpdracht is null)
-            return false;
-
-        var bestandsLocatie = await _fileManager.SlaBestandOp(opdracht.Bestand.FileName, opdracht.Bestand);
-        if (string.IsNullOrEmpty(bestandsLocatie))
-        {
-            return false;
-        }
-
-        var ingeleverdeOpdracht = new IngeleverdeOpdracht()
-        {
-            Opdracht = dbOpdracht,
-            OpdrachtId = dbOpdracht.Id,
-            Naam = opdracht.Bestand.FileName,
-            Locatie = bestandsLocatie,
-        };
-
-        await _opdrachtRepository.SlaIngeleverdeOpdrachtOp(ingeleverdeOpdracht);
-        return true;
-    }
-
     public async Task MaakOpdracht(MaakOpdrachtDto opdracht)
     {
         await _opdrachtRepository.MaakOpdracht(opdracht.Naam, opdracht.Beschrijving, opdracht.IsToets);
     }
 
-    public async Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request)
+    public async Task VerwijderOpdracht(Guid opdrachtGroupId)
     {
-        if (request.Beoordeling <= 0 || request.Beoordeling >= 11)
-            return false;
+        await _opdrachtRepository.Delete(opdrachtGroupId);
+    }
 
-        var dbIngeleverdeOpdracht = await _opdrachtRepository.HaalInzendingOp(request.InzendingId);
-        if (dbIngeleverdeOpdracht is null)
-            return false;
+    public async Task UpdateOpdracht(OpdrachtUpdateDto request)
+    {
+        var opdracht = await _opdrachtRepository.GetFullDataByGroupId(request.GroupId);
+        opdracht.Naam = request.Naam;
+        opdracht.Beschrijving = request.Beschrijving;
+        opdracht.Type = request.IsToets ? OpdrachtType.Toets : OpdrachtType.Casus;
+        await _opdrachtRepository.Update(opdracht);
 
-        await _opdrachtRepository.SlaBeoordelingOp(new OpdrachtBeoordeling()
+        var updatedOpdracht = await _opdrachtRepository.GetFullDataByGroupId(opdracht.GroupId);
+
+        foreach (var item in opdracht.BeoordelingCritereas)
         {
-            Cijfer = request.Beoordeling,
-            Feedback = request.Feedback,
-            IngeleverdeOpdracht = dbIngeleverdeOpdracht
-        });
-
-        return true;
+            updatedOpdracht.BeoordelingCritereas.Add(item);
+        }
+        updatedOpdracht.RelationshipChanged = true;
+        await _opdrachtRepository.Update(updatedOpdracht);
     }
 }

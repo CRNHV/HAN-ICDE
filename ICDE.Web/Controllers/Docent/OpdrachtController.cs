@@ -1,64 +1,56 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
-using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
+using ICDE.Web.Models.Opdrachten;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Docent;
 
-[Route("docent/opdrachten")]
+[Route("docent/opdracht")]
 [Authorize(Roles = UserRole.Docent)]
 public class OpdrachtController : ControllerBase
 {
     private readonly IOpdrachtService _opdrachtService;
+    private readonly IIngeleverdeOpdrachtService _ingeleverdeOpdrachtService;
 
-    public OpdrachtController(IOpdrachtService opdrachtService)
+    public OpdrachtController(IOpdrachtService opdrachtService, IIngeleverdeOpdrachtService ingeleverdeOpdrachtService)
     {
         _opdrachtService = opdrachtService;
+        _ingeleverdeOpdrachtService = ingeleverdeOpdrachtService;
+    }
+
+    [HttpGet("index")]
+    public async Task<IActionResult> Index()
+    {
+        var opdrachten = await _opdrachtService.GetAll();
+        return View("/Views/Docent/Opdracht/Index.cshtml", new OpdrachtenIndexViewModel()
+        {
+            Opdrachten = opdrachten,
+        });
     }
 
     /// <summary>
     /// UC2
     /// </summary>
-    /// <param name="opdrachtId"></param>
+    /// <param name="opdrachtGroupId"></param>
     /// <returns></returns>
-    [HttpGet("{opdrachtId}/inzendingen")]
-    public async Task<IActionResult> Inzendingen([FromRoute] int opdrachtId)
+    [HttpGet("bekijk/{opdrachtGroupId}")]
+    public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
-        List<IngeleverdeOpdrachtDto> ingeleverdeOpdrachten = await _opdrachtService.HaalInzendingenOp(opdrachtId);
-        return View(ingeleverdeOpdrachten);
-    }
-
-    /// <summary>
-    /// UC3
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    [HttpGet("inzending/{inzendingId}/beoordeel")]
-    [HttpPost("inzending/beoordeel")]
-    public async Task<IActionResult> BeoordeelOpdracht([FromRoute] int inzendingId, [FromForm] OpdrachtBeoordelingDto request)
-    {
-        if (HttpContext.Request.Method == "POST")
+        var opdracht = await _opdrachtService.Bekijk(opdrachtGroupId);
+        if (opdracht is null)
         {
-            await _opdrachtService.SlaBeoordelingOp(request);
+            return NotFound();
         }
 
-        return View(new OpdrachtBeoordelingDto()
-        {
-            InzendingId = inzendingId
-        });
-    }
+        var inzendingen = await _ingeleverdeOpdrachtService.HaalInzendingenOp(opdrachtGroupId);
 
-    /// <summary>
-    /// UC5
-    /// </summary>
-    /// <param name="beoordelingId"></param>
-    /// <returns></returns>
-    [HttpGet]
-    public async Task<IActionResult> BekijkBeoordeling([FromRoute] int beoordelingId)
-    {
-        return null;
+        return View("/Views/Docent/Opdracht/BekijkOpdracht.cshtml", new BekijkOpdrachtViewModel()
+        {
+            Opdracht = opdracht,
+            Inzendingen = inzendingen,
+        });
     }
 }
