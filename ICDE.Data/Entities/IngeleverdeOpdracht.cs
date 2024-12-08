@@ -11,5 +11,5 @@ public class IngeleverdeOpdracht
     public string Locatie { get; set; }
 
     public Opdracht Opdracht { get; set; }
-    public List<OpdrachtBeoordeling> Beoordelingen { get; set; }
+    public List<OpdrachtBeoordeling> Beoordelingen { get; set; } = new();
 }

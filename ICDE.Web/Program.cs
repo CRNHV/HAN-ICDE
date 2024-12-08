@@ -38,6 +38,7 @@ public class Program
             options.LoginPath = "/auth/login"; // Redirect here if not authenticated
             options.LogoutPath = "/auth/logout";
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Cookie expiration
+            options.AccessDeniedPath = "/error/401";
         });
 
         builder.Services
@@ -79,6 +80,8 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
         app.MapControllerRoute(
             name: "default",

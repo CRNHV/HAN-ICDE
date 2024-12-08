@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Planning;
@@ -28,8 +27,17 @@ internal class OpleidingService : IOpleidingService
 
     public async Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId)
     {
-        Opleiding opleiding = await _opleidingRepository.GetLatestByGroupId(opleidingGroupId);
+        var opleiding = await _opleidingRepository.GetLatestByGroupId(opleidingGroupId);
+        if (opleiding is null)
+        {
+            return false;
+        }
+
         var vak = await _vakRepository.GetLatestByGroupId(vakGroupId);
+        if (vak is null)
+        {
+            return false;
+        }
 
         opleiding.Vakken.Add(vak);
         opleiding.RelationshipChanged = true;
@@ -39,13 +47,17 @@ internal class OpleidingService : IOpleidingService
         return true;
     }
 
-    public async Task<OpleidingMetEerdereVersiesDto> ZoekOpleidingMetEerdereVersies(Guid groupId)
+    public async Task<OpleidingMetEerdereVersiesDto?> ZoekOpleidingMetEerdereVersies(Guid groupId)
     {
         var result = new OpleidingMetEerdereVersiesDto();
 
-        Opleiding opleiding = await _opleidingRepository.GetLatestByGroupId(groupId);
-        var eerdereVersies = await _opleidingRepository.GetList(x => x.GroupId == groupId && x.Id != opleiding.Id);
+        var opleiding = await _opleidingRepository.GetLatestByGroupId(groupId);
+        if (opleiding is null)
+        {
+            return null;
+        }
 
+        var eerdereVersies = await _opleidingRepository.GetList(x => x.GroupId == groupId && x.Id != opleiding.Id);
         return new OpleidingMetEerdereVersiesDto()
         {
             OpleidingDto = _mapper.Map<OpleidingMetVakkenDto>(opleiding),

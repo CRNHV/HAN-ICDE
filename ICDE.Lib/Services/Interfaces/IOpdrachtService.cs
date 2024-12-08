@@ -6,7 +6,7 @@ public interface IOpdrachtService
     Task<OpdrachtDto?> Bekijk(int opdrachtId);
     Task<List<OpdrachtDto>> GetAll();
     Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(int opdrachtId);
-    Task LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht);
+    Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht);
     Task MaakOpdracht(MaakOpdrachtDto opdracht);
-    Task SlaBeoordelingOp(OpdrachtBeoordelingDto request);
+    Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request);
 }

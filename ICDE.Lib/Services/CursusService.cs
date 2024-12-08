@@ -20,30 +20,43 @@ internal class CursusService : ICursusService
     public async Task<List<CursusDto>> GetAll()
     {
         var cursussen = await _cursusRepository.GetList();
+        if (cursussen.Count == 0)
+            return new List<CursusDto>();
 
         return _mapper.Map<List<CursusDto>>(cursussen);
     }
 
-    public async Task<CursusMetPlanningDto> GetFullCursusByGroupId(Guid cursusGroupId)
+    public async Task<CursusMetPlanningDto?> GetFullCursusByGroupId(Guid cursusGroupId)
     {
         var cursus = await _cursusRepository.GetFullCursusData(cursusGroupId);
+        if (cursus is null)
+            return null;
+
         return _mapper.Map<CursusMetPlanningDto>(cursus);
     }
 
     public async Task<List<CursusDto>> GetEarlierVersionsByGroupId(Guid groupId, int exceptId)
     {
         var cursussen = await _cursusRepository.GetList(x => x.GroupId == groupId && x.Id != exceptId);
+        if (cursussen.Count == 0)
+            return new List<CursusDto>();
         return _mapper.Map<List<CursusDto>>(cursussen);
     }
 
-    public async Task VoegPlanningToeAanCursus(Guid cursusGroupId, int planningId)
+    public async Task<bool> VoegPlanningToeAanCursus(Guid cursusGroupId, int planningId)
     {
         var cursus = await _cursusRepository.GetLatestByGroupId(cursusGroupId);
+        if (cursus is null)
+            return false;
+
         var planning = await _planningRepository.CreateCloneOf(planningId);
+        if (planning is null)
+            return false;
 
         cursus.RelationshipChanged = true;
         cursus.Planning = planning;
 
-        await _cursusRepository.Update(cursus);
+        var result = await _cursusRepository.Update(cursus);
+        return result != null;
     }
 }

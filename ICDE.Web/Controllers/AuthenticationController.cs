@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ICDE.Web.Controllers;
 
 [Route("Auth")]
-public class AuthenticationController : Controller
+public class AuthenticationController : ControllerBase
 {
     private readonly IAuthenticationService _authService;
 
@@ -19,25 +19,38 @@ public class AuthenticationController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromForm] RegisterViewModel request)
     {
-        if (HttpContext.Request.Method == "POST")
+        if (IsRequestMethod("POST"))
         {
             var result = await _authService.Register(request.Username, request.Password, request.Role);
-            return result ? Redirect("/auth/login") : Unauthorized();
+            return result ? Redirect("/auth/login") : View(new RegisterViewModel()
+            {
+                Message = "Unable to register. Try again."
+            });
         }
 
-        return View();
+        return View(new RegisterViewModel());
     }
 
     [HttpGet("login")]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromForm] LoginViewModel request)
     {
-        if (HttpContext.Request.Method == "POST")
+        if (IsRequestMethod("POST"))
         {
             var result = await _authService.Login(request.Username, request.Password);
-            return result ? Redirect("/") : Redirect("/auth/login");
+            return result ? Redirect("/") : View(new LoginViewModel()
+            {
+                Message = "Unable to login. Try again."
+            });
         }
 
-        return View();
+        return View(new LoginViewModel());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        await _authService.LogoutUser();
+        return Redirect("/auth/login");
     }
 }

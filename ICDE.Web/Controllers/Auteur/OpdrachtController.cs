@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ICDE.Web.Controllers.Auteur;
 
 
 [Route("auteur/opdracht")]
+[Authorize(Roles = UserRole.Auteur)]
 public class OpdrachtController : ControllerBase
 {
     private readonly IOpdrachtService _opdrachtService;
