@@ -18,6 +18,10 @@ internal class RapportageService : IRapportageService
     public async Task<bool> ValidateOpleiding(Guid opleidingGroupId)
     {
         var opleiding = await _opleidingRepository.GetFullObjectTreeByGroupId(opleidingGroupId);
+        if (opleiding is null)
+        {
+            return false;
+        }
 
         foreach (var vak in opleiding.Vakken)
         {

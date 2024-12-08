@@ -6,7 +6,7 @@ public interface IVakService
 {
     Task<Guid> CreateCourse(string naam, string beschrijving);
     Task<List<VakDto>> GetAll();
-    Task<VakMetOnderwijsOnderdelenDto> HaalVolledigeVakDataOp(Guid vakGroupId);
-    Task KoppelCursus(Guid vakGroupId, Guid cursusGroupId);
-    Task KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId);
+    Task<VakMetOnderwijsOnderdelenDto?> HaalVolledigeVakDataOp(Guid vakGroupId);
+    Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId);
+    Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId);
 }

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Lessen;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/les")]
+[Authorize(Roles = UserRole.Auteur)]
 public class LesController : Controller
 {
     private readonly ILesService _lesService;
@@ -40,6 +43,10 @@ public class LesController : Controller
     public async Task<IActionResult> MaakLes([FromForm] MaakLesViewModel request)
     {
         LesDto les = await _lesService.CreateLesson(request.Naam, request.Beschrijving);
+        if (les is null)
+        {
+            return BadRequest();
+        }
         return Redirect($"get/{les.GroupId}");
     }
 
@@ -51,6 +58,10 @@ public class LesController : Controller
     public async Task<IActionResult> BekijkLes([FromRoute] Guid groupId)
     {
         LesMetEerdereVersies lmev = await _lesService.GetLessonWithPreviousVersions(groupId);
+        if (lmev is null)
+        {
+            return NotFound();
+        }
         return View("/Views/Auteur/Les/BekijkLes.cshtml", new BekijkLesViewModel()
         {
             Les = lmev.Les,
@@ -97,7 +108,11 @@ public class LesController : Controller
     [HttpGet("koppelluk/{lesGroupId}/{lukGroupId}")]
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {
-        await _lesService.KoppelLukAanLes(lesGroupId, lukGroupId);
+        var result = await _lesService.KoppelLukAanLes(lesGroupId, lukGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/les/get/{lesGroupId}");
     }
 
@@ -108,7 +123,11 @@ public class LesController : Controller
     [HttpGet("ontkoppelluk/{lesGroupId}/{lukGroupId}")]
     public async Task<IActionResult> OntkoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {
-        await _lesService.OntkoppelLukAanLes(lesGroupId, lukGroupId);
+        var result = await _lesService.OntkoppelLukAanLes(lesGroupId, lukGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/les/get/{lesGroupId}");
     }
 }

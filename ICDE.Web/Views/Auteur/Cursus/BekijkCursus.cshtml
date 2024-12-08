@@ -6,8 +6,6 @@
 }
 
 <h1>Bekijk & update cursus</h1>
-
-<h4>Bekijk & update cursus</h4>
 <hr />
 <div class="row">
     <div class="col-md-6">
@@ -85,9 +83,10 @@
     </div>
     <div class="col-md-6">
         <h4> Planning </h4>
-        <a href="/auteur/planning/bekijk/@Model.Cursus.Planning.Id">Bekijk planning</a>
+        
         @if (Model.Cursus.Planning != null && Model.Cursus.Planning.Items.Count > 0)
         {
+            <a href="/auteur/planning/bekijk/@Model.Cursus.Planning.Id">Bekijk planning</a>
             <table class="table">
                 <thead>
                     <tr>

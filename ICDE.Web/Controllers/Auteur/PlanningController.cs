@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Planning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Auteur;
 
 [Route("auteur/planning")]
+[Authorize(Roles = UserRole.Auteur)]
 public class PlanningController : ControllerBase
 {
     private readonly IPlanningService _planningService;
@@ -44,6 +47,10 @@ public class PlanningController : ControllerBase
     public async Task<IActionResult> BekijkPlanning([FromRoute] int planningId)
     {
         var planning = await _planningService.GetById(planningId);
+        if (planning is null)
+        {
+            return NotFound();
+        }
         var cursussen = await _cursusService.GetAll();
         var opdrachten = await _opdrachtService.GetAll();
         var lessen = await _lesService.GetAll();
@@ -60,7 +67,11 @@ public class PlanningController : ControllerBase
     [HttpGet("{planningId}/voegcursustoe/{cursusGroupId}")]
     public async Task<IActionResult> VoegToeAanCursus([FromRoute] int planningId, [FromRoute] Guid cursusGroupId)
     {
-        await _cursusService.VoegPlanningToeAanCursus(cursusGroupId, planningId);
+        var result = await _cursusService.VoegPlanningToeAanCursus(cursusGroupId, planningId);
+        if (result is false)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/planning/bekijk/{planningId}");
     }
 
@@ -81,7 +92,11 @@ public class PlanningController : ControllerBase
     [HttpGet("{planningId}/voegopdrachttoe/{groupId}")]
     public async Task<IActionResult> VoegOpdrachtToe([FromRoute] int planningId, [FromRoute] Guid groupId)
     {
-        PlanningZonderItemsDto dto = await _planningService.VoegOpdrachtToe(planningId, groupId);
+        var dto = await _planningService.VoegOpdrachtToe(planningId, groupId);
+        if (dto is null)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/planning/bekijk/{planningId}");
     }
 
@@ -92,7 +107,11 @@ public class PlanningController : ControllerBase
     [HttpGet("{planningId}/voeglestoe/{groupId}")]
     public async Task<IActionResult> VoegLesTOe([FromRoute] int planningId, [FromRoute] Guid groupId)
     {
-        PlanningZonderItemsDto dto = await _planningService.VoegLesToe(planningId, groupId);
+        var dto = await _planningService.VoegLesToe(planningId, groupId);
+        if (dto is null)
+        {
+            return BadRequest();
+        }
         return Redirect($"/auteur/planning/bekijk/{planningId}");
     }
 }

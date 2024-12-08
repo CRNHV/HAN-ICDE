@@ -7,8 +7,8 @@ public class Opdracht : OnderwijsOnderdeel, IVersionable
 {
     public OpdrachtType Type { get; set; }
 
-    public ICollection<BeoordelingCriterea> BeoordelingCritereas { get; set; }
-    public ICollection<IngeleverdeOpdracht> IngeleverdeOpdrachten { get; set; }
+    public ICollection<BeoordelingCriterea> BeoordelingCritereas { get; set; } = new List<BeoordelingCriterea>();
+    public ICollection<IngeleverdeOpdracht> IngeleverdeOpdrachten { get; set; } = new List<IngeleverdeOpdracht>();
 
     public int VersieNummer { get; set; }
     public Guid GroupId { get; set; }

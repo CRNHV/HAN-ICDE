@@ -23,19 +23,35 @@ internal class PlanningService : IPlanningService
     public async Task<List<PlanningZonderItemsDto>> GetAll()
     {
         var plannings = await _planningRepository.GetList();
+        if (plannings.Count == 0)
+        {
+            return new List<PlanningZonderItemsDto>();
+        }
         return _mapper.Map<List<PlanningZonderItemsDto>>(plannings);
     }
 
-    public async Task<PlanningDto> GetById(int planningId)
+    public async Task<PlanningDto?> GetById(int planningId)
     {
         var planning = await _planningRepository.Get(planningId);
+        if (planning is null)
+        {
+            return null;
+        }
         return _mapper.Map<PlanningDto>(planning);
     }
 
-    public async Task<PlanningZonderItemsDto> VoegOpdrachtToe(int planningId, Guid groupId)
+    public async Task<PlanningZonderItemsDto?> VoegOpdrachtToe(int planningId, Guid groupId)
     {
         var planning = await _planningRepository.Get(planningId);
+        if (planning is null)
+        {
+            return null;
+        }
         var opdracht = await _opdrachtRepository.GetLatestByGroupId(groupId);
+        if (opdracht is null)
+        {
+            return null;
+        }
 
         var nextItemIndex = planning.PlanningItems.OrderByDescending(x => x.Index).First().Index;
         nextItemIndex++;
@@ -47,15 +63,28 @@ internal class PlanningService : IPlanningService
             OpdrachtId = opdracht.Id,
         });
 
-        await _planningRepository.Update(planning);
+        var result = await _planningRepository.Update(planning);
+        if (result is null)
+        {
+            return null;
+        }
 
         return _mapper.Map<PlanningZonderItemsDto>(planning);
     }
 
-    public async Task<PlanningZonderItemsDto> VoegLesToe(int planningId, Guid groupId)
+    public async Task<PlanningZonderItemsDto?> VoegLesToe(int planningId, Guid groupId)
     {
         var planning = await _planningRepository.Get(planningId);
+        if (planning is null)
+        {
+            return null;
+        }
+
         var les = await _lesRepository.GetLatestByGroupId(groupId);
+        if (les is null)
+        {
+            return null;
+        }
 
         var nextItemIndex = planning.PlanningItems.OrderByDescending(x => x.Index).First().Index;
         nextItemIndex++;
@@ -67,7 +96,11 @@ internal class PlanningService : IPlanningService
             LesId = les.Id,
         });
 
-        await _planningRepository.Update(planning);
+        var result = await _planningRepository.Update(planning);
+        if (result is null)
+        {
+            return null;
+        }
         return _mapper.Map<PlanningZonderItemsDto>(planning);
     }
 }

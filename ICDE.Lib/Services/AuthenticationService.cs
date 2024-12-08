@@ -25,6 +25,11 @@ public class AuthenticationService : IAuthenticationService
         return result.Succeeded;
     }
 
+    public async Task LogoutUser()
+    {
+        await _signInManager.SignOutAsync();
+    }
+
     public async Task<bool> Register(string username, string password, string rol)
     {
         var userCreated = await _userRepository.CreateUser(username, password);

@@ -1,11 +1,14 @@
 ﻿using System.Threading.Tasks;
+using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICDE.Web.Controllers.Student;
 
 [Route("student/opdracht")]
+[Authorize(Roles = UserRole.Student)]
 public class OpdrachtController : ControllerBase
 {
     private readonly IOpdrachtService _opdrachtService;

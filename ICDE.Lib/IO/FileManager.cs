@@ -7,16 +7,23 @@ internal sealed class FileManager : IFileManager
 
     public async Task<string> SlaBestandOp(string naam, IFormFile bestand)
     {
-        if (!Directory.Exists(OpdrachtenMap))
-            Directory.CreateDirectory(OpdrachtenMap);
+        try
+        {
+            if (!Directory.Exists(OpdrachtenMap))
+                Directory.CreateDirectory(OpdrachtenMap);
 
-        var filePath = $"{OpdrachtenMap}/{Guid.NewGuid()}";
+            var filePath = $"{OpdrachtenMap}/{Guid.NewGuid()}";
 
-        var fileStream = new FileStream(filePath, FileMode.Create);
-        await bestand.CopyToAsync(fileStream);
+            var fileStream = new FileStream(filePath, FileMode.Create);
+            await bestand.CopyToAsync(fileStream);
 
-        await fileStream.FlushAsync();
+            await fileStream.FlushAsync();
 
-        return filePath;
+            return filePath;
+        }
+        catch (Exception)
+        {
+            return string.Empty;
+        }
     }
 }

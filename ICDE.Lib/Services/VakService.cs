@@ -33,26 +33,47 @@ internal class VakService : IVakService
             GroupId = Guid.NewGuid(),
         });
 
+        if (course is null)
+        {
+            return Guid.Empty;
+        }
+
         return course.GroupId;
     }
 
     public async Task<List<VakDto>> GetAll()
     {
         var vakken = await _vakRepository.GetList();
+        if (vakken.Count == 0)
+        {
+            return new List<VakDto>();
+        }
         return _mapper.Map<List<VakDto>>(vakken);
     }
 
-    public async Task<VakMetOnderwijsOnderdelenDto> HaalVolledigeVakDataOp(Guid vakGroupId)
+    public async Task<VakMetOnderwijsOnderdelenDto?> HaalVolledigeVakDataOp(Guid vakGroupId)
     {
         var vak = await _vakRepository.GetLatestByGroupId(vakGroupId);
+        if (vak is null)
+        {
+            return null;
+        }
 
         return _mapper.Map<VakMetOnderwijsOnderdelenDto>(vak);
     }
 
-    public async Task KoppelCursus(Guid vakGroupId, Guid cursusGroupId)
+    public async Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId)
     {
         var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId);
+        if (vakken.Count == 0)
+        {
+            return false;
+        }
         var cursus = await _cursusRepository.GetLatestByGroupId(cursusGroupId);
+        if (cursus is null)
+        {
+            return false;
+        }
         foreach (var vak in vakken)
         {
             if (!vak.Cursussen.Contains(cursus))
@@ -63,12 +84,22 @@ internal class VakService : IVakService
                 await _vakRepository.Update(vak);
             }
         }
+
+        return true;
     }
 
-    public async Task KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
+    public async Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
     {
         var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId);
+        if (vakken.Count == 0)
+        {
+            return false;
+        }
         var luk = await _leeruitkomstRepository.GetLatestByGroupId(lukGroupId);
+        if (luk is null)
+        {
+            return false;
+        }
         foreach (var vak in vakken)
         {
             if (!vak.Leeruitkomsten.Contains(luk))
@@ -79,5 +110,7 @@ internal class VakService : IVakService
                 await _vakRepository.Update(vak);
             }
         }
+
+        return true;
     }
 }
