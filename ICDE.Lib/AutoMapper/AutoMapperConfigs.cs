@@ -24,7 +24,7 @@ internal class AutoMapperConfigs : Profile
 
     private void CreateOpdrachtMappings()
     {
-        CreateMap<Opdracht, OpdrachtDto>();
+        CreateMap<Opdracht, OpdrachtDto>().ForCtorParam("isToets", opt => opt.MapFrom(x => x.Type == OpdrachtType.Toets));
         CreateMap<IngeleverdeOpdracht, IngeleverdeOpdrachtDto>();
         CreateMap<OpdrachtBeoordeling, OpdrachtBeoordelingDto>();
         CreateMap<BeoordelingCriterea, BeoordelingCritereaDto>();

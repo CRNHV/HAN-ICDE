@@ -60,8 +60,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
 
         modelBuilder.Entity<Opdracht>()
               .HasMany(o => o.BeoordelingCritereas)
-              .WithOne()
-              .HasForeignKey(bc => bc.OpdrachtId);
+              .WithMany();
 
         modelBuilder.Entity<BeoordelingCriterea>()
             .HasMany(x => x.Leeruitkomsten)

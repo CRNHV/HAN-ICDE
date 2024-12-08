@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlanningRepository, PlanningRepository>();
         services.AddScoped<IIngeleverdeOpdrachtRepository, IngeleverdeOpdrachtRepository>();
         services.AddScoped<IOpdrachtBeoordelingRepository, OpdrachtBeoordelingRepository>();
+        services.AddScoped<IBeoordelingCritereaRepository, BeoordelingCritereaRepository>();
 
         return services;
     }
