@@ -1,0 +1,61 @@
+﻿@using ICDE.Web.Models.Opdrachten
+@model BekijkOpdrachtViewModel
+
+@{
+    ViewData["Title"] = "Bekijk opdracht";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk opdracht: @Model.Opdracht.Naam</h1>
+<p>@Model.Opdracht.Type</p>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Opdracht.Naam</td>
+                    <td>@Model.Opdracht.Beschrijving</td>
+                    <td>@Model.Opdracht.Type</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+@if (Model.Inzendingen.Count > 0)
+{
+    <h4>Ingeleverde opdrachten</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Inzendingen)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td><a href="/docent/opdrachtinzending/@item.Id">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <h4>Niemand heeft een opdracht ingeleverd</h4>
+}

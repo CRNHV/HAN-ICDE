@@ -1,0 +1,42 @@
+﻿@using ICDE.Web.Models.Opdrachten
+@model OpdrachtenIndexViewModel
+
+@{
+    ViewData["Title"] = "Opdrachten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Opdrachten</h1>
+
+@if (Model.Opdrachten.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>Type</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Opdrachten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>@item.Type</td>
+                            <td><a href="/docent/opdracht/bekijk/@item.GroupId">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <h4>Er zijn geen opdrachten.</h4>
+}

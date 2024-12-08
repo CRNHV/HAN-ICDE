@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ICDE.Data.Entities;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
@@ -18,6 +19,15 @@ internal class AutoMapperConfigs : Profile
         CreateVakMappings();
         CreateOpleidingMappings();
         CreatePlanningMappings();
+        CreateOpdrachtMappings();
+    }
+
+    private void CreateOpdrachtMappings()
+    {
+        CreateMap<Opdracht, OpdrachtDto>().ForCtorParam("isToets", opt => opt.MapFrom(x => x.Type == OpdrachtType.Toets));
+        CreateMap<IngeleverdeOpdracht, IngeleverdeOpdrachtDto>();
+        CreateMap<OpdrachtBeoordeling, OpdrachtBeoordelingDto>();
+        CreateMap<BeoordelingCriterea, BeoordelingCritereaDto>();
     }
 
     private void CreateVakMappings()
@@ -57,6 +67,5 @@ internal class AutoMapperConfigs : Profile
     {
         CreateMap<Leeruitkomst, LeeruitkomstDto>().ReverseMap();
         CreateMap<Les, LesDto>().ReverseMap();
-        CreateMap<Opdracht, OpdrachtDto>();
     }
 }

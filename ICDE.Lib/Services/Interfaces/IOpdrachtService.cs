@@ -3,10 +3,10 @@
 namespace ICDE.Lib.Services.Interfaces;
 public interface IOpdrachtService
 {
-    Task<OpdrachtDto?> Bekijk(int opdrachtId);
+    Task<OpdrachtDto?> Bekijk(Guid opdrachtId);
     Task<List<OpdrachtDto>> GetAll();
-    Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(int opdrachtId);
-    Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht);
+    Task<OpdrachtVolledigeDataDto?> GetFullDataByGroupId(Guid opdrachtGroupId);
     Task MaakOpdracht(MaakOpdrachtDto opdracht);
-    Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request);
+    Task UpdateOpdracht(OpdrachtUpdateDto request);
+    Task VerwijderOpdracht(Guid opdrachtGroupId);
 }

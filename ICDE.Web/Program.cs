@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using ICDE.Data;
 using ICDE.Data.Entities;
 using ICDE.Data.Entities.Identity;
@@ -90,7 +91,7 @@ public class Program
         app.Run();
     }
 
-    private static async void SeedDatabase(WebApplication app)
+    private static void SeedDatabase(WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
@@ -98,6 +99,7 @@ public class Program
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+            var usermanager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             if (!dbContext.Roles.Any())
             {
                 var leeruitkomst1 = new Leeruitkomst()
@@ -250,6 +252,14 @@ public class Program
                                              leeruitkomst1
                                          }
                                      },
+                                 },
+                                 IngeleverdeOpdrachten = new List<IngeleverdeOpdracht>()
+                                 {
+                                     new IngeleverdeOpdracht()
+                                     {
+                                         Locatie = "./Opdrachten/asjdhajksd.png",
+                                         Naam = "Casus.zip",
+                                     }
                                  }
                             }
                         }
@@ -290,6 +300,47 @@ public class Program
                 {
                     Name = "Student",
                     NormalizedName = "STUDENT"
+                }).Wait();
+
+                usermanager.CreateAsync(new User()
+                {
+                    UserName = "Student",
+                }, "Student12345!").Wait();
+
+                usermanager.CreateAsync(new User()
+                {
+                    UserName = "Docent",
+                }, "Docent12345!").Wait();
+
+                usermanager.CreateAsync(new User()
+                {
+                    UserName = "Auteur",
+                }, "Auteur12345!").Wait();
+
+                var docent = usermanager.FindByNameAsync("Docent").Result;
+                var student = usermanager.FindByNameAsync("Student").Result;
+                var auteur = usermanager.FindByNameAsync("Auteur").Result;
+
+                usermanager.AddToRoleAsync(docent, "Docent").Wait();
+                usermanager.AddToRoleAsync(student, "Student").Wait();
+                usermanager.AddToRoleAsync(auteur, "Auteur").Wait();
+
+                usermanager.AddClaimsAsync(docent, new List<Claim>()
+                {
+                    new Claim("Id", $"{docent.Id}"),
+                    new Claim("Role", "Docent"),
+                }).Wait();
+
+                usermanager.AddClaimsAsync(auteur, new List<Claim>()
+                {
+                    new Claim("Id", $"{auteur.Id}"),
+                    new Claim("Role", "Auteur"),
+                }).Wait();
+
+                usermanager.AddClaimsAsync(student, new List<Claim>()
+                {
+                    new Claim("Id", $"{student.Id}"),
+                    new Claim("Role", "Student"),
                 }).Wait();
             }
         }

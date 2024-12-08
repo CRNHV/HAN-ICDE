@@ -1,4 +1,5 @@
-﻿@model ICDE.Lib.Dto.Opdracht.OpdrachtDto
+﻿@using ICDE.Web.Models.Opdrachten
+@model AuteurBekijkOpdrachtViewModel
 
 @{
     ViewData["Title"] = "Bekijk opdracht";
@@ -6,28 +7,131 @@
 }
 
 <h1>Bekijk opdracht</h1>
+<a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/verwijder">Verwijder</a>
 
-<h4>Bekijk opdracht</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Naam</th>
-                    <th>Beschrijving</th>
-                    <th>Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>@Model.Naam</td>
-                    <td>@Model.Beschrijving</td>
-                    <td>@Model.Type</td>
-                </tr>
-            </tbody>
-        </table>
-        <p><a href="/auteur/opdracht/@Model.GroupId/leverin">Lever iets in</a></p>
-        <p><a href="/auteur/opdracht/@Model.GroupId/inzendingen">Bekijk inleveringen</a></p>
+    <div class="col-md-6">
+        <form enctype="multipart/form-data" asp-action="UpdateOpdracht">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input name="GroupId" class="form-control" value="@Model.Opdracht.Opdracht.GroupId" hidden />
+            <div class="form-group">
+                <label for="Naam" class="control-label"></label>
+                <input name="Naam" class="form-control" value="@Model.Opdracht.Opdracht.Naam" />
+            </div>
+            <div class="form-group">
+                <label for="Beschrijving" class="control-label"></label>
+                <input name="Beschrijving" class="form-control" value="@Model.Opdracht.Opdracht.Beschrijving" />
+            </div>
+            <div>
+                <label>Is toets:</label>
+                <div>
+                    <input type="radio" name="IsToets" value="true" />
+                    <label for="IsToets">Yes</label>
+                </div>
+                <div>
+                    <input type="radio" name="IsToets" value="false" />
+                    <label for="IsToets">No</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
+    <div class="col-md-6">
+        @if (Model.Opdracht.EerdereVersies.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>Type</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Opdracht.EerdereVersies)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td>@item.Type</td>
+                            <td><a href="/auteur/opdracht/bekijkversie/@item.GroupId">Bekijk versie</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h4>Er zijn geen eerdere versies voor deze opdracht.</h4>
+        }
+    </div>
+    <div class="col-md-6">
+        @if (Model.Opdracht.BeoordelingCritereas.Count > 0)
+        {
+            <h4>BeoordelingCritereas</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>Bekijk</th>
+                        <th>Verwijder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var beoordelingCriterea in Model.Opdracht.BeoordelingCritereas)
+                    {
+                        <tr>
+                            <td>@beoordelingCriterea.Naam</td>
+                            <td>@beoordelingCriterea.Beschrijving</td>
+                            <td><a href="/auteur/beoordelingcriterea/bekijk/@beoordelingCriterea.GroupId">Bekijk</a></td>
+                            <td><a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/verwijdercriterea/@beoordelingCriterea.GroupId">Verwijder</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+        else
+        {
+            <h4>Er zijn geen beoordelingscriterea's voor deze opdracht.</h4>
+        }
+    </div>
+    <div class="col-md-6">
+        @if (Model.BeoordelingCritereas.Count > 0)
+        {
+            <h4>Voeg beoordelingcriterea toe</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>Bekijk</th>
+                        <th>Voeg toe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var beoordelingCriterea in Model.BeoordelingCritereas)
+                    {
+                        <tr>
+                            <td>@beoordelingCriterea.Naam</td>
+                            <td>@beoordelingCriterea.Beschrijving</td>
+                            <td><a href="/auteur/beoordelingcriterea/bekijk/@beoordelingCriterea.GroupId">Bekijk</a></td>
+                            <td><a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/voegcritereatoe/@beoordelingCriterea.GroupId">Voeg toe</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+        else
+        {
+            <h4>Er zijn geen beoordelingscriterea's om toe te voegen.</h4>
+        }
+    </div>
+
 </div>
