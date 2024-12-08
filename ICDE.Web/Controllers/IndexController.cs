@@ -9,6 +9,6 @@ public class IndexController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        return View("/Views/Index/Index.cshtml");
     }
 }

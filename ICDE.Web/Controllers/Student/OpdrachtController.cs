@@ -27,19 +27,21 @@ public class OpdrachtController : ControllerBase
     [HttpPost("{opdrachtId}/leverin")]
     public async Task<IActionResult> LeverOpdrachtIn([FromRoute] int opdrachtId, [FromForm] LeverOpdrachtInDto request)
     {
-        if (HttpContext.Request.Method == "POST")
-        {
-            var userId = this.GetUserIdFromClaims();
-            if (userId is null)
-                return Unauthorized();
+        //if (HttpContext.Request.Method == "POST")
+        //{
+        //    var userId = this.GetUserIdFromClaims();
+        //    if (userId is null)
+        //        return Unauthorized();
 
-            await _opdrachtService.LeverOpdrachtIn(userId.Value, request);
-        }
+        //    await _opdrachtService.LeverOpdrachtIn(userId.Value, request);
+        //}
 
-        return View(new LeverOpdrachtInDto()
-        {
-            OpdrachtId = opdrachtId,
-        });
+        //return View(new LeverOpdrachtInDto()
+        //{
+        //    OpdrachtId = opdrachtId,
+        //});
+
+        return Ok();
     }
 
     /// <summary>

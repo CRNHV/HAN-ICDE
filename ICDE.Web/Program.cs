@@ -92,6 +92,8 @@ public class Program
 
     private static async void SeedDatabase(WebApplication app)
     {
+        return;
+
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
@@ -250,6 +252,14 @@ public class Program
                                              leeruitkomst1
                                          }
                                      },
+                                 },
+                                 IngeleverdeOpdrachten = new List<IngeleverdeOpdracht>()
+                                 {
+                                     new IngeleverdeOpdracht()
+                                     {
+                                         Locatie = "./Opdrachten/asjdhajksd.png",
+                                         Naam = "Casus.zip",
+                                     }
                                  }
                             }
                         }

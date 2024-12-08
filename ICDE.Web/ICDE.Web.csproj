@@ -29,6 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="opdrachten\" />
 	  <Folder Include="Views\Auteur\Rapportage\" />
 	  <Folder Include="Views\Student\Cursus\" />
 	</ItemGroup>

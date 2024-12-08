@@ -1,0 +1,112 @@
+﻿@using ICDE.Web.Models.OpdrachtInzending
+@model BekijkInzendingViewModel;
+@{
+    ViewData["Title"] = "Bekijk inzending";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk inzending</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Bekijk bestand</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Inzending.IngeleverdeOpdracht.Naam</td>
+                    <td>@Model.Inzending.IngeleverdeOpdracht.Id</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h4>Voeg beoordeling toe</h4>
+        <div class="col-md-4">
+            <form enctype="multipart/form-data" asp-action="VoegBeoordelingToe">
+                <input type="number" name="InzendingId" class="form-control" value="@Model.Inzending.IngeleverdeOpdracht.Id" hidden />
+                <div class="form-group">
+                    <label for="Beoordeling" class="control-label"></label>
+                    <input type="number" name="Beoordeling" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Feedback" class="control-label"></label>
+                    <input name="Feedback" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4">
+        @if (Model.Inzending.Beoordelingen.Count > 0)
+        {
+            <h4>Beoordelingen</h4>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Beoordeling</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Inzending.Beoordelingen)
+                    {
+                        <tr>
+                            <td>@item.Cijfer</td>
+                            <td>@item.Feedback</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+        else
+        {
+            <h4> Er zijn geen Beoordelingen toegevoegd aan deze opdracht.</h4>
+        }
+    </div>
+    <div class="col-md-4">
+        @if (Model.Inzending.BeoordelingCritereas.Count > 0)
+        {
+            <h4>BeoordelingCritereas</h4>
+
+            <ul>
+                @foreach (var beoordelingCriterea in Model.Inzending.BeoordelingCritereas)
+                {
+                    <li>
+                        <p>Beoordeling criterea: <strong>@beoordelingCriterea.Naam</strong> - @beoordelingCriterea.Beschrijving</p>
+                        @if (beoordelingCriterea.Leeruitkomsten?.Count > 0)
+                        {
+                            <ul>
+                                @foreach (var luk in beoordelingCriterea.Leeruitkomsten)
+                                {
+                                    <li>
+                                        <strong>@luk.Naam</strong> <br /> @luk.Beschrijving<br />
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No attached leeruitkomsten.</p>
+                        }
+                    </li>
+                }
+            </ul>
+
+        }
+        else
+        {
+            <h4> Er zijn geen BeoordelingCritereas toegevoegd aan deze opdracht.</h4>
+        }
+    </div>
+</div>
+

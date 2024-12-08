@@ -17,11 +17,6 @@ public class OpdrachtRepository : IOpdrachtRepository
         return await _context.Opdrachten.ToListAsync();
     }
 
-    public Task<List<IngeleverdeOpdracht>> HaalInzendingenOp(int opdrachtId)
-    {
-        return _context.IngeleverdeOpdrachten.Where(x => x.OpdrachtId == opdrachtId).ToListAsync();
-    }
-
     public async Task<Opdracht?> GetById(int opdrachtId)
     {
         return await _context.Opdrachten.FirstOrDefaultAsync(x => x.Id == opdrachtId);
@@ -40,28 +35,23 @@ public class OpdrachtRepository : IOpdrachtRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task SlaIngeleverdeOpdrachtOp(IngeleverdeOpdracht ingeleverdeOpdracht)
-    {
-        await _context.IngeleverdeOpdrachten.AddAsync(ingeleverdeOpdracht);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task SlaBeoordelingOp(OpdrachtBeoordeling beoordeling)
-    {
-        await _context.OpdrachtBeoordelingen.AddAsync(beoordeling);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task<IngeleverdeOpdracht> HaalInzendingOp(int inzendingId)
-    {
-        return await _context.IngeleverdeOpdrachten.Where(x => x.Id == inzendingId).FirstOrDefaultAsync();
-    }
-
     public async Task<Opdracht?> GetLatestByGroupId(Guid groupId)
     {
         return await _context.Opdrachten
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<Opdracht?> GetByInzendingId(int inzendingId)
+    {
+        return await _context.IngeleverdeOpdrachten
+            .Where(x => x.Id == inzendingId)
+            .Include(x => x.Opdracht)
+            .ThenInclude(x => x.BeoordelingCritereas)
+            .ThenInclude(x => x.Leeruitkomsten)
+            .Select(x => x.Opdracht)
+            .FirstOrDefaultAsync();
+
     }
 }

@@ -25,6 +25,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IPlanningService, PlanningService>();
         services.AddScoped<IRapportageService, RapportageService>();
         services.AddTransient<IValidationManager, ValidationManager>();
+        services.AddScoped<IIngeleverdeOpdrachtService, IngeleverdeOpdrachtService>();
+
         return services;
     }
 }

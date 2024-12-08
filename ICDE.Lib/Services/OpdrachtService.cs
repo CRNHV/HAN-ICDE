@@ -16,9 +16,9 @@ internal sealed class OpdrachtService : IOpdrachtService
         _fileManager = fileManager;
     }
 
-    public async Task<OpdrachtDto?> Bekijk(int opdrachtId)
+    public async Task<OpdrachtDto?> Bekijk(Guid opdrachtId)
     {
-        var dbOpdracht = await _opdrachtRepository.GetById(opdrachtId);
+        var dbOpdracht = await _opdrachtRepository.GetLatestByGroupId(opdrachtId);
         if (dbOpdracht is null)
             return null;
 
@@ -47,65 +47,8 @@ internal sealed class OpdrachtService : IOpdrachtService
         });
     }
 
-    public async Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(int opdrachtId)
-    {
-        List<IngeleverdeOpdracht> dbInzendingen = await _opdrachtRepository.HaalInzendingenOp(opdrachtId);
-        if (dbInzendingen.Count == 0)
-        {
-            return new List<IngeleverdeOpdrachtDto>();
-        }
-        return dbInzendingen.ConvertAll(x => new IngeleverdeOpdrachtDto()
-        {
-            Id = x.Id,
-            Naam = x.Naam,
-        });
-    }
-
-    public async Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
-    {
-        var dbOpdracht = await _opdrachtRepository.GetById(opdracht.OpdrachtId);
-        if (dbOpdracht is null)
-            return false;
-
-        var bestandsLocatie = await _fileManager.SlaBestandOp(opdracht.Bestand.FileName, opdracht.Bestand);
-        if (string.IsNullOrEmpty(bestandsLocatie))
-        {
-            return false;
-        }
-
-        var ingeleverdeOpdracht = new IngeleverdeOpdracht()
-        {
-            Opdracht = dbOpdracht,
-            OpdrachtId = dbOpdracht.Id,
-            Naam = opdracht.Bestand.FileName,
-            Locatie = bestandsLocatie,
-        };
-
-        await _opdrachtRepository.SlaIngeleverdeOpdrachtOp(ingeleverdeOpdracht);
-        return true;
-    }
-
     public async Task MaakOpdracht(MaakOpdrachtDto opdracht)
     {
         await _opdrachtRepository.MaakOpdracht(opdracht.Naam, opdracht.Beschrijving, opdracht.IsToets);
-    }
-
-    public async Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request)
-    {
-        if (request.Beoordeling <= 0 || request.Beoordeling >= 11)
-            return false;
-
-        var dbIngeleverdeOpdracht = await _opdrachtRepository.HaalInzendingOp(request.InzendingId);
-        if (dbIngeleverdeOpdracht is null)
-            return false;
-
-        await _opdrachtRepository.SlaBeoordelingOp(new OpdrachtBeoordeling()
-        {
-            Cijfer = request.Beoordeling,
-            Feedback = request.Feedback,
-            IngeleverdeOpdracht = dbIngeleverdeOpdracht
-        });
-
-        return true;
     }
 }

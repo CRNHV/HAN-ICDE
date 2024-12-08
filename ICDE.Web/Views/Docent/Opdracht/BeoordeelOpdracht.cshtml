@@ -14,9 +14,9 @@
         <form enctype="multipart/form-data" asp-action="BeoordeelOpdracht">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input value="@Model.InzendingId" asp-for="InzendingId" type="text" hidden />
-            <label asp-for="Beoordeling" class="control-label"></label>
-            <input type="number" asp-for="Beoordeling" class="form-control" />
-            <span asp-validation-for="Beoordeling" class="text-danger"></span>
+            <label asp-for="Cijfer" class="control-label"></label>
+            <input type="number" asp-for="Cijfer" class="form-control" />
+            <span asp-validation-for="Cijfer" class="text-danger"></span>
             <div class="form-group">
                 <label asp-for="Feedback" class="control-label"></label>
                 <input asp-for="Feedback" class="form-control" />
