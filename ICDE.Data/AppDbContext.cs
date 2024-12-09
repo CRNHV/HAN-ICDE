@@ -26,7 +26,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     {
         modelBuilder.Entity<Opleiding>()
             .HasMany(e => e.Vakken)
-            .WithOne();
+            .WithMany();
 
         modelBuilder.Entity<Vak>()
            .HasMany(e => e.Cursussen)
