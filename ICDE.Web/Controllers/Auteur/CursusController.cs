@@ -43,14 +43,4 @@ public class CursusController : ControllerBase
             EerderVersies = eerdereVersies,
         });
     }
-
-    /// <summary>
-    /// UC17
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet()]
-    public async Task<IActionResult> CheckLeeruitkomstOverzichtVanCursus()
-    {
-        return View();
-    }
 }
