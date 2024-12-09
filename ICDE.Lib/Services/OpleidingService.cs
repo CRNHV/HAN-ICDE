@@ -40,6 +40,30 @@ internal class OpleidingService : IOpleidingService
         return createdOpleiding.GroupId;
     }
 
+    public async Task<OpleidingDto?> Create(CreateOpleiding request)
+    {
+        var opleiding = _mapper.Map<Opleiding>(request);
+        opleiding.GroupId = Guid.NewGuid();
+        var result = await _opleidingRepository.Create(opleiding);
+        if (result is null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<OpleidingDto>(result);
+    }
+
+    public async Task<bool> Delete(Guid groupId, int versie)
+    {
+        var opleidingen = await _opleidingRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versie);
+        foreach (var item in opleidingen)
+        {
+            await _opleidingRepository.Delete(item);
+        }
+
+        return true;
+    }
+
     public async Task<List<OpleidingDto>> GetAllUnique()
     {
         var opleidingen = await _opleidingRepository.GetList();
@@ -66,6 +90,26 @@ internal class OpleidingService : IOpleidingService
 
         await _opleidingRepository.Update(opleiding);
 
+        return true;
+    }
+
+    public async Task<bool> Update(UpdateOpleiding request)
+    {
+        var opleidingToUpdate = await _opleidingRepository.GetLatestByGroupId(request.GroupId);
+        if (opleidingToUpdate is null)
+        {
+            return false;
+        }
+
+        opleidingToUpdate.Naam = request.Naam;
+        opleidingToUpdate.Beschrijving = request.Beschrijving;
+
+        await _opleidingRepository.Update(opleidingToUpdate);
+        var updatedOpleiding = await _opleidingRepository.GetLatestByGroupId(request.GroupId);
+        updatedOpleiding.RelationshipChanged = true;
+        updatedOpleiding.Vakken = opleidingToUpdate.Vakken;
+
+        await _opleidingRepository.Update(updatedOpleiding);
         return true;
     }
 

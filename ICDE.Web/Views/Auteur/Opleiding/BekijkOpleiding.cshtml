@@ -9,12 +9,13 @@
 
 <a href="/auteur/rapportage/generate/@Model.Opleiding.GroupId">check</a>
 <a href="/auteur/opleiding/@Model.Opleiding.GroupId/copy">Kopie</a>
+<a href="/auteur/opleiding/verwijder/@Model.Opleiding.GroupId/@Model.Opleiding.VersieNummer">verwijder</a>
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form method="post" enctype="multipart/form-data" asp-action="UpdateLeeruitkomst">
+        <form method="post" enctype="multipart/form-data" asp-action="UpdateOpleiding">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <input name="Id" class="form-control" value="@Model.Opleiding.Id" hidden /> *@
+            <input name="GroupId" class="form-control" value="@Model.Opleiding.GroupId" hidden />
             <div class="form-group">
                 <label name="Naam" class="control-label"></label>
                 <input name="Naam" class="form-control" value="@Model.Opleiding.Naam" />

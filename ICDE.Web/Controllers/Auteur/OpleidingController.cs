@@ -43,9 +43,16 @@ public class OpleidingController : Controller
     /// UC11
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> MaakOpleiding()
+    [HttpPost("create")]
+    public async Task<IActionResult> MaakOpleiding([FromForm] CreateOpleiding request)
     {
-        return null;
+        var result = await _opleidingService.Create(request);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/opleiding/bekijk/{result.GroupId}");
     }
 
     /// <summary>
@@ -85,19 +92,33 @@ public class OpleidingController : Controller
     /// <summary>
     /// UC11
     /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> VerwijderOpleiding()
+    /// <returns></returns>    
+    [HttpGet("verwijder/{groupId}/{versie}")]
+    public async Task<IActionResult> VerwijderOpleiding([FromRoute] Guid groupId, [FromRoute] int versie)
     {
-        return null;
+        bool result = await _opleidingService.Delete(groupId, versie);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return RedirectToAction("Index");
     }
 
     /// <summary>
     /// UC11
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> UpdateOpleiding()
+    [HttpPost("Update")]
+    public async Task<IActionResult> UpdateOpleiding([FromForm] UpdateOpleiding request)
     {
-        return null;
+        var result = await _opleidingService.Update(request);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/opleiding/bekijk/{request.GroupId}");
     }
 
     /// <summary>
