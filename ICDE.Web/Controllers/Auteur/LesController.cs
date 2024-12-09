@@ -85,10 +85,14 @@ public class LesController : Controller
     /// UC6
     /// </summary>
     /// <returns></returns>    
-    [HttpDelete("delete/{groupId}/{versionId}")]
+    [HttpGet("delete/{groupId}/{versionId}")]
     public async Task<IActionResult> VerwijderLes([FromRoute] Guid groupId, [FromRoute] int versionId)
     {
-        return null;
+        var result = await _lesService.Delete(groupId, versionId);
+        if (result == false)
+            return BadRequest();
+
+        return Redirect("/auteur/les");
     }
 
     /// <summary>
@@ -98,7 +102,11 @@ public class LesController : Controller
     [HttpPost("update")]
     public async Task<IActionResult> UpdateLes([FromForm] LesUpdateDto request)
     {
-        return null;
+        var result = await _lesService.Update(request);
+        if (!result)
+            return BadRequest();
+
+        return Redirect($"/auteur/les/get/{request.GroupId}");
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Core;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Interfaces;
@@ -71,7 +72,8 @@ public class VakController : Controller
         {
             Vak = vak,
             Cursussen = cursussen,
-            Leeruitkomsten = luks
+            Leeruitkomsten = luks,
+            EerdereVersies = vak.EerdereVersies
         });
     }
 
@@ -79,18 +81,28 @@ public class VakController : Controller
     /// UC9
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> VerwijderVak()
+
+    [HttpGet("delete/{vakGroupId}/{vakVersieId}")]
+    public async Task<IActionResult> VerwijderVak([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
     {
-        return View();
+        var result = await _vakService.Delete(vakGroupId, vakVersie);
+        if (!result)
+            return BadRequest();
+
+        return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 
     /// <summary>
     /// UC9
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> UpdateVak()
+    public async Task<IActionResult> UpdateVak([FromForm] UpdateVakDto request)
     {
-        return View();
+        var result = await _vakService.Update(request);
+        if (!result)
+            return BadRequest();
+
+        return Redirect($"/auteur/vak/get/{request.GroupId}");
     }
 
     /// <summary>

@@ -41,6 +41,17 @@ internal class VakService : IVakService
         return course.GroupId;
     }
 
+    public async Task<bool> Delete(Guid vakGroupId, int vakVersie)
+    {
+        var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        foreach (var item in vakken)
+        {
+            await _vakRepository.Delete(item);
+        }
+
+        return true;
+    }
+
     public async Task<List<VakDto>> GetAll()
     {
         var vakken = await _vakRepository.GetList();
@@ -59,7 +70,11 @@ internal class VakService : IVakService
             return null;
         }
 
-        return _mapper.Map<VakMetOnderwijsOnderdelenDto>(vak);
+        var result = _mapper.Map<VakMetOnderwijsOnderdelenDto>(vak);
+        var eerdereVersies = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.Id != vak.Id);
+        result.EerdereVersies = _mapper.Map<List<VakDto>>(eerdereVersies);
+
+        return result;
     }
 
     public async Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId)
@@ -110,6 +125,27 @@ internal class VakService : IVakService
                 await _vakRepository.Update(vak);
             }
         }
+
+        return true;
+    }
+
+    public async Task<bool> Update(UpdateVakDto request)
+    {
+        var vak = await _vakRepository.GetLatestByGroupId(request.GroupId);
+        if (vak is null)
+        {
+            return false;
+        }
+
+        vak.Naam = request.Naam;
+        vak.Beschrijving = request.Beschrijving;
+        await _vakRepository.Update(vak);
+
+        var updatedVak = await _vakRepository.GetLatestByGroupId(vak.GroupId);
+        updatedVak.RelationshipChanged = true;
+        updatedVak.Cursussen = vak.Cursussen;
+        updatedVak.Leeruitkomsten = vak.Leeruitkomsten;
+        await _vakRepository.Update(updatedVak);
 
         return true;
     }

@@ -29,7 +29,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Views\Auteur\BeoordelingCritereas\" />
 	  <Folder Include="Views\Auteur\Rapportage\" />
 	  <Folder Include="Views\Student\Cursus\" />
 	</ItemGroup>

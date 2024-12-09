@@ -64,7 +64,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
     {
-        var dbOpdracht = await _opdrachtRepository.GetById(opdracht.OpdrachtId);
+        var dbOpdracht = await _opdrachtRepository.Get(opdracht.OpdrachtId);
         if (dbOpdracht is null)
             return false;
 

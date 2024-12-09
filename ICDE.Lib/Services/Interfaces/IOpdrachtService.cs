@@ -3,6 +3,7 @@
 namespace ICDE.Lib.Services.Interfaces;
 public interface IOpdrachtService
 {
+    Task<bool> AddCritereaToAssignment(Guid opdrachtGroupId, Guid critereaGroupId);
     Task<OpdrachtDto?> Bekijk(Guid opdrachtId);
     Task<List<OpdrachtDto>> GetAll();
     Task<OpdrachtVolledigeDataDto?> GetFullDataByGroupId(Guid opdrachtGroupId);

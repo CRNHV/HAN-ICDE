@@ -104,8 +104,15 @@ public class OpleidingController : Controller
     /// UC12
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> KopieerOpleiding()
+    [HttpGet("{opleidingGroupId}/copy")]
+    public async Task<IActionResult> KopieerOpleiding([FromRoute] Guid opleidingGroupId)
     {
-        return null;
+        var resultGuid = await _opleidingService.Copy(opleidingGroupId);
+        if (resultGuid == Guid.Empty)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/opleiding/bekijk/{resultGuid}");
     }
 }
