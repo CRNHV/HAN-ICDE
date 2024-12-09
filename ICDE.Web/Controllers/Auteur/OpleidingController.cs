@@ -23,7 +23,6 @@ public class OpleidingController : Controller
         _vakService = vakService;
     }
 
-
     /// <summary>
     /// UC10
     /// </summary>
