@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
-using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;

@@ -1,5 +1,9 @@
-﻿namespace ICDE.Lib.Services.Interfaces;
+﻿using ICDE.Lib.Validator;
+
+namespace ICDE.Lib.Services.Interfaces;
 public interface IRapportageService
 {
-    Task<bool> ValidateOpleiding(Guid opleidingGroupId);
+    Task<List<ValidationResult>> GenerateReportForOpleiding(Guid opleidingGroupId);
+    Task<List<ValidationResult>> GenerateReportForVak(Guid vakGroupId);
+    Task<List<ValidationResult>> GenerateReportForCursus(Guid vakGroupId);
 }

@@ -28,7 +28,7 @@ internal class CursusService : ICursusService
 
     public async Task<CursusMetPlanningDto?> GetFullCursusByGroupId(Guid cursusGroupId)
     {
-        var cursus = await _cursusRepository.GetFullCursusData(cursusGroupId);
+        var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(cursusGroupId);
         if (cursus is null)
             return null;
 

@@ -1,0 +1,89 @@
+﻿@using ICDE.Web.Models.Rapportage
+@model RapportageIndexViewModel
+@{
+    ViewData["Title"] = "Genereer rapportage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Genereer rapportage</h1>
+
+<hr />
+<div class="row">    
+    <div class="col-md-4">
+        <h2> Opleidingen </h2>
+        @if (Model.Opleidingen.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Opleidingen)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/auteur/rapportage/opleiding/@item.GroupId">Check leeruitkomsten</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2> Vakken </h2>
+        @if (Model.Vakken.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Vakken)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/auteur/rapportage/vak/@item.GroupId">Check leeruitkomsten</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2> Opleidingen </h2>
+        @if (Model.Cursussen.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Cursussen)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/auteur/rapportage/cursus/@item.GroupId">Check leeruitkomsten</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</div>
+

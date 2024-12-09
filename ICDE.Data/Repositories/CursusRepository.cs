@@ -21,18 +21,19 @@ internal class CursusRepository : RepositoryBase<Cursus>, ICursusRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Cursus?> GetFullCursusData(Guid groupId)
+    public async Task<Cursus?> GetFullObjectTreeByGroupId(Guid vakGroupId)
     {
         return await _context.Cursussen
-            .AsSplitQuery()
-            .Include(x => x.Leeruitkomsten)
-            .Include(x => x.Planning)
-            .ThenInclude(x => x.PlanningItems)
-            .ThenInclude(x => x.Les)
-            .Include(x => x.Planning)
-            .ThenInclude(x => x.PlanningItems)
-            .ThenInclude(x => x.Opdracht)
-            .Where(x => x.GroupId == groupId)
+                    .Include(c => c.Planning)
+                        .ThenInclude(p => p.PlanningItems)
+                            .ThenInclude(pi => pi.Opdracht)
+                                .ThenInclude(o => o.BeoordelingCritereas)
+                                    .ThenInclude(bc => bc.Leeruitkomsten)
+                    .Include(c => c.Planning)
+                        .ThenInclude(p => p.PlanningItems)
+                            .ThenInclude(pi => pi.Les)
+                                .ThenInclude(l => l.Leeruitkomsten)
+            .Where(x => x.GroupId == vakGroupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
     }

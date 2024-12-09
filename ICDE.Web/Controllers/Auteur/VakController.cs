@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Azure.Core;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Interfaces;

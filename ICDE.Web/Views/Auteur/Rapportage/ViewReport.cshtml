@@ -1,0 +1,43 @@
+﻿@using ICDE.Lib.Validator
+@model List<ValidationResult>
+@{
+    ViewData["Title"] = "Genereer rapportage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int ctr = 0;
+}
+
+<h1>Genereer rapportage</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h2> Opleidingen </h2>
+        @if (Model.Count > 0)
+        {
+
+            ctr += 1;
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Succes</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@ctr</td>
+                            <td>@item.Success</td>
+                            <td>@item.Message</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
