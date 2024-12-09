@@ -85,4 +85,15 @@ internal class LeeruitkomstService : ILeeruitkomstService
         var luk = dbLuks.FirstOrDefault();
         return _mapper.Map<LeeruitkomstDto?>(luk);
     }
+
+    public async Task<bool> Delete(Guid groupId, int versieId)
+    {
+        var leeruitkomsten = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
+        foreach (var luk in leeruitkomsten)
+        {
+            await _leeruitkomstRepository.Delete(luk);
+        }
+
+        return true;
+    }
 }

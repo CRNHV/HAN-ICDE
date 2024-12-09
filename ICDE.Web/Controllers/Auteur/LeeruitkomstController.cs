@@ -79,9 +79,16 @@ public class LeeruitkomstController : ControllerBase
     /// UC14
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> VerwijderLeeruitkomst()
+    [HttpGet("delete/{groupId}/{versieId}")]
+    public async Task<IActionResult> DeleteLeeruitkosmt([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
-        return null;
+        var result = await _leeruitkomstService.Delete(groupId, versieId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/leeruitkomst/bekijkalle");
     }
 
     /// <summary>
