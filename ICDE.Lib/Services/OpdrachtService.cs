@@ -11,13 +11,15 @@ internal sealed class OpdrachtService : IOpdrachtService
 {
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly IFileManager _fileManager;
+    private readonly IBeoordelingCritereaRepository _beoordelingCritereaRepository;
     private readonly IMapper _mapper;
 
-    public OpdrachtService(IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IMapper mapper)
+    public OpdrachtService(IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IMapper mapper, IBeoordelingCritereaRepository beoordelingCritereaRepository)
     {
         _opdrachtRepository = opdrachtRepository;
         _fileManager = fileManager;
         _mapper = mapper;
+        _beoordelingCritereaRepository = beoordelingCritereaRepository;
     }
 
     public async Task<OpdrachtDto?> Bekijk(Guid opdrachtId)
@@ -53,7 +55,7 @@ internal sealed class OpdrachtService : IOpdrachtService
 
     public async Task<List<OpdrachtDto>> GetAll()
     {
-        var dbOpdrachten = await _opdrachtRepository.HaalAlleOp();
+        var dbOpdrachten = await _opdrachtRepository.GetList();
         if (dbOpdrachten.Count == 0)
         {
             return new List<OpdrachtDto>();
@@ -68,9 +70,11 @@ internal sealed class OpdrachtService : IOpdrachtService
         });
     }
 
-    public async Task MaakOpdracht(MaakOpdrachtDto opdracht)
+    public async Task MaakOpdracht(MaakOpdrachtDto request)
     {
-        await _opdrachtRepository.MaakOpdracht(opdracht.Naam, opdracht.Beschrijving, opdracht.IsToets);
+        var opdracht = _mapper.Map<Opdracht>(request);
+        opdracht.GroupId = Guid.NewGuid();
+        await _opdrachtRepository.Create(opdracht);
     }
 
     public async Task VerwijderOpdracht(Guid opdrachtGroupId)
@@ -94,5 +98,29 @@ internal sealed class OpdrachtService : IOpdrachtService
         }
         updatedOpdracht.RelationshipChanged = true;
         await _opdrachtRepository.Update(updatedOpdracht);
+    }
+
+    public async Task<bool> AddCritereaToAssignment(Guid opdrachtGroupId, Guid critereaGroupId)
+    {
+        var opdrachten = await _opdrachtRepository.GetList(x => x.GroupId == opdrachtGroupId);
+        if (opdrachten.Count == 0)
+        {
+            return false;
+        }
+
+        var criterea = await _beoordelingCritereaRepository.GetList(x => x.GroupId == critereaGroupId);
+        if (criterea.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (var item in opdrachten)
+        {
+            item.BeoordelingCritereas.Add(criterea.First());
+            item.RelationshipChanged = true;
+            await _opdrachtRepository.Update(item);
+        }
+
+        return true;
     }
 }

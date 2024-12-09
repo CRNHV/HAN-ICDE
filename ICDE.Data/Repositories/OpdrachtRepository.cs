@@ -1,18 +1,19 @@
 ﻿using ICDE.Data.Entities;
+using ICDE.Data.Repositories.Base;
 using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-public class OpdrachtRepository : IOpdrachtRepository
+public class OpdrachtRepository : RepositoryBase<Opdracht>, IOpdrachtRepository
 {
     private readonly AppDbContext _context;
 
-    public OpdrachtRepository(AppDbContext context)
+    public OpdrachtRepository(AppDbContext context) : base(context)
     {
         _context = context;
     }
 
-    public async Task<List<Opdracht>> HaalAlleOp()
+    public override async Task<List<Opdracht>> GetList()
     {
         return await _context.Opdrachten
             .GroupBy(l => l.GroupId)
@@ -20,27 +21,11 @@ public class OpdrachtRepository : IOpdrachtRepository
             .ToListAsync();
     }
 
-    public async Task<Opdracht?> GetById(int opdrachtId)
-    {
-        return await _context.Opdrachten.FirstOrDefaultAsync(x => x.Id == opdrachtId);
-    }
-
-    public async Task MaakOpdracht(string naam, string beschrijving, bool isToets)
-    {
-        var opdracht = new Opdracht()
-        {
-            Naam = naam,
-            Beschrijving = beschrijving,
-            Type = isToets ? OpdrachtType.Toets : OpdrachtType.Casus
-        };
-
-        await _context.Opdrachten.AddAsync(opdracht);
-        await _context.SaveChangesAsync();
-    }
-
     public async Task<List<Opdracht>> GetEarlierVersions(Guid groupId, int exceptId)
     {
-        return await _context.Opdrachten.Where(x => x.GroupId == groupId && x.Id != exceptId).ToListAsync();
+        return await _context.Opdrachten
+            .Where(x => x.GroupId == groupId && x.Id != exceptId)
+            .ToListAsync();
     }
 
     public async Task<Opdracht?> GetFullDataByGroupId(Guid groupId)
@@ -97,12 +82,5 @@ public class OpdrachtRepository : IOpdrachtRepository
         {
             await trans.RollbackAsync();
         }
-    }
-
-    public async Task<Opdracht> Update(Opdracht opdracht)
-    {
-        _context.Opdrachten.Update(opdracht);
-        await _context.SaveChangesAsync();
-        return opdracht;
     }
 }

@@ -6,12 +6,15 @@
 
 <h1>Bekijk vak</h1>
 
+<a href="/auteur/vak/delete/@Model.Vak.GroupId/@Model.Vak.VersieNummer">Verwijder vak</a>
+
 <hr />
 <div class="row">
     <div class="col-md-6">
         <h2> Vak </h2>
-        <form method="post" enctype="multipart/form-data" asp-action="MaakVak">
+        <form method="post" enctype="multipart/form-data" asp-action="UpdateVak">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input name="GroupId" class="form-control" value="@Model.Vak.GroupId" hidden />
             <div class="form-group">
                 <label name="Naam" class="control-label">Naam</label>
                 <input name="Naam" class="form-control" value="@Model.Vak.Naam" />

@@ -37,6 +37,24 @@ internal class LesService : ILesService
         return _mapper.Map<LesDto>(result);
     }
 
+    public async Task<bool> Delete(Guid groupId, int versionId)
+    {
+        try
+        {
+            var lessons = await _lesRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versionId);
+            foreach (var item in lessons)
+            {
+                await _lesRepository.Delete(item);
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
     public async Task<List<LesDto>> GetAll()
     {
         var lessons = await _lesRepository.GetList();
@@ -105,6 +123,26 @@ internal class LesService : ILesService
             item.RelationshipChanged = true;
             await _lesRepository.Update(item);
         }
+
+        return true;
+    }
+
+    public async Task<bool> Update(LesUpdateDto request)
+    {
+        var les = await _lesRepository.GetLatestByGroupId(request.GroupId);
+        if (les is null)
+        {
+            return false;
+        }
+
+        les.Naam = request.Naam;
+        les.Beschrijving = request.Beschrijving;
+        await _lesRepository.Update(les);
+
+        var updatedLes = await _lesRepository.GetLatestByGroupId(request.GroupId);
+        updatedLes.Leeruitkomsten = les.Leeruitkomsten;
+        updatedLes.RelationshipChanged = true;
+        await _lesRepository.Update(updatedLes);
 
         return true;
     }

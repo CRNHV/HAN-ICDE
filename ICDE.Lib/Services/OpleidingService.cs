@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Planning;
@@ -16,6 +17,27 @@ internal class OpleidingService : IOpleidingService
         _opleidingRepository = opleidingRepository;
         _vakRepository = vakRepository;
         _mapper = mapper;
+    }
+
+    public async Task<Guid> Copy(Guid opleidingGroupId)
+    {
+        var opleiding = await _opleidingRepository.GetLatestByGroupId(opleidingGroupId);
+        if (opleiding is null)
+        {
+            return Guid.Empty;
+        }
+
+        var opleidingCopy = (Opleiding)opleiding.Clone();
+        opleidingCopy.Naam += $" | KOPIE {DateTime.Now.ToShortDateString()}";
+
+        opleidingCopy.GroupId = Guid.NewGuid();
+        var createdOpleiding = await _opleidingRepository.Create(opleidingCopy);
+        if (createdOpleiding is null)
+        {
+            return Guid.Empty;
+        }
+
+        return createdOpleiding.GroupId;
     }
 
     public async Task<List<OpleidingDto>> GetAllUnique()

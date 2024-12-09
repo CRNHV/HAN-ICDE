@@ -12,6 +12,15 @@ internal class BeoordelingCritereaRepository : RepositoryBase<BeoordelingCritere
         _context = context;
     }
 
+    public async Task<BeoordelingCriterea?> GetFullDataByGroupId(Guid critereaGroupId)
+    {
+        return await _context.BeoordelingCritereas
+            .Include(x => x.Leeruitkomsten)
+            .Where(x => x.GroupId == critereaGroupId)
+            .OrderByDescending(x => x.VersieNummer)
+            .FirstOrDefaultAsync();
+    }
+
     public override async Task<List<BeoordelingCriterea>> GetList()
     {
         return await _context.BeoordelingCritereas

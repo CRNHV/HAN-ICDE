@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Core;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
@@ -44,6 +45,13 @@ public class OpdrachtController : ControllerBase
         }
 
         return View("/Views/Auteur/Opdracht/MaakOpdracht.cshtml");
+    }
+
+    [HttpGet("{opdrachtGroupId}/voegcritereatoe/{critereaGroupId}")]
+    public async Task<IActionResult> AddCritereaToAssignment([FromRoute] Guid opdrachtGroupId, [FromRoute] Guid critereaGroupId)
+    {
+        bool result = await _opdrachtService.AddCritereaToAssignment(opdrachtGroupId, critereaGroupId);
+        return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
     }
 
     [HttpGet("bekijk/{opdrachtGroupId}")]

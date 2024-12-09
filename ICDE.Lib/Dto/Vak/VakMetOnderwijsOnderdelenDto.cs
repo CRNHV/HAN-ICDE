@@ -11,4 +11,6 @@ public class VakMetOnderwijsOnderdelenDto
 
     public List<LeeruitkomstDto> Leeruitkomsten { get; set; } = new();
     public List<CursusDto> Cursussen { get; set; } = new();
+
+    public List<VakDto> EerdereVersies { get; set; } = new();
 }

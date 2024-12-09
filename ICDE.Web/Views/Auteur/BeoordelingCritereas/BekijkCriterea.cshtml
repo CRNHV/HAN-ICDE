@@ -1,61 +1,58 @@
-﻿@model ICDE.Web.Models.Lessen.BekijkLesViewModel
+﻿@using ICDE.Web.Models.BeoordelingCriterea
+@model BekijkBeoorderlingCritereaViewModel
 @{
-    ViewData["Title"] = "Bekijk les";
+    ViewData["Title"] = "Bekijk BeoordelingCriterea";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Lessen</h1>
-
-<a href="/auteur/les/delete/@Model.Les.GroupId/@Model.Les.VersieNummer">Verwijder versie</a>
+<h1>bekijk BeoordelingCriterea</h1>
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2> Maak les </h2>
-        <form method="post" enctype="multipart/form-data" asp-action="UpdateLes">
+        <form method="post" enctype="multipart/form-data" asp-action="MaakLes">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input name="GroupId" class="form-control" value="@Model.Les.GroupId" hidden />
+            <input name="GroupId" class="form-control" value="@Model.BeoordelingCriterea.GroupId" hidden />
             <div class="form-group">
                 <label name="Naam" class="control-label">Naam</label>
-                <input name="Naam" class="form-control" value="@Model.Les.Naam" />
+                <input name="Naam" class="form-control" value="@Model.BeoordelingCriterea.Naam" />
             </div>
             <div class="form-group">
                 <label name="Beschrijving" class="control-label">Beschrijving</label>
-                <input name="Beschrijving" class="form-control" value="@Model.Les.Beschrijving" />
+                <input name="Beschrijving" class="form-control" value="@Model.BeoordelingCriterea.Beschrijving" />
             </div>
-            <button type="submit">Maak</button>
+            <button type="submit">Update</button>
         </form>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Andere versies</h2>
-        @if (Model.LesList.Count > 0)
+        @if (Model.EerdereVersies.Count > 0)
         {
             <table class="table">
                 <thead>
                     <tr>
                         <th>Naam</th>
                         <th>Beschrijving</th>
-                        <th>VersieNummer</th>
                         <th>URL</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.LesList)
+                    @foreach (var item in Model.EerdereVersies)
                     {
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
-                            <td>@item.VersieNummer</td>
-                            <td><a href="auteur/les/get/@item.GroupId/@item.VersieNummer">Voeg toe</a></td>
+                            <td><a href="/auteur/les/get/@item.GroupId/@item.VersieNummer">Bekijk versie</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Gekoppelde leeruitkomsten</h2>
-        @if (Model.LesLeeruitkomsten.Count > 0)
+        @if (Model.BeoordelingCriterea.Leeruitkomsten.Count > 0)
         {
             <table class="table">
                 <thead>
@@ -67,46 +64,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.LesLeeruitkomsten)
+                    @foreach (var item in Model.BeoordelingCriterea.Leeruitkomsten)
                     {
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
                             <td>@item.VersieNummer</td>
-                            <td>
-                                <a href="/auteur/les/ontkoppelluk/@Model.Les.GroupId/@item.GroupId">Verwijder</a>
-                            </td>
+                            <td><a href="/auteur/leeruitkomst/bekijk/@item.GroupId/">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
     </div>
-    <div class="col-md-4">
-        <h2>Voeg LUK toe</h2>
-        @if (Model.BeschrikbareLeeruitkomsten.Count > 0)
+    <div class="col-md-6">
+        <h2>Koppel leeruitkomsten</h2>
+        @if (Model.Leeruitkomsten.Count > 0)
         {
             <table class="table">
                 <thead>
                     <tr>
                         <th>Naam</th>
                         <th>Beschrijving</th>
+                        <th>VersieNummer</th>
                         <th>URL</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.BeschrikbareLeeruitkomsten)
+                    @foreach (var item in Model.Leeruitkomsten)
                     {
                         <tr>
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
-                            <td><a href="/auteur/les/koppelluk/@Model.Les.GroupId/@item.GroupId">Bekijk</a></td>
+                            <td>@item.VersieNummer</td>
+                            <td><a href="/auteur/leeruitkomst/bekijk/@item.GroupId/">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
     </div>
-
 </div>
 
