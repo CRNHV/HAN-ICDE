@@ -20,6 +20,7 @@ internal class AutoMapperConfigs : Profile
         CreateOpleidingMappings();
         CreatePlanningMappings();
         CreateOpdrachtMappings();
+        CreateLesMappings();
     }
 
     private void CreateOpdrachtMappings()
@@ -69,9 +70,14 @@ internal class AutoMapperConfigs : Profile
             .ForMember(dest => dest.Leeruitkomsten, opt => opt.MapFrom(src => src.Leeruitkomsten))
             .ForMember(dest => dest.Planning, opt => opt.MapFrom(src => src.Planning));
     }
+    private void CreateLesMappings()
+    {
+        CreateMap<Les, LesDto>().ReverseMap();
+        CreateMap<Les, LesMetLeeruitkomstenDto>();
+    }
+
     private void CreateSimpleDtoMappings()
     {
         CreateMap<Leeruitkomst, LeeruitkomstDto>().ReverseMap();
-        CreateMap<Les, LesDto>().ReverseMap();
     }
 }

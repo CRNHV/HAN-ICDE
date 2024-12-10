@@ -31,6 +31,7 @@ internal class PlanningRepository : RepositoryBase<Planning>, IPlanningRepositor
         return await _context.Plannings
             .Include(x => x.PlanningItems)
             .ThenInclude(x => x.Les)
+            .ThenInclude(x => x.Leeruitkomsten)
             .Include(x => x.PlanningItems)
             .ThenInclude(x => x.Opdracht)
             .Where(x => x.Id == id)
