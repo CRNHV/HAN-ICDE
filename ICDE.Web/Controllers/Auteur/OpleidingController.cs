@@ -23,6 +23,7 @@ public class OpleidingController : Controller
         _vakService = vakService;
     }
 
+
     /// <summary>
     /// UC10
     /// </summary>
@@ -77,7 +78,7 @@ public class OpleidingController : Controller
         {
             return NotFound();
         }
-        var vakken = await _vakService.GetAll();
+        var vakken = await _vakService.Allemaal();
 
         var viewModel = new BekijkOpleidingViewModel()
         {
