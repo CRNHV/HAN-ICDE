@@ -64,8 +64,8 @@ public class VakController : Controller
             return NotFound();
         }
 
-        var luks = await _leeruitkomstService.GetAll();
-        var cursussen = await _cursusService.GetAll();
+        var luks = await _leeruitkomstService.Allemaal();
+        var cursussen = await _cursusService.Allemaal();
 
         return View("Views/Auteur/Vak/BekijkVak.cshtml", new BekijkVakViewModel()
         {

@@ -26,7 +26,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("bekijkalle")]
     public async Task<IActionResult> BekijkAlle()
     {
-        List<OpdrachtDto> opdrachten = await _opdrachtService.GetAll();
+        List<OpdrachtDto> opdrachten = await _opdrachtService.Allemaal();
         return View("/Views/Auteur/Opdracht/BekijkAlle.cshtml", opdrachten);
     }
 
@@ -49,20 +49,20 @@ public class OpdrachtController : ControllerBase
     [HttpGet("{opdrachtGroupId}/voegcritereatoe/{critereaGroupId}")]
     public async Task<IActionResult> AddCritereaToAssignment([FromRoute] Guid opdrachtGroupId, [FromRoute] Guid critereaGroupId)
     {
-        bool result = await _opdrachtService.AddCritereaToAssignment(opdrachtGroupId, critereaGroupId);
+        bool result = await _opdrachtService.VoegCritereaToe(opdrachtGroupId, critereaGroupId);
         return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
     }
 
     [HttpGet("bekijk/{opdrachtGroupId}")]
     public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
-        var opdrachtData = await _opdrachtService.GetFullDataByGroupId(opdrachtGroupId);
+        var opdrachtData = await _opdrachtService.HaalAlleDataOp(opdrachtGroupId);
         if (opdrachtData is null)
         {
             return NotFound();
         }
 
-        var beoordelingCritereas = await _beoordeilngCritereaService.GetAllUnique();
+        var beoordelingCritereas = await _beoordeilngCritereaService.Unieke();
 
         return View("/Views/Auteur/Opdracht/BekijkOpdracht.cshtml", new AuteurBekijkOpdrachtViewModel()
         {

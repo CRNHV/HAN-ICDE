@@ -20,7 +20,7 @@ internal class LesService : ILesService
         _mapper = mapper;
     }
 
-    public async Task<LesDto?> CreateLesson(string naam, string beschrijving)
+    public async Task<LesDto?> Maak(string naam, string beschrijving)
     {
         var result = await _lesRepository.Create(new Les()
         {
@@ -37,7 +37,7 @@ internal class LesService : ILesService
         return _mapper.Map<LesDto>(result);
     }
 
-    public async Task<bool> Delete(Guid groupId, int versionId)
+    public async Task<bool> VerwijderVersie(Guid groupId, int versionId)
     {
         try
         {
@@ -55,7 +55,7 @@ internal class LesService : ILesService
         }
     }
 
-    public async Task<List<LesDto>> GetAll()
+    public async Task<List<LesDto>> Allemaal()
     {
         var lessons = await _lesRepository.GetList();
         if (lessons.Count == 0)
@@ -65,7 +65,7 @@ internal class LesService : ILesService
         return _mapper.Map<List<LesDto>>(lessons);
     }
 
-    public async Task<LesMetEerdereVersies?> GetLessonWithPreviousVersions(Guid groupId)
+    public async Task<LesMetEerdereVersies?> HaalLessenOpMetEerdereVersies(Guid groupId)
     {
         var currentVersion = await _lesRepository.GetLatestByGroupId(groupId);
         if (currentVersion is null)

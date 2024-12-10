@@ -46,7 +46,7 @@ public class OpleidingController : Controller
     [HttpPost("create")]
     public async Task<IActionResult> MaakOpleiding([FromForm] CreateOpleiding request)
     {
-        var result = await _opleidingService.Create(request);
+        var result = await _opleidingService.Maak(request);
         if (result is null)
         {
             return BadRequest();
@@ -62,7 +62,7 @@ public class OpleidingController : Controller
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        List<OpleidingDto> opleidingen = await _opleidingService.GetAllUnique();
+        List<OpleidingDto> opleidingen = await _opleidingService.HaalUniekeOp();
         return View("/Views/Auteur/Opleiding/Index.cshtml", opleidingen);
     }
 
@@ -96,7 +96,7 @@ public class OpleidingController : Controller
     [HttpGet("verwijder/{groupId}/{versie}")]
     public async Task<IActionResult> VerwijderOpleiding([FromRoute] Guid groupId, [FromRoute] int versie)
     {
-        bool result = await _opleidingService.Delete(groupId, versie);
+        bool result = await _opleidingService.Verwijder(groupId, versie);
         if (!result)
         {
             return BadRequest();
@@ -128,7 +128,7 @@ public class OpleidingController : Controller
     [HttpGet("{opleidingGroupId}/copy")]
     public async Task<IActionResult> KopieerOpleiding([FromRoute] Guid opleidingGroupId)
     {
-        var resultGuid = await _opleidingService.Copy(opleidingGroupId);
+        var resultGuid = await _opleidingService.Kopie(opleidingGroupId);
         if (resultGuid == Guid.Empty)
         {
             return BadRequest();

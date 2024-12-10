@@ -30,7 +30,7 @@ public class LesController : Controller
     public async Task<IActionResult> Index()
     {
         LesIndexViewModel viewModel = new LesIndexViewModel();
-        viewModel.Lessen = await _lesService.GetAll();
+        viewModel.Lessen = await _lesService.Allemaal();
         return View("/Views/Auteur/Les/Index.cshtml", viewModel);
     }
 
@@ -42,7 +42,7 @@ public class LesController : Controller
     [HttpPost("create")]
     public async Task<IActionResult> MaakLes([FromForm] MaakLesViewModel request)
     {
-        LesDto les = await _lesService.CreateLesson(request.Naam, request.Beschrijving);
+        LesDto les = await _lesService.Maak(request.Naam, request.Beschrijving);
         if (les is null)
         {
             return BadRequest();
@@ -57,7 +57,7 @@ public class LesController : Controller
     [HttpGet("get/{groupId}")]
     public async Task<IActionResult> BekijkLes([FromRoute] Guid groupId)
     {
-        LesMetEerdereVersies lmev = await _lesService.GetLessonWithPreviousVersions(groupId);
+        LesMetEerdereVersies lmev = await _lesService.HaalLessenOpMetEerdereVersies(groupId);
         if (lmev is null)
         {
             return NotFound();
@@ -67,7 +67,7 @@ public class LesController : Controller
             Les = lmev.Les,
             LesList = lmev.LesList,
             LesLeeruitkomsten = lmev.LesLeeruitkomsten,
-            BeschrikbareLeeruitkomsten = await _leeruitkomstService.GetAll()
+            BeschrikbareLeeruitkomsten = await _leeruitkomstService.Allemaal()
         });
     }
 
@@ -88,7 +88,7 @@ public class LesController : Controller
     [HttpGet("delete/{groupId}/{versionId}")]
     public async Task<IActionResult> VerwijderLes([FromRoute] Guid groupId, [FromRoute] int versionId)
     {
-        var result = await _lesService.Delete(groupId, versionId);
+        var result = await _lesService.VerwijderVersie(groupId, versionId);
         if (result == false)
             return BadRequest();
 

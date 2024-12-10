@@ -17,7 +17,7 @@ internal class CursusService : ICursusService
         _planningRepository = planningRepository;
     }
 
-    public async Task<List<CursusDto>> GetAll()
+    public async Task<List<CursusDto>> Allemaal()
     {
         var cursussen = await _cursusRepository.GetList();
         if (cursussen.Count == 0)
@@ -26,7 +26,7 @@ internal class CursusService : ICursusService
         return _mapper.Map<List<CursusDto>>(cursussen);
     }
 
-    public async Task<CursusMetPlanningDto?> GetFullCursusByGroupId(Guid cursusGroupId)
+    public async Task<CursusMetPlanningDto?> HaalAlleDataOp(Guid cursusGroupId)
     {
         var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(cursusGroupId);
         if (cursus is null)
@@ -35,7 +35,7 @@ internal class CursusService : ICursusService
         return _mapper.Map<CursusMetPlanningDto>(cursus);
     }
 
-    public async Task<List<CursusDto>> GetEarlierVersionsByGroupId(Guid groupId, int exceptId)
+    public async Task<List<CursusDto>> HaalEerdereVersiesOp(Guid groupId, int exceptId)
     {
         var cursussen = await _cursusRepository.GetList(x => x.GroupId == groupId && x.Id != exceptId);
         if (cursussen.Count == 0)

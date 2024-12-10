@@ -41,7 +41,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("bekijkalle")]
     public async Task<IActionResult> BekijkLeeruitkomsten()
     {
-        List<LeeruitkomstDto> leeruitkomsten = await _leeruitkomstService.GetAll();
+        List<LeeruitkomstDto> leeruitkomsten = await _leeruitkomstService.Allemaal();
         return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomsten.cshtml", leeruitkomsten);
     }
 
@@ -52,7 +52,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("bekijk/{groupId}")]
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId)
     {
-        var leeruitkomst = await _leeruitkomstService.GetEntityWithEarlierVersions(groupId);
+        var leeruitkomst = await _leeruitkomstService.HaalOpMetEerdereVersies(groupId);
         if (leeruitkomst is null)
         {
             return NotFound();
@@ -63,7 +63,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("bekijkversie/{groupId}/{versieId}")]
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
-        var leeruitkomst = await _leeruitkomstService.GetVersion(groupId, versieId);
+        var leeruitkomst = await _leeruitkomstService.HaalVersieOp(groupId, versieId);
         if (leeruitkomst is null)
         {
             return NotFound();
@@ -82,7 +82,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("delete/{groupId}/{versieId}")]
     public async Task<IActionResult> DeleteLeeruitkosmt([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
-        var result = await _leeruitkomstService.Delete(groupId, versieId);
+        var result = await _leeruitkomstService.Verwijder(groupId, versieId);
         if (!result)
         {
             return BadRequest();
