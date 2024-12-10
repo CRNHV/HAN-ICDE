@@ -8,7 +8,6 @@
 
 <h1>Bekijk & update planning</h1>
 
-<h4>Bekijk & update planning</h4>
 <hr />
 <div class="row">
     <div class="col-md-6">
@@ -115,6 +114,31 @@
                     }
                 </tbody>
             </table>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4> Overzicht leeruitkomsten van planning </h4>
+        @if (Model.Lessen != null && Model.Lessen.Count > 0)
+        {
+            @foreach (var les in Model.LessenInPlanning)
+            {
+                <li>
+                    <strong>@les.Naam</strong>
+                    @if (les.Leeruitkomsten.Any())
+                    {
+                        <ul>
+                            @foreach (var leeruitkomst in les.Leeruitkomsten)
+                            {
+                                <li>@leeruitkomst.Naam | @leeruitkomst.Beschrijving</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p><em>No Leeruitkomsten available</em></p>
+                    }
+                </li>
+            }
         }
     </div>
 </div>

@@ -9,7 +9,8 @@ namespace ICDE.Web.Models.Planning;
 public class BekijkPlanningViewModel
 {
     public PlanningDto Planning { get; set; }
-    public List<CursusDto> Cursussen { get; set; }
-    public List<LesDto> Lessen { get; set; }
-    public List<OpdrachtDto> Opdrachten { get; set; }
+    public List<LesMetLeeruitkomstenDto> LessenInPlanning { get; set; } = new();
+    public List<CursusDto> Cursussen { get; set; } = new();
+    public List<LesDto> Lessen { get; set; } = new();
+    public List<OpdrachtDto> Opdrachten { get; set; } = new();
 }

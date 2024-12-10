@@ -1,4 +1,5 @@
-﻿using ICDE.Lib.Dto.Planning;
+﻿using ICDE.Lib.Dto.Lessen;
+using ICDE.Lib.Dto.Planning;
 
 namespace ICDE.Lib.Services.Interfaces;
 public interface IPlanningService
@@ -7,4 +8,5 @@ public interface IPlanningService
     Task<PlanningDto?> GetById(int planningId);
     Task<PlanningZonderItemsDto?> VoegOpdrachtToe(int planningId, Guid groupId);
     Task<PlanningZonderItemsDto?> VoegLesToe(int planningId, Guid groupId);
+    Task<List<LesMetLeeruitkomstenDto>> GetLessonsForPlanning(int planningId);
 }

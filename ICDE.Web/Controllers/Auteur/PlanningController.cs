@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
+using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Planning;
@@ -54,13 +55,15 @@ public class PlanningController : ControllerBase
         var cursussen = await _cursusService.GetAll();
         var opdrachten = await _opdrachtService.GetAll();
         var lessen = await _lesService.GetAll();
+        var lessenInPlanning = await _planningService.GetLessonsForPlanning(planningId);
 
         return View("/Views/Auteur/Planning/ViewPlanning.cshtml", new BekijkPlanningViewModel()
         {
             Planning = planning,
             Cursussen = cursussen,
             Lessen = lessen,
-            Opdrachten = opdrachten
+            Opdrachten = opdrachten,
+            LessenInPlanning = lessenInPlanning,
         });
     }
 

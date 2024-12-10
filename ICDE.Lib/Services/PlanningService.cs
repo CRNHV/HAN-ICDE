@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 
@@ -102,5 +103,20 @@ internal class PlanningService : IPlanningService
             return null;
         }
         return _mapper.Map<PlanningZonderItemsDto>(planning);
+    }
+
+    public async Task<List<LesMetLeeruitkomstenDto>> GetLessonsForPlanning(int planningId)
+    {
+        var planning = await _planningRepository.Get(planningId);
+        if (planning is null)
+        {
+            return new List<LesMetLeeruitkomstenDto>();
+        }
+
+        var lessons = planning.PlanningItems
+            .Where(x => x.Les != null)
+            .Select(x => x.Les)
+            .ToList();
+        return _mapper.Map<List<LesMetLeeruitkomstenDto>>(lessons);
     }
 }
