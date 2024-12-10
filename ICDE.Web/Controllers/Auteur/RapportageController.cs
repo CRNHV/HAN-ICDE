@@ -44,21 +44,21 @@ public class RapportageController : ControllerBase
     [HttpGet("opleiding/{groupGuid}")]
     public async Task<IActionResult> GenerateOpleidingReport([FromRoute] Guid groupGuid)
     {
-        var result = await _rapportageService.GenerateReportForOpleiding(groupGuid);
+        var result = await _rapportageService.GenereerRapportVoorOpleiding(groupGuid);
         return View("/Views/Auteur/Rapportage/ViewReport.cshtml", result);
     }
 
     [HttpGet("vak/{groupGuid}")]
     public async Task<IActionResult> GenerateVakReport([FromRoute] Guid groupGuid)
     {
-        var result = await _rapportageService.GenerateReportForVak(groupGuid);
+        var result = await _rapportageService.GenereerRapportVoorVak(groupGuid);
         return View("/Views/Auteur/Rapportage/ViewReport.cshtml", result);
     }
 
     [HttpGet("cursus/{groupGuid}")]
     public async Task<IActionResult> GenerateCursusReport([FromRoute] Guid groupGuid)
     {
-        var result = await _rapportageService.GenerateReportForCursus(groupGuid);
+        var result = await _rapportageService.GenereerRapportVoorCursus(groupGuid);
         return View("/Views/Auteur/Rapportage/ViewReport.cshtml", result);
     }
 }

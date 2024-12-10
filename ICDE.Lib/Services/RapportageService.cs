@@ -20,7 +20,7 @@ internal class RapportageService : IRapportageService
         _cursusRepository = cursusRepository;
     }
 
-    public async Task<List<ValidationResult>> GenerateReportForOpleiding(Guid opleidingGroupId)
+    public async Task<List<ValidationResult>> GenereerRapportVoorOpleiding(Guid opleidingGroupId)
     {
         var opleiding = await _opleidingRepository.GetFullObjectTreeByGroupId(opleidingGroupId);
         if (opleiding is null)
@@ -43,7 +43,7 @@ internal class RapportageService : IRapportageService
         return validationResult;
     }
 
-    public async Task<List<ValidationResult>> GenerateReportForVak(Guid vakGroupId)
+    public async Task<List<ValidationResult>> GenereerRapportVoorVak(Guid vakGroupId)
     {
         var vak = await _vakRepository.GetFullObjectTreeByGroupId(vakGroupId);
         if (vak is null)
@@ -63,7 +63,7 @@ internal class RapportageService : IRapportageService
         return validationResult;
     }
 
-    public async Task<List<ValidationResult>> GenerateReportForCursus(Guid vakGroupId)
+    public async Task<List<ValidationResult>> GenereerRapportVoorCursus(Guid vakGroupId)
     {
         var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(vakGroupId);
         if (cursus is null)
