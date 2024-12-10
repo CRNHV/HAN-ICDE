@@ -30,7 +30,7 @@ public class RapportageController : ControllerBase
     public async Task<IActionResult> Index()
     {
         var allOpleidingen = await _opleidingService.GetAllUnique();
-        var vakken = await _vakService.GetAll();
+        var vakken = await _vakService.Allemaal();
         var cursus = await _cursusService.GetAll();
 
         return View("/Views/Auteur/Rapportage/Index.cshtml", new RapportageIndexViewModel()

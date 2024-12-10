@@ -28,7 +28,7 @@ public class VakController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        List<VakDto> vakken = await _vakService.GetAll();
+        List<VakDto> vakken = await _vakService.Allemaal();
         return View("Views/Auteur/Vak/Index.cshtml", new VakIndexViewModel()
         {
             Vakken = vakken
@@ -42,7 +42,7 @@ public class VakController : Controller
     [HttpPost("maak")]
     public async Task<IActionResult> MaakVak([FromForm] MaakVakViewModel request)
     {
-        Guid groupId = await _vakService.CreateCourse(request.Naam, request.Beschrijving);
+        Guid groupId = await _vakService.MaakVak(request.Naam, request.Beschrijving);
         if (groupId == Guid.Empty)
         {
             return BadRequest();
@@ -84,7 +84,7 @@ public class VakController : Controller
     [HttpGet("delete/{vakGroupId}/{vakVersieId}")]
     public async Task<IActionResult> VerwijderVak([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
     {
-        var result = await _vakService.Delete(vakGroupId, vakVersie);
+        var result = await _vakService.VerwijderVersie(vakGroupId, vakVersie);
         if (!result)
             return BadRequest();
 

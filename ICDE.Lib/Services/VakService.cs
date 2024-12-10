@@ -24,7 +24,7 @@ internal class VakService : IVakService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateCourse(string naam, string beschrijving)
+    public async Task<Guid> MaakVak(string naam, string beschrijving)
     {
         var course = await _vakRepository.Create(new Vak()
         {
@@ -41,7 +41,7 @@ internal class VakService : IVakService
         return course.GroupId;
     }
 
-    public async Task<bool> Delete(Guid vakGroupId, int vakVersie)
+    public async Task<bool> VerwijderVersie(Guid vakGroupId, int vakVersie)
     {
         var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
         foreach (var item in vakken)
@@ -52,7 +52,7 @@ internal class VakService : IVakService
         return true;
     }
 
-    public async Task<List<VakDto>> GetAll()
+    public async Task<List<VakDto>> Allemaal()
     {
         var vakken = await _vakRepository.GetList();
         if (vakken.Count == 0)
