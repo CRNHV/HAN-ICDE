@@ -24,7 +24,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        var opdrachten = await _opdrachtService.GetAll();
+        var opdrachten = await _opdrachtService.Allemaal();
         return View("/Views/Docent/Opdracht/Index.cshtml", new OpdrachtenIndexViewModel()
         {
             Opdrachten = opdrachten,

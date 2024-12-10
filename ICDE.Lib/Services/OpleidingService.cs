@@ -19,7 +19,7 @@ internal class OpleidingService : IOpleidingService
         _mapper = mapper;
     }
 
-    public async Task<Guid> Copy(Guid opleidingGroupId)
+    public async Task<Guid> Kopie(Guid opleidingGroupId)
     {
         var opleiding = await _opleidingRepository.GetLatestByGroupId(opleidingGroupId);
         if (opleiding is null)
@@ -40,7 +40,7 @@ internal class OpleidingService : IOpleidingService
         return createdOpleiding.GroupId;
     }
 
-    public async Task<OpleidingDto?> Create(CreateOpleiding request)
+    public async Task<OpleidingDto?> Maak(CreateOpleiding request)
     {
         var opleiding = _mapper.Map<Opleiding>(request);
         opleiding.GroupId = Guid.NewGuid();
@@ -53,7 +53,7 @@ internal class OpleidingService : IOpleidingService
         return _mapper.Map<OpleidingDto>(result);
     }
 
-    public async Task<bool> Delete(Guid groupId, int versie)
+    public async Task<bool> Verwijder(Guid groupId, int versie)
     {
         var opleidingen = await _opleidingRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versie);
         foreach (var item in opleidingen)
@@ -64,7 +64,7 @@ internal class OpleidingService : IOpleidingService
         return true;
     }
 
-    public async Task<List<OpleidingDto>> GetAllUnique()
+    public async Task<List<OpleidingDto>> HaalUniekeOp()
     {
         var opleidingen = await _opleidingRepository.GetList();
 

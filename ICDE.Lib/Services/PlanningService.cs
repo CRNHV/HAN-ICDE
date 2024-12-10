@@ -21,7 +21,7 @@ internal class PlanningService : IPlanningService
         _lesRepository = lesRepository;
     }
 
-    public async Task<List<PlanningZonderItemsDto>> GetAll()
+    public async Task<List<PlanningZonderItemsDto>> Allemaal()
     {
         var plannings = await _planningRepository.GetList();
         if (plannings.Count == 0)
@@ -31,7 +31,7 @@ internal class PlanningService : IPlanningService
         return _mapper.Map<List<PlanningZonderItemsDto>>(plannings);
     }
 
-    public async Task<PlanningDto?> GetById(int planningId)
+    public async Task<PlanningDto?> ZoekMetId(int planningId)
     {
         var planning = await _planningRepository.Get(planningId);
         if (planning is null)
@@ -105,7 +105,7 @@ internal class PlanningService : IPlanningService
         return _mapper.Map<PlanningZonderItemsDto>(planning);
     }
 
-    public async Task<List<LesMetLeeruitkomstenDto>> GetLessonsForPlanning(int planningId)
+    public async Task<List<LesMetLeeruitkomstenDto>> HaalLessenOpVoorPlanning(int planningId)
     {
         var planning = await _planningRepository.Get(planningId);
         if (planning is null)

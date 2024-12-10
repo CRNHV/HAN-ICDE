@@ -35,7 +35,7 @@ public class PlanningController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        List<PlanningZonderItemsDto> plannings = await _planningService.GetAll();
+        List<PlanningZonderItemsDto> plannings = await _planningService.Allemaal();
         return View("/Views/Auteur/Planning/Index.cshtml", plannings);
     }
 
@@ -47,15 +47,15 @@ public class PlanningController : ControllerBase
     [HttpGet("bekijk/{planningId}")]
     public async Task<IActionResult> BekijkPlanning([FromRoute] int planningId)
     {
-        var planning = await _planningService.GetById(planningId);
+        var planning = await _planningService.ZoekMetId(planningId);
         if (planning is null)
         {
             return NotFound();
         }
-        var cursussen = await _cursusService.GetAll();
-        var opdrachten = await _opdrachtService.GetAll();
-        var lessen = await _lesService.GetAll();
-        var lessenInPlanning = await _planningService.GetLessonsForPlanning(planningId);
+        var cursussen = await _cursusService.Allemaal();
+        var opdrachten = await _opdrachtService.Allemaal();
+        var lessen = await _lesService.Allemaal();
+        var lessenInPlanning = await _planningService.HaalLessenOpVoorPlanning(planningId);
 
         return View("/Views/Auteur/Planning/ViewPlanning.cshtml", new BekijkPlanningViewModel()
         {

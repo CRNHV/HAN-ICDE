@@ -3,10 +3,10 @@
 namespace ICDE.Lib.Services.Interfaces;
 public interface ILeeruitkomstService
 {
-    Task<LeeruitkomstMetEerdereVersiesDto?> GetEntityWithEarlierVersions(Guid leeruitkomstId);
-    Task<List<LeeruitkomstDto>> GetAll();
+    Task<LeeruitkomstMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid leeruitkomstId);
+    Task<List<LeeruitkomstDto>> Allemaal();
     Task<LeeruitkomstDto?> MaakLeeruitkomst(MaakLeeruitkomstDto request);
     Task<LeeruitkomstDto?> UpdateLeeruitkomst(LukUpdateDto request);
-    Task<LeeruitkomstDto?> GetVersion(Guid groupId, int versieId);
-    Task<bool> Delete(Guid groupId, int versieId);
+    Task<LeeruitkomstDto?> HaalVersieOp(Guid groupId, int versieId);
+    Task<bool> Verwijder(Guid groupId, int versieId);
 }

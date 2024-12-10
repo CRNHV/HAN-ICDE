@@ -4,9 +4,9 @@ using ICDE.Lib.Dto.Planning;
 namespace ICDE.Lib.Services.Interfaces;
 public interface IPlanningService
 {
-    Task<List<PlanningZonderItemsDto>> GetAll();
-    Task<PlanningDto?> GetById(int planningId);
+    Task<List<PlanningZonderItemsDto>> Allemaal();
+    Task<PlanningDto?> ZoekMetId(int planningId);
     Task<PlanningZonderItemsDto?> VoegOpdrachtToe(int planningId, Guid groupId);
     Task<PlanningZonderItemsDto?> VoegLesToe(int planningId, Guid groupId);
-    Task<List<LesMetLeeruitkomstenDto>> GetLessonsForPlanning(int planningId);
+    Task<List<LesMetLeeruitkomstenDto>> HaalLessenOpVoorPlanning(int planningId);
 }

@@ -15,13 +15,13 @@ internal class BeoordelingCritereaService : IBeoordelingCritereaService
         _mapper = mapper;
     }
 
-    public async Task<List<BeoordelingCritereaDto>> GetAllUnique()
+    public async Task<List<BeoordelingCritereaDto>> Unieke()
     {
         var beoordelingCritereas = await _beoordelingCritereaRepository.GetList();
         return _mapper.Map<List<BeoordelingCritereaDto>>(beoordelingCritereas);
     }
 
-    public async Task<BeoordelingCritereaMetEerdereVersiesDto?> GetEntityWithEarlierVersions(Guid critereaGroupId)
+    public async Task<BeoordelingCritereaMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid critereaGroupId)
     {
         var dbCriterea = await _beoordelingCritereaRepository.GetFullDataByGroupId(critereaGroupId);
         if (dbCriterea is null)

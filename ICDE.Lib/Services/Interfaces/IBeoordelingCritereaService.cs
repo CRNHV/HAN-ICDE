@@ -3,6 +3,6 @@
 namespace ICDE.Lib.Services.Interfaces;
 public interface IBeoordelingCritereaService
 {
-    Task<List<BeoordelingCritereaDto>> GetAllUnique();
-    Task<BeoordelingCritereaMetEerdereVersiesDto?> GetEntityWithEarlierVersions(Guid critereaGroupId);
+    Task<List<BeoordelingCritereaDto>> Unieke();
+    Task<BeoordelingCritereaMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid critereaGroupId);
 }

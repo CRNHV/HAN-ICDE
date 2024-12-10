@@ -26,20 +26,20 @@ public class BeoordelingCritereaController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        List<BeoordelingCritereaDto> beoordelingCritereas = await _beoordelingCritereaService.GetAllUnique();
+        List<BeoordelingCritereaDto> beoordelingCritereas = await _beoordelingCritereaService.Unieke();
         return View("/Views/Auteur/BeoordelingCritereas/index.cshtml", beoordelingCritereas);
     }
 
     [HttpGet("get/{critereaGroupId}")]
     public async Task<IActionResult> Index([FromRoute] Guid critereaGroupId)
     {
-        var beoorderlingCriterea = await _beoordelingCritereaService.GetEntityWithEarlierVersions(critereaGroupId);
+        var beoorderlingCriterea = await _beoordelingCritereaService.HaalOpMetEerdereVersies(critereaGroupId);
         if (beoorderlingCriterea is null)
         {
             return NotFound();
         }
 
-        var leeruitkomsten = await _leeruitkomstService.GetAll();
+        var leeruitkomsten = await _leeruitkomstService.Allemaal();
         return View("/Views/Auteur/BeoordelingCritereas/BekijkCriterea.cshtml", new BekijkBeoorderlingCritereaViewModel()
         {
             BeoordelingCriterea = beoorderlingCriterea.BeoordelingCriterea,

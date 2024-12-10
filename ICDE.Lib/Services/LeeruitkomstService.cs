@@ -16,7 +16,7 @@ internal class LeeruitkomstService : ILeeruitkomstService
         _mapper = mapper;
     }
 
-    public async Task<LeeruitkomstMetEerdereVersiesDto?> GetEntityWithEarlierVersions(Guid leeruitkomstId)
+    public async Task<LeeruitkomstMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid leeruitkomstId)
     {
         LeeruitkomstMetEerdereVersiesDto luk = new();
 
@@ -36,7 +36,7 @@ internal class LeeruitkomstService : ILeeruitkomstService
         return luk;
     }
 
-    public async Task<List<LeeruitkomstDto>> GetAll()
+    public async Task<List<LeeruitkomstDto>> Allemaal()
     {
         var dbLuks = await _leeruitkomstRepository.GetList();
         if (dbLuks.Count == 0)
@@ -75,7 +75,7 @@ internal class LeeruitkomstService : ILeeruitkomstService
         return result != null ? _mapper.Map<LeeruitkomstDto>(result) : null;
     }
 
-    public async Task<LeeruitkomstDto?> GetVersion(Guid groupId, int versieId)
+    public async Task<LeeruitkomstDto?> HaalVersieOp(Guid groupId, int versieId)
     {
         var dbLuks = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
         if (dbLuks.Count == 0)
@@ -86,7 +86,7 @@ internal class LeeruitkomstService : ILeeruitkomstService
         return _mapper.Map<LeeruitkomstDto?>(luk);
     }
 
-    public async Task<bool> Delete(Guid groupId, int versieId)
+    public async Task<bool> Verwijder(Guid groupId, int versieId)
     {
         var leeruitkomsten = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
         foreach (var luk in leeruitkomsten)

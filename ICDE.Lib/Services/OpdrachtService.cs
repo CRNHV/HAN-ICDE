@@ -36,7 +36,7 @@ internal sealed class OpdrachtService : IOpdrachtService
         };
     }
 
-    public async Task<OpdrachtVolledigeDataDto?> GetFullDataByGroupId(Guid opdrachtGroupId)
+    public async Task<OpdrachtVolledigeDataDto?> HaalAlleDataOp(Guid opdrachtGroupId)
     {
         var opdracht = await _opdrachtRepository.GetFullDataByGroupId(opdrachtGroupId);
         if (opdracht is null)
@@ -53,7 +53,7 @@ internal sealed class OpdrachtService : IOpdrachtService
         };
     }
 
-    public async Task<List<OpdrachtDto>> GetAll()
+    public async Task<List<OpdrachtDto>> Allemaal()
     {
         var dbOpdrachten = await _opdrachtRepository.GetList();
         if (dbOpdrachten.Count == 0)
@@ -100,7 +100,7 @@ internal sealed class OpdrachtService : IOpdrachtService
         await _opdrachtRepository.Update(updatedOpdracht);
     }
 
-    public async Task<bool> AddCritereaToAssignment(Guid opdrachtGroupId, Guid critereaGroupId)
+    public async Task<bool> VoegCritereaToe(Guid opdrachtGroupId, Guid critereaGroupId)
     {
         var opdrachten = await _opdrachtRepository.GetList(x => x.GroupId == opdrachtGroupId);
         if (opdrachten.Count == 0)

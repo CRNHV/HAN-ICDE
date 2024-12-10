@@ -24,19 +24,19 @@ public class CursusController : ControllerBase
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
-        var cursussen = await _cursusService.GetAll();
+        var cursussen = await _cursusService.Allemaal();
         return View("/Views/Auteur/Cursus/Index.cshtml", cursussen);
     }
 
     [HttpGet("get/{cursusGroupId}")]
     public async Task<IActionResult> BekijkCursus([FromRoute] Guid cursusGroupId)
     {
-        var cursus = await _cursusService.GetFullCursusByGroupId(cursusGroupId);
+        var cursus = await _cursusService.HaalAlleDataOp(cursusGroupId);
         if (cursus is null)
         {
             return NotFound();
         }
-        List<CursusDto> eerdereVersies = await _cursusService.GetEarlierVersionsByGroupId(cursusGroupId, cursus.Id);
+        List<CursusDto> eerdereVersies = await _cursusService.HaalEerdereVersiesOp(cursusGroupId, cursus.Id);
         return View("/Views/Auteur/Cursus/BekijkCursus.cshtml", new BekijkCursusViewModel()
         {
             Cursus = cursus,
