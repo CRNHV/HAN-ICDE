@@ -17,6 +17,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     public DbSet<BeoordelingCriterea> BeoordelingCritereas { get; set; }
     public DbSet<Planning> Plannings { get; set; }
     public DbSet<PlanningItem> PlanningItems { get; set; }
+    public DbSet<Student> Studenten { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -70,6 +71,16 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
          .HasOne(io => io.Opdracht)
          .WithMany(o => o.IngeleverdeOpdrachten)
          .HasForeignKey(io => io.OpdrachtId);
+
+        modelBuilder.Entity<Student>()
+            .HasOne(x => x.User)
+            .WithOne()
+            .HasForeignKey(nameof(Student));
+
+        modelBuilder.Entity<Student>()
+            .HasMany(x => x.IngeleverdeOpdrachten)
+            .WithOne()
+            .HasForeignKey(pi => pi.StudentNummer);
 
         base.OnModelCreating(modelBuilder);
     }

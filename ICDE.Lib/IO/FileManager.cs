@@ -12,7 +12,10 @@ internal sealed class FileManager : IFileManager
             if (!Directory.Exists(OpdrachtenMap))
                 Directory.CreateDirectory(OpdrachtenMap);
 
-            var filePath = $"{OpdrachtenMap}/{Guid.NewGuid()}";
+            var fileDirectory = $"{OpdrachtenMap}/{Guid.NewGuid()}/";
+            Directory.CreateDirectory(fileDirectory);
+
+            var filePath = Path.Combine(fileDirectory, naam);
 
             var fileStream = new FileStream(filePath, FileMode.Create);
             await bestand.CopyToAsync(fileStream);

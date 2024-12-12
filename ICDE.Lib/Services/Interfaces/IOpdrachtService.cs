@@ -7,6 +7,7 @@ public interface IOpdrachtService
     Task<OpdrachtDto?> Bekijk(Guid opdrachtId);
     Task<List<OpdrachtDto>> Allemaal();
     Task<OpdrachtVolledigeDataDto?> HaalAlleDataOp(Guid opdrachtGroupId);
+    Task<StudentOpdrachtDto?> HaalStudentOpdrachtDataOp(Guid opdrachtGroupId);
     Task MaakOpdracht(MaakOpdrachtDto opdracht);
     Task UpdateOpdracht(OpdrachtUpdateDto request);
     Task VerwijderOpdracht(Guid opdrachtGroupId);

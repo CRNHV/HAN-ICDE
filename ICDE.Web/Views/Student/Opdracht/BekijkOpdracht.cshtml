@@ -1,0 +1,74 @@
+﻿@using ICDE.Lib.Dto.Opdracht;
+@model StudentOpdrachtDto
+@{
+    ViewData["Title"] = "LeverOpdrachtIn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>LeverOpdrachtIn</h1>
+
+<h4>LeverOpdrachtIn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h1>De opdracht</h1>
+        <form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <input class="form-control" value="@Model.Opdracht.Naam" readonly />
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <input class="form-control" value="@Model.Opdracht.Beschrijving" readonly />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h1>Beoordeling critereas</h1>
+        @if (Model.BeoordelingCritereas.Count > 0)
+        {
+            <h4>BeoordelingCritereas</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var beoordelingCriterea in Model.BeoordelingCritereas)
+                    {
+                        <tr>
+                            <td>@beoordelingCriterea.Naam</td>
+                            <td>@beoordelingCriterea.Beschrijving</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+        else
+        {
+            <h4>Er zijn geen beoordelingscriterea's voor deze opdracht.</h4>
+        }
+    </div>
+    <div class="col-md-6">
+        <h1> Lever iets in</h1>
+        <form enctype="multipart/form-data" asp-action="LeverOpdrachtIn">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input name="OpdrachtId" value="@Model.OpdrachtId" hidden />
+            <div class="form-group">
+                <label class="control-label">Bestandsnaam</label>
+                <input name="Naam" class="form-control" placeholder="Je bestandsnaam" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Bestand</label>
+                <input name="Bestand" type="file" class="form-control" value="@Model.Opdracht.Beschrijving" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

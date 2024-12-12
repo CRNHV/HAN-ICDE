@@ -4,6 +4,7 @@ using ICDE.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICDE.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212193402_AddStudentEntity2")]
+    partial class AddStudentEntity2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,6 +238,9 @@ namespace ICDE.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("IngeleverdeOpdracht")
+                        .HasColumnType("int");
+
                     b.Property<string>("Locatie")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -246,14 +252,11 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("OpdrachtId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentNummer")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("OpdrachtId");
+                    b.HasIndex("IngeleverdeOpdracht");
 
-                    b.HasIndex("StudentNummer");
+                    b.HasIndex("OpdrachtId");
 
                     b.ToTable("IngeleverdeOpdrachten");
                 });
@@ -698,15 +701,13 @@ namespace ICDE.Data.Migrations
 
             modelBuilder.Entity("ICDE.Data.Entities.IngeleverdeOpdracht", b =>
                 {
+                    b.HasOne("ICDE.Data.Entities.Student", null)
+                        .WithMany("IngeleverdeOpdrachten")
+                        .HasForeignKey("IngeleverdeOpdracht");
+
                     b.HasOne("ICDE.Data.Entities.Opdracht", "Opdracht")
                         .WithMany("IngeleverdeOpdrachten")
                         .HasForeignKey("OpdrachtId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ICDE.Data.Entities.Student", null)
-                        .WithMany("IngeleverdeOpdrachten")
-                        .HasForeignKey("StudentNummer")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

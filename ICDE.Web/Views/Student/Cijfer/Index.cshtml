@@ -1,0 +1,40 @@
+﻿@using ICDE.Lib.Dto.OpdrachtBeoordeling
+@model List<OpdrachtMetBeoordelingDto>
+
+@{
+    ViewData["Title"] = "Bekijk cijfers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk je cijfers</h1>
+
+@if (Model.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Opdracht naam</th>
+                        <th>Cijfer</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.OpdrachtNaam</td>
+                            <td>@item.Cijfer</td>
+                            <td>@item.Feedback</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <h4>Je hebt geen cijfers.</h4>
+}

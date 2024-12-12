@@ -91,7 +91,7 @@ public class Program
         app.Run();
     }
 
-    private static void SeedDatabase(WebApplication app)
+    private static async void SeedDatabase(WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
@@ -102,6 +102,74 @@ public class Program
             var usermanager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             if (!dbContext.Roles.Any())
             {
+                roleManager.CreateAsync(new Role()
+                {
+                    Name = "Auteur",
+                    NormalizedName = "AUTEUR"
+                }).Wait();
+
+                roleManager.CreateAsync(new Role()
+                {
+                    Name = "Docent",
+                    NormalizedName = "DOCENT"
+                }).Wait();
+
+                roleManager.CreateAsync(new Role()
+                {
+                    Name = "Student",
+                    NormalizedName = "STUDENT"
+                }).Wait();
+
+                usermanager.CreateAsync(new User()
+                {
+                    UserName = "Student",
+                }, "Student12345!").Wait();
+
+                usermanager.CreateAsync(new User()
+                {
+                    UserName = "Docent",
+                }, "Docent12345!").Wait();
+
+                usermanager.CreateAsync(new User()
+                {
+                    UserName = "Auteur",
+                }, "Auteur12345!").Wait();
+
+                var docent = usermanager.FindByNameAsync("Docent").Result;
+                var student = usermanager.FindByNameAsync("Student").Result;
+                var auteur = usermanager.FindByNameAsync("Auteur").Result;
+
+                usermanager.AddToRoleAsync(docent, "Docent").Wait();
+                usermanager.AddToRoleAsync(student, "Student").Wait();
+                usermanager.AddToRoleAsync(auteur, "Auteur").Wait();
+
+                usermanager.AddClaimsAsync(docent, new List<Claim>()
+                {
+                    new Claim("Id", $"{docent.Id}"),
+                    new Claim("Role", "Docent"),
+                }).Wait();
+
+                usermanager.AddClaimsAsync(auteur, new List<Claim>()
+                {
+                    new Claim("Id", $"{auteur.Id}"),
+                    new Claim("Role", "Auteur"),
+                }).Wait();
+
+                usermanager.AddClaimsAsync(student, new List<Claim>()
+                {
+                    new Claim("Id", $"{student.Id}"),
+                    new Claim("Role", "Student"),
+                }).Wait();
+
+                var studentEntity = new Student()
+                {
+                    User = student,
+                    UserId = student.Id,
+                };
+
+                dbContext.Studenten.Add(studentEntity);
+                dbContext.SaveChanges();
+
                 var leeruitkomst1 = new Leeruitkomst()
                 {
                     Naam = "Kan Chinees",
@@ -257,6 +325,7 @@ public class Program
                                  {
                                      new IngeleverdeOpdracht()
                                      {
+                                         StudentNummer = studentEntity.StudentNummer,
                                          Locatie = "./Opdrachten/asjdhajksd.png",
                                          Naam = "Casus.zip",
                                      }
@@ -283,65 +352,6 @@ public class Program
                 cursus1.Planning = planning;
 
                 dbContext.SaveChanges();
-
-                roleManager.CreateAsync(new Role()
-                {
-                    Name = "Auteur",
-                    NormalizedName = "AUTEUR"
-                }).Wait();
-
-                roleManager.CreateAsync(new Role()
-                {
-                    Name = "Docent",
-                    NormalizedName = "DOCENT"
-                }).Wait();
-
-                roleManager.CreateAsync(new Role()
-                {
-                    Name = "Student",
-                    NormalizedName = "STUDENT"
-                }).Wait();
-
-                usermanager.CreateAsync(new User()
-                {
-                    UserName = "Student",
-                }, "Student12345!").Wait();
-
-                usermanager.CreateAsync(new User()
-                {
-                    UserName = "Docent",
-                }, "Docent12345!").Wait();
-
-                usermanager.CreateAsync(new User()
-                {
-                    UserName = "Auteur",
-                }, "Auteur12345!").Wait();
-
-                var docent = usermanager.FindByNameAsync("Docent").Result;
-                var student = usermanager.FindByNameAsync("Student").Result;
-                var auteur = usermanager.FindByNameAsync("Auteur").Result;
-
-                usermanager.AddToRoleAsync(docent, "Docent").Wait();
-                usermanager.AddToRoleAsync(student, "Student").Wait();
-                usermanager.AddToRoleAsync(auteur, "Auteur").Wait();
-
-                usermanager.AddClaimsAsync(docent, new List<Claim>()
-                {
-                    new Claim("Id", $"{docent.Id}"),
-                    new Claim("Role", "Docent"),
-                }).Wait();
-
-                usermanager.AddClaimsAsync(auteur, new List<Claim>()
-                {
-                    new Claim("Id", $"{auteur.Id}"),
-                    new Claim("Role", "Auteur"),
-                }).Wait();
-
-                usermanager.AddClaimsAsync(student, new List<Claim>()
-                {
-                    new Claim("Id", $"{student.Id}"),
-                    new Claim("Role", "Student"),
-                }).Wait();
             }
         }
     }
