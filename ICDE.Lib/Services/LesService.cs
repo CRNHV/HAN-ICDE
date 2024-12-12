@@ -146,4 +146,19 @@ internal class LesService : ILesService
 
         return true;
     }
+
+    public async Task<LesDto?> HaalVersieOp(Guid groupId, int versionId)
+    {
+        var les = await _lesRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versionId);
+        return _mapper.Map<LesDto?>(les.First());
+    }
+
+    public async Task<Guid> MaakKopie(Guid groupId, int versionId)
+    {
+        var les = await _lesRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versionId);
+        var lesClone = (Les)les.First().Clone();
+        lesClone.GroupId = Guid.NewGuid();
+        await _lesRepository.Create(lesClone);
+        return lesClone.GroupId;
+    }
 }

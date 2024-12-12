@@ -53,6 +53,29 @@ public class OpdrachtController : ControllerBase
         return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
     }
 
+    [HttpGet("{opdrachtGroupId}/kopie/{versie}")]
+    public async Task<IActionResult> MaakKopieVanVersie([FromRoute] Guid opdrachtGroupId, [FromRoute] int versie)
+    {
+        Guid opdrachtGuid = await _opdrachtService.MaakKopieVanVersie(opdrachtGroupId, versie);
+        if (opdrachtGroupId == Guid.Empty)
+        {
+            return BadRequest();
+        }
+
+        return Redirect("/auteur/opdracht/bekijkalle");
+    }
+
+
+    [HttpGet("{opdrachtGroupId}/bekijkversie/{versie}")]
+    public async Task<IActionResult> BekijkVersie([FromRoute] Guid opdrachtGroupId, [FromRoute] int versie)
+    {
+        var opdrachtData = await _opdrachtService.HaalVersieDataOp(opdrachtGroupId, versie);
+        return View("/Views/Auteur/Opdracht/BekijkOpdrachtVersie.cshtml", new BekijkOpdrachtVersieViewModel()
+        {
+            Opdracht = opdrachtData,
+        });
+    }
+
     [HttpGet("bekijk/{opdrachtGroupId}")]
     public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
@@ -63,7 +86,6 @@ public class OpdrachtController : ControllerBase
         }
 
         var beoordelingCritereas = await _beoordeilngCritereaService.Unieke();
-
         return View("/Views/Auteur/Opdracht/BekijkOpdracht.cshtml", new AuteurBekijkOpdrachtViewModel()
         {
             Opdracht = opdrachtData,

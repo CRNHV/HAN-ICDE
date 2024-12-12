@@ -1,0 +1,31 @@
+﻿@using ICDE.Lib.Dto.Opleidingen
+@model OpleidingDto
+@{
+    ViewData["Title"] = "Bekijk opleiding versie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk opleiding versie</h1>
+
+<a href="/auteur/opleiding/delete/@Model.GroupId/@Model.VersieNummer">Verwijder versie</a>
+<a href="/auteur/opleiding/@Model.GroupId/kopie/@Model.VersieNummer">Maak kopie</a>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h2> Vak </h2>
+        <form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input name="GroupId" class="form-control" value="@Model.GroupId" hidden />
+            <div class="form-group">
+                <label name="Naam" class="control-label">Naam</label>
+                <input name="Naam" class="form-control" value="@Model.Naam" readonly />
+            </div>
+            <div class="form-group">
+                <label name="Beschrijving" class="control-label">Beschrijving</label>
+                <input name="Beschrijving" class="form-control" value="@Model.Beschrijving" readonly />
+            </div>
+        </form>
+    </div>
+</div>
+

@@ -130,4 +130,36 @@ internal class OpleidingService : IOpleidingService
             EerdereVersies = _mapper.Map<List<OpleidingDto>>(eerdereVersies)
         };
     }
+
+    public async Task<OpleidingDto?> BekijkVersie(Guid groupId, int versie)
+    {
+        var opleiding = await _opleidingRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versie);
+
+        if (opleiding is null)
+        {
+            return null;
+        }
+        var dto = _mapper.Map<OpleidingDto>(opleiding.First());
+        return dto;
+    }
+
+    public async Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie)
+    {
+        var opleiding = await _opleidingRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        var opleidingClone = (Opleiding)opleiding.First().Clone();
+        opleidingClone.GroupId = Guid.NewGuid();
+        await _opleidingRepository.Create(opleidingClone);
+        return opleidingClone.GroupId;
+    }
+
+    public async Task<bool> VerwijderVersie(Guid vakGroupId, int vakVersie)
+    {
+        var opleidingen = await _opleidingRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        foreach (var item in opleidingen)
+        {
+            await _opleidingRepository.Delete(item);
+        }
+
+        return true;
+    }
 }

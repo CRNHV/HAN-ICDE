@@ -10,4 +10,7 @@ public interface IOpleidingService
     Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId);
     Task<bool> Update(UpdateOpleiding request);
     Task<OpleidingMetEerdereVersiesDto?> ZoekOpleidingMetEerdereVersies(Guid groupId);
+    Task<OpleidingDto?> BekijkVersie(Guid groupId, int versie);
+    Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie);
+    Task<bool> VerwijderVersie(Guid vakGroupId, int vakVersie);
 }

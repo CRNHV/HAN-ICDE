@@ -10,4 +10,6 @@ public interface IOpdrachtService
     Task MaakOpdracht(MaakOpdrachtDto opdracht);
     Task UpdateOpdracht(OpdrachtUpdateDto request);
     Task VerwijderOpdracht(Guid opdrachtGroupId);
+    Task<OpdrachtDto> HaalVersieDataOp(Guid opdrachtGroupId, int versie);
+    Task<Guid> MaakKopieVanVersie(Guid opdrachtGroupId, int versie);
 }

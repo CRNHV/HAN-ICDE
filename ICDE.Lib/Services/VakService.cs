@@ -149,4 +149,19 @@ internal class VakService : IVakService
 
         return true;
     }
+
+    public async Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie)
+    {
+        var vak = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        return _mapper.Map<VakDto?>(vak.First());
+    }
+
+    public async Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie)
+    {
+        var vak = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        var vakClone = (Vak)vak.First().Clone();
+        vakClone.GroupId = Guid.NewGuid();
+        await _vakRepository.Create(vakClone);
+        return vakClone.GroupId;
+    }
 }

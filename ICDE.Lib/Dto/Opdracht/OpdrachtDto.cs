@@ -11,6 +11,7 @@ public class OpdrachtDto
     public Guid GroupId { get; set; }
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
+    public int VersieNummer { get; set; }
     public string Type
     {
         get => isToets ? "Dit is een toets" : "Dit is een casus";

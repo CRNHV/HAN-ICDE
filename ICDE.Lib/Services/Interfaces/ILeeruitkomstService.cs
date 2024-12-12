@@ -9,4 +9,5 @@ public interface ILeeruitkomstService
     Task<LeeruitkomstDto?> UpdateLeeruitkomst(LukUpdateDto request);
     Task<LeeruitkomstDto?> HaalVersieOp(Guid groupId, int versieId);
     Task<bool> Verwijder(Guid groupId, int versieId);
+    Task<Guid> MaakKopieVanVersie(Guid groupId, int versieId);
 }

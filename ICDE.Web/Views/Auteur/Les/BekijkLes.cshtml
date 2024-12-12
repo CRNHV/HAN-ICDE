@@ -10,7 +10,7 @@
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2> Maak les </h2>
         <form method="post" enctype="multipart/form-data" asp-action="UpdateLes">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -26,7 +26,7 @@
             <button type="submit">Maak</button>
         </form>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Andere versies</h2>
         @if (Model.LesList.Count > 0)
         {
@@ -46,14 +46,14 @@
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
                             <td>@item.VersieNummer</td>
-                            <td><a href="auteur/les/get/@item.GroupId/@item.VersieNummer">Voeg toe</a></td>
+                            <td><a href="/auteur/les/@item.GroupId/bekijkversie/@item.VersieNummer">Bekijk versie</a></td>
                         </tr>
                     }
                 </tbody>
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Gekoppelde leeruitkomsten</h2>
         @if (Model.LesLeeruitkomsten.Count > 0)
         {
@@ -82,7 +82,7 @@
             </table>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2>Voeg LUK toe</h2>
         @if (Model.BeschrikbareLeeruitkomsten.Count > 0)
         {

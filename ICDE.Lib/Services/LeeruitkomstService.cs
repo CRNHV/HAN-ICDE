@@ -96,4 +96,15 @@ internal class LeeruitkomstService : ILeeruitkomstService
 
         return true;
     }
+
+    public async Task<Guid> MaakKopieVanVersie(Guid groupId, int versieId)
+    {
+        var dbLuks = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
+        var luk = dbLuks.First();
+
+        var lukClone = (Leeruitkomst)luk.Clone();
+        lukClone.GroupId = Guid.NewGuid();
+        await _leeruitkomstRepository.Create(lukClone);
+        return lukClone.GroupId;
+    }
 }

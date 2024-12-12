@@ -10,4 +10,6 @@ public interface ILesService
     Task<bool> KoppelLukAanLes(Guid lesGroupId, Guid lukGroupId);
     Task<bool> OntkoppelLukAanLes(Guid lesGroupId, Guid lukGroupId);
     Task<bool> Update(LesUpdateDto request);
+    Task<LesDto?> HaalVersieOp(Guid groupId, int versionId);
+    Task<Guid> MaakKopie(Guid groupId, int versionId);
 }

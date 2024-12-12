@@ -75,10 +75,32 @@ public class LesController : Controller
     /// UC6
     /// </summary>
     /// <returns></returns>
-    [HttpGet("get/{groupId}/{versionId}")]
+    [HttpGet("{groupId}/bekijkversie/{versionId}")]
     public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versionId)
     {
-        return null;
+        LesDto? les = await _lesService.HaalVersieOp(groupId, versionId);
+        if (les is null)
+        {
+            return BadRequest();
+        }
+
+        return View("/Views/Auteur/Les/BekijkVersie.cshtml", les);
+    }
+
+    /// <summary>
+    /// UC6
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("{groupId}/kopie/{versionId}")]
+    public async Task<IActionResult> KopieVersie([FromRoute] Guid groupId, [FromRoute] int versionId)
+    {
+        Guid les = await _lesService.MaakKopie(groupId, versionId);
+        if (les == Guid.Empty)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/les/get/{groupId}");
     }
 
     /// <summary>

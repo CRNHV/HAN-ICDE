@@ -3,7 +3,7 @@ using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
 
-public class Opdracht : OnderwijsOnderdeel, IVersionable
+public class Opdracht : OnderwijsOnderdeel, IVersionable, ICloneable
 {
     public OpdrachtType Type { get; set; }
 
@@ -15,4 +15,15 @@ public class Opdracht : OnderwijsOnderdeel, IVersionable
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }
+
+    public object Clone()
+    {
+        return new Opdracht()
+        {
+            Naam = Naam,
+            Beschrijving = Beschrijving,
+            Type = Type,
+            BeoordelingCritereas = BeoordelingCritereas,
+        };
+    }
 }

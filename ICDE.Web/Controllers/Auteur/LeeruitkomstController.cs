@@ -20,10 +20,6 @@ public class LeeruitkomstController : ControllerBase
         _leeruitkomstService = leeruitkomstService;
     }
 
-    /// <summary>
-    /// UC14
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("maak")]
     [HttpGet("maak")]
     public async Task<IActionResult> MaakLeeruitkomst([FromForm] MaakLeeruitkomstDto request)
@@ -45,10 +41,6 @@ public class LeeruitkomstController : ControllerBase
         return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomsten.cshtml", leeruitkomsten);
     }
 
-    /// <summary>
-    /// UC14
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("bekijk/{groupId}")]
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId)
     {
@@ -61,24 +53,29 @@ public class LeeruitkomstController : ControllerBase
     }
 
     [HttpGet("bekijkversie/{groupId}/{versieId}")]
-    public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
+    public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
         var leeruitkomst = await _leeruitkomstService.HaalVersieOp(groupId, versieId);
         if (leeruitkomst is null)
         {
             return NotFound();
         }
-        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomst.cshtml", new LeeruitkomstMetEerdereVersiesDto()
-        {
-            Leeruitkomst = leeruitkomst,
-        });
+        return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomstVersie.cshtml", leeruitkomst);
 
     }
 
-    /// <summary>
-    /// UC14
-    /// </summary>
-    /// <returns></returns>
+    [HttpGet("{groupId}/kopie/{versieId}")]
+    public async Task<IActionResult> MaakKopieVanVersie([FromRoute] Guid groupId, [FromRoute] int versieId)
+    {
+        Guid leeruitkomst = await _leeruitkomstService.MaakKopieVanVersie(groupId, versieId);
+        if (leeruitkomst == Guid.Empty)
+        {
+            return BadRequest();
+        }
+        return Redirect($"/auteur/leeruitkomst/bekijk/{leeruitkomst}");
+
+    }
+
     [HttpGet("delete/{groupId}/{versieId}")]
     public async Task<IActionResult> DeleteLeeruitkosmt([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
@@ -91,10 +88,6 @@ public class LeeruitkomstController : ControllerBase
         return Redirect($"/auteur/leeruitkomst/bekijkalle");
     }
 
-    /// <summary>
-    /// UC14
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("update")]
     public async Task<IActionResult> UpdateLeeruitkomst([FromForm] LukUpdateDto request)
     {

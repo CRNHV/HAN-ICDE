@@ -1,0 +1,31 @@
+﻿@using ICDE.Web.Models.Opdrachten
+@model BekijkOpdrachtVersieViewModel
+
+@{
+    ViewData["Title"] = "Bekijk opdracht";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk opdracht</h1>
+
+<a href="/auteur/opdracht/@Model.Opdracht.GroupId/kopie/@Model.Opdracht.VersieNummer">Maak kopie van versie</a>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form enctype="multipart/form-data" asp-action="UpdateOpdracht">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label for="Naam" class="control-label"></label>
+                <input name="Naam" class="form-control" value="@Model.Opdracht.Naam" readonly />
+            </div>
+            <div class="form-group">
+                <label for="Beschrijving" class="control-label"></label>
+                <input name="Beschrijving" class="form-control" value="@Model.Opdracht.Beschrijving" readonly />
+            </div>
+            <div>
+                @Model.Opdracht.Type
+            </div>
+        </form>
+    </div>
+</div>

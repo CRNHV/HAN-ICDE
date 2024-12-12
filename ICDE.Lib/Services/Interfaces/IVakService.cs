@@ -11,4 +11,6 @@ public interface IVakService
     Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId);
     Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId);
     Task<bool> Update(UpdateVakDto request);
+    Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie);
+    Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie);
 }

@@ -93,6 +93,22 @@ public class OpleidingController : Controller
     /// UC11
     /// </summary>
     /// <returns></returns>    
+    [HttpGet("{groupId}/bekijkversie/{versie}")]
+    public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versie)
+    {
+        var opleiding = await _opleidingService.BekijkVersie(groupId, versie);
+        if (opleiding is null)
+        {
+            return NotFound();
+        }
+
+        return View("/Views/Auteur/Opleiding/BekijkVersie.cshtml", opleiding);
+    }
+
+    /// <summary>
+    /// UC11
+    /// </summary>
+    /// <returns></returns>    
     [HttpGet("verwijder/{groupId}/{versie}")]
     public async Task<IActionResult> VerwijderOpleiding([FromRoute] Guid groupId, [FromRoute] int versie)
     {
@@ -135,5 +151,25 @@ public class OpleidingController : Controller
         }
 
         return Redirect($"/auteur/opleiding/bekijk/{resultGuid}");
+    }
+
+    [HttpGet("{vakGroupId}/kopie/{vakVersie}")]
+    public async Task<IActionResult> Kopie([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
+    {
+        Guid groupId = await _opleidingService.MaakKopie(vakGroupId, vakVersie);
+        if (groupId == Guid.Empty)
+            return BadRequest();
+
+        return Redirect($"/auteur/opleiding/bekijk/{groupId}");
+    }
+
+    [HttpGet("delete/{vakGroupId}/{vakVersie}")]
+    public async Task<IActionResult> VerwijderVak([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
+    {
+        var result = await _opleidingService.VerwijderVersie(vakGroupId, vakVersie);
+        if (!result)
+            return BadRequest();
+
+        return Redirect($"/auteur/opleiding/bekijk/{vakGroupId}");
     }
 }

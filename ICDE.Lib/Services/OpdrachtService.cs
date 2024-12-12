@@ -123,4 +123,24 @@ internal sealed class OpdrachtService : IOpdrachtService
 
         return true;
     }
+
+    public async Task<OpdrachtDto> HaalVersieDataOp(Guid opdrachtGroupId, int versie)
+    {
+        var opdracht = await _opdrachtRepository.GetList(x => x.GroupId == opdrachtGroupId && x.VersieNummer == versie);
+        return _mapper.Map<OpdrachtDto>(opdracht[0]);
+    }
+
+    public async Task<Guid> MaakKopieVanVersie(Guid opdrachtGroupId, int versie)
+    {
+        var opdrachten = await _opdrachtRepository
+            .GetList(x => x.GroupId == opdrachtGroupId && x.VersieNummer == versie);
+
+        var opdracht = opdrachten.First();
+
+        var nieuweOpdracht = (Opdracht)opdracht.Clone();
+        nieuweOpdracht.GroupId = Guid.NewGuid();
+        await _opdrachtRepository.Create(nieuweOpdracht);
+
+        return nieuweOpdracht.GroupId;
+    }
 }
