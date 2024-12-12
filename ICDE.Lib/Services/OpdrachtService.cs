@@ -61,13 +61,7 @@ internal sealed class OpdrachtService : IOpdrachtService
             return new List<OpdrachtDto>();
         }
 
-        return dbOpdrachten.ConvertAll(x => new OpdrachtDto(x.Type == OpdrachtType.Toets)
-        {
-            Beschrijving = x.Beschrijving,
-            GroupId = x.GroupId,
-            Naam = x.Naam,
-
-        });
+        return _mapper.Map<List<OpdrachtDto>>(dbOpdrachten);
     }
 
     public async Task MaakOpdracht(MaakOpdrachtDto request)
@@ -122,5 +116,21 @@ internal sealed class OpdrachtService : IOpdrachtService
         }
 
         return true;
+    }
+
+    public async Task<StudentOpdrachtDto?> HaalStudentOpdrachtDataOp(Guid opdrachtGroupId)
+    {
+        var opdracht = await _opdrachtRepository.GetFullDataByGroupId(opdrachtGroupId);
+        if (opdracht is null)
+        {
+            return null;
+        }
+
+        return new StudentOpdrachtDto()
+        {
+            OpdrachtId = opdracht.Id,
+            Opdracht = _mapper.Map<OpdrachtDto>(opdracht),
+            BeoordelingCritereas = _mapper.Map<List<BeoordelingCritereaDto>>(opdracht.BeoordelingCritereas)
+        };
     }
 }
