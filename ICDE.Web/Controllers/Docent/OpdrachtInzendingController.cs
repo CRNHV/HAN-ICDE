@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
-using ICDE.Lib.Dto.Opdracht;
+using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.OpdrachtInzending;
 using Microsoft.AspNetCore.Authorization;

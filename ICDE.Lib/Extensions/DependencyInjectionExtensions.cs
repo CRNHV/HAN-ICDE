@@ -27,6 +27,7 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IValidationManager, ValidationManager>();
         services.AddScoped<IIngeleverdeOpdrachtService, IngeleverdeOpdrachtService>();
         services.AddScoped<IBeoordelingCritereaService, BeoordelingCritereaService>();
+        services.AddScoped<IOpdrachtBeoordelingService, OpdrachtBeoordelingService>();
 
         return services;
     }

@@ -1,5 +1,6 @@
 ﻿using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opdracht;
+using ICDE.Lib.Dto.OpdrachtBeoordeling;
 
 namespace ICDE.Lib.Dto.OpdrachtInzending;
 public class OpdrachtInzendingDto

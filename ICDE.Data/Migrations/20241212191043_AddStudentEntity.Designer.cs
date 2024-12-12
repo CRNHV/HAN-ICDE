@@ -4,6 +4,7 @@ using ICDE.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICDE.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212191043_AddStudentEntity")]
+    partial class AddStudentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,7 +249,7 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("OpdrachtId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentNummer")
+                    b.Property<int?>("StudentNummer")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -706,9 +709,7 @@ namespace ICDE.Data.Migrations
 
                     b.HasOne("ICDE.Data.Entities.Student", null)
                         .WithMany("IngeleverdeOpdrachten")
-                        .HasForeignKey("StudentNummer")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StudentNummer");
 
                     b.Navigation("Opdracht");
                 });

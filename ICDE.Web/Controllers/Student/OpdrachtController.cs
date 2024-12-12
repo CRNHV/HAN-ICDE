@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using ICDE.Data.Entities;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services.Interfaces;
@@ -12,46 +14,48 @@ namespace ICDE.Web.Controllers.Student;
 public class OpdrachtController : ControllerBase
 {
     private readonly IOpdrachtService _opdrachtService;
+    private readonly IIngeleverdeOpdrachtService _ingeleverdeOpdrachtService;
 
-    public OpdrachtController(IOpdrachtService opdrachtService)
+    public OpdrachtController(IOpdrachtService opdrachtService, IIngeleverdeOpdrachtService ingeleverdeOpdrachtService)
     {
         _opdrachtService = opdrachtService;
+        _ingeleverdeOpdrachtService = ingeleverdeOpdrachtService;
     }
 
-    /// <summary>
-    /// UC1
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    [HttpGet("{opdrachtId}/leverin")]
-    [HttpPost("{opdrachtId}/leverin")]
-    public async Task<IActionResult> LeverOpdrachtIn([FromRoute] int opdrachtId, [FromForm] LeverOpdrachtInDto request)
+    [HttpGet("index")]
+    public async Task<IActionResult> Index()
     {
-        //if (HttpContext.Request.Method == "POST")
-        //{
-        //    var userId = this.GetUserIdFromClaims();
-        //    if (userId is null)
-        //        return Unauthorized();
-
-        //    await _opdrachtService.LeverOpdrachtIn(userId.Value, request);
-        //}
-
-        //return View(new LeverOpdrachtInDto()
-        //{
-        //    OpdrachtId = opdrachtId,
-        //});
-
-        return Ok();
+        var opdrachten = await _opdrachtService.Allemaal();
+        return View("/Views/Student/Opdracht/Index.cshtml", opdrachten);
     }
 
-    /// <summary>
-    /// UC4, UC19
-    /// </summary>
-    /// <param name="beoordelingId"></param>
-    /// <returns></returns>
-    [HttpGet]
-    public async Task<IActionResult> BekijkBeoordeling([FromRoute] int beoordelingId)
+    [HttpPost("leverin")]
+    public async Task<IActionResult> LeverOpdrachtIn([FromForm] LeverOpdrachtInDto request)
     {
-        return null;
+        var userId = GetUserIdFromClaims();
+        if (userId is null)
+        {
+            return BadRequest();
+        }
+
+        var result = await _ingeleverdeOpdrachtService.LeverOpdrachtIn(userId.Value, request);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect("/student/opdracht/index");
+    }
+
+    [HttpGet("bekijk/{groupId}")]
+    public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid groupId)
+    {
+        StudentOpdrachtDto? opdracht = await _opdrachtService.HaalStudentOpdrachtDataOp(groupId);
+        if (opdracht is null)
+        {
+            return NotFound();
+        }
+
+        return View("/Views/Student/Opdracht/BekijkOpdracht.cshtml", opdracht);
     }
 }

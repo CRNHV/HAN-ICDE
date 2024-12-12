@@ -3,6 +3,7 @@ using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opdracht;
+using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.IO;
 using ICDE.Lib.Services.Interfaces;
@@ -12,18 +13,20 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 {
     private readonly IIngeleverdeOpdrachtRepository _ingeleverdeOpdrachtRepository;
     private readonly IOpdrachtBeoordelingRepository _opdrachtBeoordelingRepository;
+    private readonly IStudentRepository _studentRepository;
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly IFileManager _fileManager;
     private readonly IMapper _mapper;
 
 
-    public IngeleverdeOpdrachtService(IIngeleverdeOpdrachtRepository ingeleverdeOpdrachtRepository, IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IOpdrachtBeoordelingRepository opdrachtBeoordelingRepository, IMapper mapper)
+    public IngeleverdeOpdrachtService(IIngeleverdeOpdrachtRepository ingeleverdeOpdrachtRepository, IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IOpdrachtBeoordelingRepository opdrachtBeoordelingRepository, IMapper mapper, IStudentRepository studentRepository)
     {
         _ingeleverdeOpdrachtRepository = ingeleverdeOpdrachtRepository;
         _opdrachtRepository = opdrachtRepository;
         _fileManager = fileManager;
         _opdrachtBeoordelingRepository = opdrachtBeoordelingRepository;
         _mapper = mapper;
+        _studentRepository = studentRepository;
     }
 
     public async Task<OpdrachtInzendingDto?> HaalInzendingDataOp(int inzendingId)
@@ -68,6 +71,12 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
         if (dbOpdracht is null)
             return false;
 
+        int? studentNummer = await _studentRepository.ZoekStudentNummerVoorUserId(userId);
+        if (studentNummer is null)
+        {
+            return false;
+        }
+
         var bestandsLocatie = await _fileManager.SlaBestandOp(opdracht.Bestand.FileName, opdracht.Bestand);
         if (string.IsNullOrEmpty(bestandsLocatie))
         {
@@ -80,6 +89,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
             OpdrachtId = dbOpdracht.Id,
             Naam = opdracht.Bestand.FileName,
             Locatie = bestandsLocatie,
+            StudentNummer = studentNummer.Value,
         };
 
         await _ingeleverdeOpdrachtRepository.Create(ingeleverdeOpdracht);
