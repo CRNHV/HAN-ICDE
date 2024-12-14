@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
@@ -19,23 +20,6 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
         _lesRepository = lesRepository;
         _leeruitkomstRepository = leeruitkomstRepository;
         _mapper = mapper;
-    }
-
-    public async Task<LesDto?> Maak(string naam, string beschrijving)
-    {
-        var result = await _lesRepository.Maak(new Les()
-        {
-            Naam = naam,
-            Beschrijving = beschrijving,
-            GroupId = Guid.NewGuid(),
-        });
-
-        if (result is null)
-        {
-            return null;
-        }
-
-        return _mapper.Map<LesDto>(result);
     }
 
     public async Task<LesMetEerdereVersies?> HaalLessenOpMetEerdereVersies(Guid groupId)
@@ -102,7 +86,11 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
 
     public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        throw new NotImplementedException();
+        var les = await _lesRepository.Lijst(x => x.GroupId == groupId && x.VersieNummer == versieNummer);
+        var lesClone = (Les)les.First().Clone();
+        lesClone.GroupId = Guid.NewGuid();
+        await _lesRepository.Maak(lesClone);
+        return lesClone.GroupId;
     }
 
     public override async Task<bool> Update(UpdateLesDto request)

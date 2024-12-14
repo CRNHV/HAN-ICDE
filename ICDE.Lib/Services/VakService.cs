@@ -92,9 +92,10 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         return true;
     }
 
-    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
+    public async Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie)
     {
-        throw new NotImplementedException();
+        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        return _mapper.Map<VakDto?>(vak.First());
     }
 
     public override async Task<bool> Update(UpdateVakDto request)
@@ -116,5 +117,14 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         await _vakRepository.Update(updatedVak);
 
         return true;
+    }
+
+    public override async Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie)
+    {
+        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        var vakClone = (Vak)vak.First().Clone();
+        vakClone.GroupId = Guid.NewGuid();
+        await _vakRepository.Maak(vakClone);
+        return vakClone.GroupId;
     }
 }
