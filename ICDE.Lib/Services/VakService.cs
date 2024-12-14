@@ -3,10 +3,11 @@ using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Vak;
+using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;
-internal class VakService : IVakService
+internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, UpdateVakDto>, IVakService
 {
     private readonly IVakRepository _vakRepository;
     private readonly ICursusRepository _cursusRepository;
@@ -16,7 +17,7 @@ internal class VakService : IVakService
     public VakService(IVakRepository vakRepository,
         ICursusRepository cursusRepository,
         ILeeruitkomstRepository leeruitkomstRepository,
-        IMapper mapper)
+        IMapper mapper) : base(vakRepository, mapper)
     {
         _vakRepository = vakRepository;
         _cursusRepository = cursusRepository;
@@ -24,54 +25,16 @@ internal class VakService : IVakService
         _mapper = mapper;
     }
 
-    public async Task<Guid> MaakVak(string naam, string beschrijving)
-    {
-        var course = await _vakRepository.Create(new Vak()
-        {
-            Naam = naam,
-            Beschrijving = beschrijving,
-            GroupId = Guid.NewGuid(),
-        });
-
-        if (course is null)
-        {
-            return Guid.Empty;
-        }
-
-        return course.GroupId;
-    }
-
-    public async Task<bool> VerwijderVersie(Guid vakGroupId, int vakVersie)
-    {
-        var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
-        foreach (var item in vakken)
-        {
-            await _vakRepository.Delete(item);
-        }
-
-        return true;
-    }
-
-    public async Task<List<VakDto>> Allemaal()
-    {
-        var vakken = await _vakRepository.GetList();
-        if (vakken.Count == 0)
-        {
-            return new List<VakDto>();
-        }
-        return _mapper.Map<List<VakDto>>(vakken);
-    }
-
     public async Task<VakMetOnderwijsOnderdelenDto?> HaalVolledigeVakDataOp(Guid vakGroupId)
     {
-        var vak = await _vakRepository.GetLatestByGroupId(vakGroupId);
+        var vak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
         if (vak is null)
         {
             return null;
         }
 
         var result = _mapper.Map<VakMetOnderwijsOnderdelenDto>(vak);
-        var eerdereVersies = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.Id != vak.Id);
+        var eerdereVersies = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.Id != vak.Id);
         result.EerdereVersies = _mapper.Map<List<VakDto>>(eerdereVersies);
 
         return result;
@@ -79,12 +42,12 @@ internal class VakService : IVakService
 
     public async Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId)
     {
-        var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId);
+        var vakken = await _vakRepository.Lijst(x => x.GroupId == vakGroupId);
         if (vakken.Count == 0)
         {
             return false;
         }
-        var cursus = await _cursusRepository.GetLatestByGroupId(cursusGroupId);
+        var cursus = await _cursusRepository.NieuwsteVoorGroepId(cursusGroupId);
         if (cursus is null)
         {
             return false;
@@ -105,12 +68,12 @@ internal class VakService : IVakService
 
     public async Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
     {
-        var vakken = await _vakRepository.GetList(x => x.GroupId == vakGroupId);
+        var vakken = await _vakRepository.Lijst(x => x.GroupId == vakGroupId);
         if (vakken.Count == 0)
         {
             return false;
         }
-        var luk = await _leeruitkomstRepository.GetLatestByGroupId(lukGroupId);
+        var luk = await _leeruitkomstRepository.NieuwsteVoorGroepId(lukGroupId);
         if (luk is null)
         {
             return false;
@@ -129,9 +92,15 @@ internal class VakService : IVakService
         return true;
     }
 
-    public async Task<bool> Update(UpdateVakDto request)
+    public async Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie)
     {
-        var vak = await _vakRepository.GetLatestByGroupId(request.GroupId);
+        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        return _mapper.Map<VakDto?>(vak.First());
+    }
+
+    public override async Task<bool> Update(UpdateVakDto request)
+    {
+        var vak = await _vakRepository.NieuwsteVoorGroepId(request.GroupId);
         if (vak is null)
         {
             return false;
@@ -141,7 +110,7 @@ internal class VakService : IVakService
         vak.Beschrijving = request.Beschrijving;
         await _vakRepository.Update(vak);
 
-        var updatedVak = await _vakRepository.GetLatestByGroupId(vak.GroupId);
+        var updatedVak = await _vakRepository.NieuwsteVoorGroepId(vak.GroupId);
         updatedVak.RelationshipChanged = true;
         updatedVak.Cursussen = vak.Cursussen;
         updatedVak.Leeruitkomsten = vak.Leeruitkomsten;
@@ -150,18 +119,12 @@ internal class VakService : IVakService
         return true;
     }
 
-    public async Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie)
+    public override async Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie)
     {
-        var vak = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
-        return _mapper.Map<VakDto?>(vak.First());
-    }
-
-    public async Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie)
-    {
-        var vak = await _vakRepository.GetList(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
+        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
         var vakClone = (Vak)vak.First().Clone();
         vakClone.GroupId = Guid.NewGuid();
-        await _vakRepository.Create(vakClone);
+        await _vakRepository.Maak(vakClone);
         return vakClone.GroupId;
     }
 }

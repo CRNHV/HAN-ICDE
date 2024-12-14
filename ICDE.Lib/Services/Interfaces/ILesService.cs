@@ -1,15 +1,10 @@
 ﻿using ICDE.Lib.Dto.Lessen;
+using ICDE.Lib.Services.Base;
 
 namespace ICDE.Lib.Services.Interfaces;
-public interface ILesService
+public interface ILesService : IVersionableServiceBase<LesDto, MaakLesDto, UpdateLesDto>
 {
-    Task<LesDto?> Maak(string naam, string beschrijving);
-    Task<bool> VerwijderVersie(Guid groupId, int versionId);
-    Task<List<LesDto>> Allemaal();
     Task<LesMetEerdereVersies?> HaalLessenOpMetEerdereVersies(Guid groupId);
     Task<bool> KoppelLukAanLes(Guid lesGroupId, Guid lukGroupId);
     Task<bool> OntkoppelLukAanLes(Guid lesGroupId, Guid lukGroupId);
-    Task<bool> Update(LesUpdateDto request);
-    Task<LesDto?> HaalVersieOp(Guid groupId, int versionId);
-    Task<Guid> MaakKopie(Guid groupId, int versionId);
 }

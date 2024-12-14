@@ -2,15 +2,16 @@
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
+using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;
-internal class LeeruitkomstService : ILeeruitkomstService
+internal class LeeruitkomstService : VersionableServiceBase<Leeruitkomst, LeeruitkomstDto, MaakLeeruitkomstDto, UpdateLeeruitkomstDto>, ILeeruitkomstService
 {
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
     private readonly IMapper _mapper;
 
-    public LeeruitkomstService(ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper)
+    public LeeruitkomstService(ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper) : base(leeruitkomstRepository, mapper)
     {
         _leeruitkomstRepository = leeruitkomstRepository;
         _mapper = mapper;
@@ -20,14 +21,14 @@ internal class LeeruitkomstService : ILeeruitkomstService
     {
         LeeruitkomstMetEerdereVersiesDto luk = new();
 
-        var leeruitkomst = await _leeruitkomstRepository.GetLatestByGroupId(leeruitkomstId);
+        var leeruitkomst = await _leeruitkomstRepository.NieuwsteVoorGroepId(leeruitkomstId);
         if (leeruitkomst is null)
         {
             return null;
         }
         luk.Leeruitkomst = _mapper.Map<LeeruitkomstDto>(leeruitkomst);
 
-        var eerdereVersies = await _leeruitkomstRepository.GetList(x => x.GroupId == leeruitkomst.GroupId && x.Id != leeruitkomst.Id);
+        var eerdereVersies = await _leeruitkomstRepository.Lijst(x => x.GroupId == leeruitkomst.GroupId && x.Id != leeruitkomst.Id);
         if (eerdereVersies.Count > 0)
         {
             luk.EerdereVersies = _mapper.Map<List<LeeruitkomstDto>>(eerdereVersies);
@@ -36,75 +37,24 @@ internal class LeeruitkomstService : ILeeruitkomstService
         return luk;
     }
 
-    public async Task<List<LeeruitkomstDto>> Allemaal()
+    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        var dbLuks = await _leeruitkomstRepository.GetList();
-        if (dbLuks.Count == 0)
-        {
-            return new List<LeeruitkomstDto>();
-        }
-        return _mapper.Map<List<LeeruitkomstDto>>(dbLuks);
+        throw new NotImplementedException();
     }
 
-    public async Task<LeeruitkomstDto?> MaakLeeruitkomst(MaakLeeruitkomstDto request)
+    public override Task<bool> Update(UpdateLeeruitkomstDto request)
     {
-        var result = await _leeruitkomstRepository.Create(new Leeruitkomst()
-        {
-            Beschrijving = request.Beschrijving,
-            Naam = request.Naam,
-            VersieNummer = 0,
-            GroupId = Guid.NewGuid(),
-        });
-
-        if (result is null)
-            return null;
-
-        return _mapper.Map<LeeruitkomstDto>(result);
-    }
-
-    public async Task<LeeruitkomstDto?> UpdateLeeruitkomst(LukUpdateDto request)
-    {
-        var leeruitkomstToUpdate = await _leeruitkomstRepository.Get(request.Id);
-        if (leeruitkomstToUpdate is null)
-            return null;
-
-        leeruitkomstToUpdate.Naam = request.Naam;
-        leeruitkomstToUpdate.Beschrijving = request.Beschrijving;
-
-        var result = await _leeruitkomstRepository.Update(leeruitkomstToUpdate);
-        return result != null ? _mapper.Map<LeeruitkomstDto>(result) : null;
-    }
-
-    public async Task<LeeruitkomstDto?> HaalVersieOp(Guid groupId, int versieId)
-    {
-        var dbLuks = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
-        if (dbLuks.Count == 0)
-        {
-            return null;
-        }
-        var luk = dbLuks.FirstOrDefault();
-        return _mapper.Map<LeeruitkomstDto?>(luk);
-    }
-
-    public async Task<bool> Verwijder(Guid groupId, int versieId)
-    {
-        var leeruitkomsten = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
-        foreach (var luk in leeruitkomsten)
-        {
-            await _leeruitkomstRepository.Delete(luk);
-        }
-
-        return true;
+        throw new NotImplementedException();
     }
 
     public async Task<Guid> MaakKopieVanVersie(Guid groupId, int versieId)
     {
-        var dbLuks = await _leeruitkomstRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versieId);
+        var dbLuks = await _leeruitkomstRepository.Lijst(x => x.GroupId == groupId && x.VersieNummer == versieId);
         var luk = dbLuks.First();
 
         var lukClone = (Leeruitkomst)luk.Clone();
         lukClone.GroupId = Guid.NewGuid();
-        await _leeruitkomstRepository.Create(lukClone);
+        await _leeruitkomstRepository.Maak(lukClone);
         return lukClone.GroupId;
     }
 }

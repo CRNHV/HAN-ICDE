@@ -5,6 +5,8 @@ using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Opdracht;
+using ICDE.Lib.Dto.OpdrachtBeoordeling;
+using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Dto.Vak;
@@ -31,6 +33,9 @@ internal class AutoMapperConfigs : Profile
         CreateMap<MaakOpdrachtDto, Opdracht>()
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.IsToets ? OpdrachtType.Toets : OpdrachtType.Casus));
 
+        CreateMap<OpdrachtBeoordeling, OpdrachtMetBeoordelingDto>()
+            .ForMember(dest => dest.OpdrachtNaam, opt => opt.MapFrom(src => src.IngeleverdeOpdracht.Opdracht.Naam));
+
         CreateMap<IngeleverdeOpdracht, IngeleverdeOpdrachtDto>();
         CreateMap<OpdrachtBeoordeling, OpdrachtBeoordelingDto>();
         CreateMap<BeoordelingCriterea, BeoordelingCritereaDto>();
@@ -45,7 +50,7 @@ internal class AutoMapperConfigs : Profile
     {
         CreateMap<Opleiding, OpleidingDto>().ReverseMap();
         CreateMap<Opleiding, OpleidingMetVakkenDto>();
-        CreateMap<CreateOpleiding, Opleiding>();
+        CreateMap<MaakOpleidingDto, Opleiding>();
     }
     private void CreatePlanningMappings()
     {

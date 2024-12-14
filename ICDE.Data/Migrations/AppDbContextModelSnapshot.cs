@@ -246,9 +246,14 @@ namespace ICDE.Data.Migrations
                     b.Property<int>("OpdrachtId")
                         .HasColumnType("int");
 
+                    b.Property<int>("StudentNummer")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OpdrachtId");
+
+                    b.HasIndex("StudentNummer");
 
                     b.ToTable("IngeleverdeOpdrachten");
                 });
@@ -440,6 +445,26 @@ namespace ICDE.Data.Migrations
                     b.HasIndex("PlanningId");
 
                     b.ToTable("PlanningItems");
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.Student", b =>
+                {
+                    b.Property<int>("StudentNummer")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentNummer"));
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentNummer");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("Studenten");
                 });
 
             modelBuilder.Entity("ICDE.Data.Entities.Vak", b =>
@@ -679,6 +704,12 @@ namespace ICDE.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ICDE.Data.Entities.Student", null)
+                        .WithMany("IngeleverdeOpdrachten")
+                        .HasForeignKey("StudentNummer")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Opdracht");
                 });
 
@@ -721,6 +752,15 @@ namespace ICDE.Data.Migrations
                     b.Navigation("Opdracht");
 
                     b.Navigation("Planning");
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.Student", b =>
+                {
+                    b.HasOne("ICDE.Data.Entities.Identity.User", "User")
+                        .WithOne()
+                        .HasForeignKey("ICDE.Data.Entities.Student", "UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LeeruitkomstLes", b =>
@@ -837,6 +877,11 @@ namespace ICDE.Data.Migrations
             modelBuilder.Entity("ICDE.Data.Entities.Planning", b =>
                 {
                     b.Navigation("PlanningItems");
+                });
+
+            modelBuilder.Entity("ICDE.Data.Entities.Student", b =>
+                {
+                    b.Navigation("IngeleverdeOpdrachten");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,21 +4,13 @@ using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-internal class LesRepository : RepositoryBase<Les>, ILesRepository
+internal class LesRepository : VersionableRepositoryBase<Les>, ILesRepository
 {
     private readonly AppDbContext _context;
 
     public LesRepository(AppDbContext context) : base(context)
     {
         this._context = context;
-    }
-
-    public override async Task<List<Les>> GetList()
-    {
-        return await _context.Lessen
-            .GroupBy(l => l.GroupId)
-            .Select(g => g.OrderByDescending(l => l.VersieNummer).First())
-            .ToListAsync();
     }
 
     public async Task<List<Les>> GetLessonsWithLearningGoals(Guid groupId)
@@ -29,12 +21,21 @@ internal class LesRepository : RepositoryBase<Les>, ILesRepository
             .ToListAsync();
     }
 
-    public async Task<Les?> GetLatestByGroupId(Guid groupId)
+    public override async Task<Les?> Versie(Guid groupId, int versieNummer)
     {
         return await _context.Lessen
             .Include(x => x.Leeruitkomsten)
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
+    }
+
+    public override async Task<Les?> NieuwsteVoorGroepId(Guid groupId)
+    {
+        return await _context.Lessen
+           .Include(x => x.Leeruitkomsten)
+           .Where(x => x.GroupId == groupId)
+           .OrderByDescending(x => x.VersieNummer)
+           .FirstOrDefaultAsync();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ICDE.Lib.Dto.Opdracht;
+﻿namespace ICDE.Lib.Dto.OpdrachtBeoordeling;
 
 public class OpdrachtBeoordelingDto
 {

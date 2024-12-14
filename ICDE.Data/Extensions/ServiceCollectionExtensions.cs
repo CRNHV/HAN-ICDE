@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IIngeleverdeOpdrachtRepository, IngeleverdeOpdrachtRepository>();
         services.AddScoped<IOpdrachtBeoordelingRepository, OpdrachtBeoordelingRepository>();
         services.AddScoped<IBeoordelingCritereaRepository, BeoordelingCritereaRepository>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
 
         return services;
     }

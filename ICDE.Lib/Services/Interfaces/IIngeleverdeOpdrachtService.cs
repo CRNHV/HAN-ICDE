@@ -1,4 +1,4 @@
-﻿using ICDE.Lib.Dto.Opdracht;
+﻿using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Dto.OpdrachtInzending;
 
 namespace ICDE.Lib.Services.Interfaces;

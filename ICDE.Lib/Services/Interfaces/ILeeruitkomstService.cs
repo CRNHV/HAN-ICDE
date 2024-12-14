@@ -1,13 +1,8 @@
 ﻿using ICDE.Lib.Dto.Leeruitkomst;
+using ICDE.Lib.Services.Base;
 
 namespace ICDE.Lib.Services.Interfaces;
-public interface ILeeruitkomstService
+public interface ILeeruitkomstService : IVersionableServiceBase<LeeruitkomstDto, MaakLeeruitkomstDto, UpdateLeeruitkomstDto>
 {
     Task<LeeruitkomstMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid leeruitkomstId);
-    Task<List<LeeruitkomstDto>> Allemaal();
-    Task<LeeruitkomstDto?> MaakLeeruitkomst(MaakLeeruitkomstDto request);
-    Task<LeeruitkomstDto?> UpdateLeeruitkomst(LukUpdateDto request);
-    Task<LeeruitkomstDto?> HaalVersieOp(Guid groupId, int versieId);
-    Task<bool> Verwijder(Guid groupId, int versieId);
-    Task<Guid> MaakKopieVanVersie(Guid groupId, int versieId);
 }

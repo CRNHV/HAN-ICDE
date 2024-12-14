@@ -26,7 +26,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("bekijkalle")]
     public async Task<IActionResult> BekijkAlle()
     {
-        List<OpdrachtDto> opdrachten = await _opdrachtService.Allemaal();
+        List<OpdrachtDto> opdrachten = await _opdrachtService.AlleUnieke();
         return View("/Views/Auteur/Opdracht/BekijkAlle.cshtml", opdrachten);
     }
 
@@ -40,7 +40,7 @@ public class OpdrachtController : ControllerBase
     {
         if (IsRequestMethod("POST"))
         {
-            await _opdrachtService.MaakOpdracht(request);
+            await _opdrachtService.Maak(request);
         }
 
         return View("/Views/Auteur/Opdracht/MaakOpdracht.cshtml");
@@ -53,29 +53,6 @@ public class OpdrachtController : ControllerBase
         return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
     }
 
-    [HttpGet("{opdrachtGroupId}/kopie/{versie}")]
-    public async Task<IActionResult> MaakKopieVanVersie([FromRoute] Guid opdrachtGroupId, [FromRoute] int versie)
-    {
-        Guid opdrachtGuid = await _opdrachtService.MaakKopieVanVersie(opdrachtGroupId, versie);
-        if (opdrachtGroupId == Guid.Empty)
-        {
-            return BadRequest();
-        }
-
-        return Redirect("/auteur/opdracht/bekijkalle");
-    }
-
-
-    [HttpGet("{opdrachtGroupId}/bekijkversie/{versie}")]
-    public async Task<IActionResult> BekijkVersie([FromRoute] Guid opdrachtGroupId, [FromRoute] int versie)
-    {
-        var opdrachtData = await _opdrachtService.HaalVersieDataOp(opdrachtGroupId, versie);
-        return View("/Views/Auteur/Opdracht/BekijkOpdrachtVersie.cshtml", new BekijkOpdrachtVersieViewModel()
-        {
-            Opdracht = opdrachtData,
-        });
-    }
-
     [HttpGet("bekijk/{opdrachtGroupId}")]
     public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
@@ -85,7 +62,8 @@ public class OpdrachtController : ControllerBase
             return NotFound();
         }
 
-        var beoordelingCritereas = await _beoordeilngCritereaService.Unieke();
+        var beoordelingCritereas = await _beoordeilngCritereaService.AlleUnieke();
+
         return View("/Views/Auteur/Opdracht/BekijkOpdracht.cshtml", new AuteurBekijkOpdrachtViewModel()
         {
             Opdracht = opdrachtData,
@@ -100,8 +78,10 @@ public class OpdrachtController : ControllerBase
     [HttpGet("{opdrachtGroupId}/verwijder")]
     public async Task<IActionResult> VerwijderOpdracht([FromRoute] Guid opdrachtGroupId)
     {
-        await _opdrachtService.VerwijderOpdracht(opdrachtGroupId);
-        return Redirect("/auteur/opdracht/bekijkalle");
+        //await _opdrachtService.Verwijder(opdrachtGroupId);
+        //return Redirect("/auteur/opdracht/bekijkalle");
+
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -109,9 +89,9 @@ public class OpdrachtController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateOpdracht([FromForm] OpdrachtUpdateDto request)
+    public async Task<IActionResult> UpdateOpdracht([FromForm] UpdateOpdrachtDto request)
     {
-        await _opdrachtService.UpdateOpdracht(request);
+        await _opdrachtService.Update(request);
         return Redirect($"/auteur/opdracht/bekijk/{request.GroupId}");
     }
 }
