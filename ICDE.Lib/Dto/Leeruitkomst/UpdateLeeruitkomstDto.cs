@@ -1,5 +1,5 @@
-﻿namespace ICDE.Lib.Dto.Lessen;
-public class LesUpdateDto
+﻿namespace ICDE.Lib.Dto.Leeruitkomst;
+public class UpdateLeeruitkomstDto
 {
     public Guid GroupId { get; set; }
     public int Id { get; set; }

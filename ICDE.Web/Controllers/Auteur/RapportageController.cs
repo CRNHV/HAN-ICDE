@@ -29,9 +29,9 @@ public class RapportageController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        var allOpleidingen = await _opleidingService.HaalUniekeOp();
-        var vakken = await _vakService.Allemaal();
-        var cursus = await _cursusService.Allemaal();
+        var allOpleidingen = await _opleidingService.AlleUnieke();
+        var vakken = await _vakService.AlleUnieke();
+        var cursus = await _cursusService.AlleUnieke();
 
         return View("/Views/Auteur/Rapportage/Index.cshtml", new RapportageIndexViewModel()
         {

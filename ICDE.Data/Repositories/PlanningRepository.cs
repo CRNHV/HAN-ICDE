@@ -4,7 +4,7 @@ using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-internal class PlanningRepository : RepositoryBase<Planning>, IPlanningRepository
+internal class PlanningRepository : CrudRepositoryBase<Planning>, IPlanningRepository
 {
     private readonly AppDbContext _context;
 
@@ -25,16 +25,16 @@ internal class PlanningRepository : RepositoryBase<Planning>, IPlanningRepositor
         await _context.SaveChangesAsync();
         return newPlanning;
     }
-
-    public override async Task<Planning?> Get(int id)
-    {
-        return await _context.Plannings
-            .Include(x => x.PlanningItems)
-            .ThenInclude(x => x.Les)
-            .ThenInclude(x => x.Leeruitkomsten)
-            .Include(x => x.PlanningItems)
-            .ThenInclude(x => x.Opdracht)
-            .Where(x => x.Id == id)
-            .FirstOrDefaultAsync();
-    }
+        
+    //public override async Task<Planning?> Get(int id)
+    //{
+    //    return await _context.Plannings
+    //        .Include(x => x.PlanningItems)
+    //        .ThenInclude(x => x.Les)
+    //        .ThenInclude(x => x.Leeruitkomsten)
+    //        .Include(x => x.PlanningItems)
+    //        .ThenInclude(x => x.Opdracht)
+    //        .Where(x => x.Id == id)
+    //        .FirstOrDefaultAsync();
+    //}
 }

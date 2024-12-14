@@ -30,7 +30,7 @@ public class LeeruitkomstController : ControllerBase
     {
         if (IsRequestMethod("POST"))
         {
-            LeeruitkomstDto result = await _leeruitkomstService.MaakLeeruitkomst(request);
+            LeeruitkomstDto result = await _leeruitkomstService.Maak(request);
             if (result is null)
                 return BadRequest();
         }
@@ -41,7 +41,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("bekijkalle")]
     public async Task<IActionResult> BekijkLeeruitkomsten()
     {
-        List<LeeruitkomstDto> leeruitkomsten = await _leeruitkomstService.Allemaal();
+        List<LeeruitkomstDto> leeruitkomsten = await _leeruitkomstService.AlleUnieke();
         return View("/Views/Auteur/Leeruitkomst/BekijkLeeruitkomsten.cshtml", leeruitkomsten);
     }
 
@@ -63,7 +63,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("bekijkversie/{groupId}/{versieId}")]
     public async Task<IActionResult> BekijkLeeruitkomst([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
-        var leeruitkomst = await _leeruitkomstService.HaalVersieOp(groupId, versieId);
+        var leeruitkomst = await _leeruitkomstService.BekijkVersie(groupId, versieId);
         if (leeruitkomst is null)
         {
             return NotFound();
@@ -82,7 +82,7 @@ public class LeeruitkomstController : ControllerBase
     [HttpGet("delete/{groupId}/{versieId}")]
     public async Task<IActionResult> DeleteLeeruitkosmt([FromRoute] Guid groupId, [FromRoute] int versieId)
     {
-        var result = await _leeruitkomstService.Verwijder(groupId, versieId);
+        var result = await _leeruitkomstService.VerwijderVersie(groupId, versieId);
         if (!result)
         {
             return BadRequest();
@@ -96,15 +96,15 @@ public class LeeruitkomstController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateLeeruitkomst([FromForm] LukUpdateDto request)
+    public async Task<IActionResult> UpdateLeeruitkomst([FromForm] UpdateLeeruitkomstDto request)
     {
         if (IsRequestMethod("POST"))
         {
-            LeeruitkomstDto result = await _leeruitkomstService.UpdateLeeruitkomst(request);
-            if (result is null)
+            bool result = await _leeruitkomstService.Update(request);
+            if (result is false)
                 return BadRequest();
 
-            return Redirect($"/auteur/leeruitkomst/bekijk/{result.GroupId}");
+            return Redirect($"/auteur/leeruitkomst/bekijk/{request.GroupId}");
         }
 
         return Redirect("/auteur/leeruitkomst/bekijkalle");

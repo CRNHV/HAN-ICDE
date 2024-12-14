@@ -4,7 +4,7 @@ using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-public class OpdrachtRepository : RepositoryBase<Opdracht>, IOpdrachtRepository
+public class OpdrachtRepository : VersionableRepositoryBase<Opdracht>, IOpdrachtRepository
 {
     private readonly AppDbContext _context;
 
@@ -12,22 +12,7 @@ public class OpdrachtRepository : RepositoryBase<Opdracht>, IOpdrachtRepository
     {
         _context = context;
     }
-
-    public override async Task<List<Opdracht>> GetList()
-    {
-        return await _context.Opdrachten
-            .GroupBy(l => l.GroupId)
-            .Select(g => g.OrderByDescending(l => l.VersieNummer).First())
-            .ToListAsync();
-    }
-
-    public async Task<List<Opdracht>> GetEarlierVersions(Guid groupId, int exceptId)
-    {
-        return await _context.Opdrachten
-            .Where(x => x.GroupId == groupId && x.Id != exceptId)
-            .ToListAsync();
-    }
-
+       
     public async Task<Opdracht?> GetFullDataByGroupId(Guid groupId)
     {
         return await _context.Opdrachten
@@ -36,15 +21,7 @@ public class OpdrachtRepository : RepositoryBase<Opdracht>, IOpdrachtRepository
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
     }
-
-    public async Task<Opdracht?> GetLatestByGroupId(Guid groupId)
-    {
-        return await _context.Opdrachten
-            .Where(x => x.GroupId == groupId)
-            .OrderByDescending(x => x.VersieNummer)
-            .FirstOrDefaultAsync();
-    }
-
+       
     public async Task<Opdracht?> GetByInzendingId(int inzendingId)
     {
         return await _context.IngeleverdeOpdrachten
@@ -56,7 +33,7 @@ public class OpdrachtRepository : RepositoryBase<Opdracht>, IOpdrachtRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task Delete(Guid opdrachtGroupId)
+    public async Task Verwijder(Guid opdrachtGroupId)
     {
         var trans = await _context.Database.BeginTransactionAsync();
 
@@ -82,5 +59,18 @@ public class OpdrachtRepository : RepositoryBase<Opdracht>, IOpdrachtRepository
         {
             await trans.RollbackAsync();
         }
+    }
+
+    public async override Task<Opdracht?> Versie(Guid groupId, int versieNummer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async override Task<Opdracht?> NieuwsteVoorGroepId(Guid groupId)
+    {
+        return await _context.Opdrachten
+            .Where(x => x.GroupId == groupId)
+            .OrderByDescending(x => x.VersieNummer)
+            .FirstOrDefaultAsync();
     }
 }

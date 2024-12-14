@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ICDE.Lib.Dto.Opleidingen;
-using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Dto.Vak;
 
 namespace ICDE.Web.Models.Opleiding;

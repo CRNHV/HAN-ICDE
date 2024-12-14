@@ -4,16 +4,17 @@ using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
+using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;
-internal class LesService : ILesService
+internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, UpdateLesDto>, ILesService
 {
     private readonly ILesRepository _lesRepository;
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
     private readonly IMapper _mapper;
 
-    public LesService(ILesRepository lesRepository, ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper)
+    public LesService(ILesRepository lesRepository, ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper) : base(lesRepository, mapper)
     {
         _lesRepository = lesRepository;
         _leeruitkomstRepository = leeruitkomstRepository;
@@ -22,7 +23,7 @@ internal class LesService : ILesService
 
     public async Task<LesDto?> Maak(string naam, string beschrijving)
     {
-        var result = await _lesRepository.Create(new Les()
+        var result = await _lesRepository.Maak(new Les()
         {
             Naam = naam,
             Beschrijving = beschrijving,
@@ -37,43 +38,15 @@ internal class LesService : ILesService
         return _mapper.Map<LesDto>(result);
     }
 
-    public async Task<bool> VerwijderVersie(Guid groupId, int versionId)
-    {
-        try
-        {
-            var lessons = await _lesRepository.GetList(x => x.GroupId == groupId && x.VersieNummer == versionId);
-            foreach (var item in lessons)
-            {
-                await _lesRepository.Delete(item);
-            }
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-    public async Task<List<LesDto>> Allemaal()
-    {
-        var lessons = await _lesRepository.GetList();
-        if (lessons.Count == 0)
-        {
-            return new List<LesDto>();
-        }
-        return _mapper.Map<List<LesDto>>(lessons);
-    }
-
     public async Task<LesMetEerdereVersies?> HaalLessenOpMetEerdereVersies(Guid groupId)
     {
-        var currentVersion = await _lesRepository.GetLatestByGroupId(groupId);
+        var currentVersion = await _lesRepository.NieuwsteVoorGroepId(groupId);
         if (currentVersion is null)
         {
             return null;
         }
 
-        var otherVersions = await _lesRepository.GetList(x => x.GroupId == groupId && x.Id != currentVersion.Id);
+        var otherVersions = await _lesRepository.Lijst(x => x.GroupId == groupId && x.Id != currentVersion.Id);
         return new LesMetEerdereVersies()
         {
             Les = _mapper.Map<LesDto>(currentVersion),
@@ -90,7 +63,7 @@ internal class LesService : ILesService
             return false;
         }
 
-        var luk = await _leeruitkomstRepository.GetLatestByGroupId(lukGroupId);
+        var luk = await _leeruitkomstRepository.NieuwsteVoorGroepId(lukGroupId);
         if (luk is null)
         {
             return false;
@@ -127,9 +100,14 @@ internal class LesService : ILesService
         return true;
     }
 
-    public async Task<bool> Update(LesUpdateDto request)
+    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        var les = await _lesRepository.GetLatestByGroupId(request.GroupId);
+        throw new NotImplementedException();
+    }
+
+    public override async Task<bool> Update(UpdateLesDto request)
+    {
+        var les = await _lesRepository.NieuwsteVoorGroepId(request.GroupId);
         if (les is null)
         {
             return false;
@@ -139,7 +117,7 @@ internal class LesService : ILesService
         les.Beschrijving = request.Beschrijving;
         await _lesRepository.Update(les);
 
-        var updatedLes = await _lesRepository.GetLatestByGroupId(request.GroupId);
+        var updatedLes = await _lesRepository.NieuwsteVoorGroepId(request.GroupId);
         updatedLes.Leeruitkomsten = les.Leeruitkomsten;
         updatedLes.RelationshipChanged = true;
         await _lesRepository.Update(updatedLes);

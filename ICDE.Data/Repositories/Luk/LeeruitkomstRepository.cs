@@ -3,7 +3,7 @@ using ICDE.Data.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories.Luk;
-public class LeeruitkomstRepository : RepositoryBase<Leeruitkomst>, ILeeruitkomstRepository
+public class LeeruitkomstRepository : VersionableRepositoryBase<Leeruitkomst>, ILeeruitkomstRepository
 {
     private readonly AppDbContext _context;
 
@@ -12,19 +12,19 @@ public class LeeruitkomstRepository : RepositoryBase<Leeruitkomst>, ILeeruitkoms
         _context = context;
     }
 
-    public async Task<Leeruitkomst?> GetLatestByGroupId(Guid groupId)
+    public override async Task<Leeruitkomst?> NieuwsteVoorGroepId(Guid groupId)
+    {
+        return await _context.leeruitkomstsen
+           .Where(x => x.GroupId == groupId)
+           .OrderByDescending(x => x.VersieNummer)
+           .FirstOrDefaultAsync();
+    }
+
+    public override async Task<Leeruitkomst?> Versie(Guid groupId, int versieNummer)
     {
         return await _context.leeruitkomstsen
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
-    }
-
-    public override async Task<List<Leeruitkomst>> GetList()
-    {
-        return await _context.leeruitkomstsen
-            .GroupBy(l => l.GroupId)
-            .Select(g => g.OrderByDescending(l => l.VersieNummer).First())
-            .ToListAsync();
     }
 }

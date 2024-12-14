@@ -49,7 +49,7 @@ internal class AutoMapperConfigs : Profile
     {
         CreateMap<Opleiding, OpleidingDto>().ReverseMap();
         CreateMap<Opleiding, OpleidingMetVakkenDto>();
-        CreateMap<CreateOpleiding, Opleiding>();
+        CreateMap<MaakOpleidingDto, Opleiding>();
     }
     private void CreatePlanningMappings()
     {
