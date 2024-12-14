@@ -46,13 +46,38 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
         return result != null;
     }
 
-    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
+    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        throw new NotImplementedException();
+        var cursus = await _cursusRepository.Versie(groupId, versieNummer);
+        var cursusClone = (Cursus)cursus.Clone();
+        cursusClone.GroupId = Guid.NewGuid();
+        await _cursusRepository.Maak(cursusClone);
+        return cursusClone.GroupId;
     }
 
-    public override Task<bool> Update(UpdateCursusDto request)
+    public override async Task<bool> Update(UpdateCursusDto request)
     {
-        throw new NotImplementedException();
+        var dbCursus = await _cursusRepository.GetFullObjectTreeByGroupId(request.GroupId);
+        if (dbCursus is null)
+            return false;
+
+        dbCursus.Naam = request.Naam;
+        dbCursus.Beschrijving = request.Beschrijving;
+
+        var updateResult = await _cursusRepository.Update(dbCursus);
+        if (!updateResult)
+            return false;
+
+        var updatedCursus = await _cursusRepository.GetFullObjectTreeByGroupId(request.GroupId);
+        if (updatedCursus is null)
+            return false;
+
+        if (dbCursus.Planning is null)
+            return true;
+
+        updatedCursus.Planning = (Planning)dbCursus.Planning.Clone();
+        updatedCursus.RelationshipChanged = true;
+
+        return await _cursusRepository.Update(updatedCursus);
     }
 }
