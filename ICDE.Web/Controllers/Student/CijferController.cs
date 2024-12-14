@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Services.Interfaces;

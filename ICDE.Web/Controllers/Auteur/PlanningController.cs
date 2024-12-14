@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
-using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Planning;

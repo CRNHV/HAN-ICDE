@@ -2,7 +2,6 @@
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
-using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.IO;

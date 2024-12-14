@@ -49,6 +49,8 @@ public class VakController : Controller
         //}
 
         //return Redirect($"get/{groupId}");
+
+        return BadRequest();
     }
 
     /// <summary>

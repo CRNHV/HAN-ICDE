@@ -1,5 +1,4 @@
-﻿using ICDE.Data.Repositories.Base;
-using ICDE.Lib.Dto.BeoordelingCriterea;
+﻿using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Services.Base;
 
 namespace ICDE.Lib.Services.Interfaces;

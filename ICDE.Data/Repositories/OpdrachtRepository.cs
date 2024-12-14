@@ -12,7 +12,7 @@ public class OpdrachtRepository : VersionableRepositoryBase<Opdracht>, IOpdracht
     {
         _context = context;
     }
-       
+
     public async Task<Opdracht?> GetFullDataByGroupId(Guid groupId)
     {
         return await _context.Opdrachten
@@ -21,7 +21,7 @@ public class OpdrachtRepository : VersionableRepositoryBase<Opdracht>, IOpdracht
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
     }
-       
+
     public async Task<Opdracht?> GetByInzendingId(int inzendingId)
     {
         return await _context.IngeleverdeOpdrachten

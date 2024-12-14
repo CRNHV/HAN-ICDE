@@ -25,7 +25,7 @@ internal class PlanningRepository : CrudRepositoryBase<Planning>, IPlanningRepos
         await _context.SaveChangesAsync();
         return newPlanning;
     }
-        
+
     //public override async Task<Planning?> Get(int id)
     //{
     //    return await _context.Plannings

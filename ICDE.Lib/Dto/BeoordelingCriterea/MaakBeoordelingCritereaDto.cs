@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ICDE.Lib.Dto.BeoordelingCriterea;
+﻿namespace ICDE.Lib.Dto.BeoordelingCriterea;
 public class MaakBeoordelingCritereaDto
 {
     public string Naam { get; set; }
