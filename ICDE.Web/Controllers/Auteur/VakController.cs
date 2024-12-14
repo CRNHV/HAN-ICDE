@@ -28,7 +28,7 @@ public class VakController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        List<VakDto> vakken = await _vakService.Allemaal();
+        List<VakDto> vakken = await _vakService.AlleUnieke();
         return View("Views/Auteur/Vak/Index.cshtml", new VakIndexViewModel()
         {
             Vakken = vakken
@@ -42,13 +42,15 @@ public class VakController : Controller
     [HttpPost("maak")]
     public async Task<IActionResult> MaakVak([FromForm] MaakVakViewModel request)
     {
-        Guid groupId = await _vakService.MaakVak(request.Naam, request.Beschrijving);
-        if (groupId == Guid.Empty)
-        {
-            return BadRequest();
-        }
+        //Guid groupId = await _vakService.MaakVak(request.Naam, request.Beschrijving);
+        //if (groupId == Guid.Empty)
+        //{
+        //    return BadRequest();
+        //}
 
-        return Redirect($"get/{groupId}");
+        //return Redirect($"get/{groupId}");
+
+        return BadRequest();
     }
 
     /// <summary>
@@ -64,8 +66,8 @@ public class VakController : Controller
             return NotFound();
         }
 
-        var luks = await _leeruitkomstService.Allemaal();
-        var cursussen = await _cursusService.Allemaal();
+        var luks = await _leeruitkomstService.AlleUnieke();
+        var cursussen = await _cursusService.AlleUnieke();
 
         return View("Views/Auteur/Vak/BekijkVak.cshtml", new BekijkVakViewModel()
         {

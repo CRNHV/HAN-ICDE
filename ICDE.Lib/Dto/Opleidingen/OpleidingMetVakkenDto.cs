@@ -1,6 +1,6 @@
 ﻿using ICDE.Lib.Dto.Vak;
 
-namespace ICDE.Lib.Dto.Planning;
+namespace ICDE.Lib.Dto.Opleidingen;
 public class OpleidingMetVakkenDto
 {
     public string Naam { get; set; }

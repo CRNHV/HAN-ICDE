@@ -1,14 +1,10 @@
 ﻿using ICDE.Lib.Dto.Opdracht;
+using ICDE.Lib.Services.Base;
 
 namespace ICDE.Lib.Services.Interfaces;
-public interface IOpdrachtService
+public interface IOpdrachtService : IVersionableServiceBase<OpdrachtDto, MaakOpdrachtDto, UpdateOpdrachtDto>
 {
     Task<bool> VoegCritereaToe(Guid opdrachtGroupId, Guid critereaGroupId);
-    Task<OpdrachtDto?> Bekijk(Guid opdrachtId);
-    Task<List<OpdrachtDto>> Allemaal();
     Task<OpdrachtVolledigeDataDto?> HaalAlleDataOp(Guid opdrachtGroupId);
     Task<StudentOpdrachtDto?> HaalStudentOpdrachtDataOp(Guid opdrachtGroupId);
-    Task MaakOpdracht(MaakOpdrachtDto opdracht);
-    Task UpdateOpdracht(OpdrachtUpdateDto request);
-    Task VerwijderOpdracht(Guid opdrachtGroupId);
 }

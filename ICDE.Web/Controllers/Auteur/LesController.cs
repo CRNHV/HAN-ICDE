@@ -30,7 +30,7 @@ public class LesController : Controller
     public async Task<IActionResult> Index()
     {
         LesIndexViewModel viewModel = new LesIndexViewModel();
-        viewModel.Lessen = await _lesService.Allemaal();
+        viewModel.Lessen = await _lesService.AlleUnieke();
         return View("/Views/Auteur/Les/Index.cshtml", viewModel);
     }
 
@@ -42,12 +42,14 @@ public class LesController : Controller
     [HttpPost("create")]
     public async Task<IActionResult> MaakLes([FromForm] MaakLesViewModel request)
     {
-        LesDto les = await _lesService.Maak(request.Naam, request.Beschrijving);
-        if (les is null)
-        {
-            return BadRequest();
-        }
-        return Redirect($"get/{les.GroupId}");
+        //LesDto les = await _lesService.Maak(request.Naam, request.Beschrijving);
+        //if (les is null)
+        //{
+        //    return BadRequest();
+        //}
+        //return Redirect($"get/{les.GroupId}");
+
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -67,7 +69,7 @@ public class LesController : Controller
             Les = lmev.Les,
             LesList = lmev.LesList,
             LesLeeruitkomsten = lmev.LesLeeruitkomsten,
-            BeschrikbareLeeruitkomsten = await _leeruitkomstService.Allemaal()
+            BeschrikbareLeeruitkomsten = await _leeruitkomstService.AlleUnieke()
         });
     }
 
@@ -100,7 +102,7 @@ public class LesController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateLes([FromForm] LesUpdateDto request)
+    public async Task<IActionResult> UpdateLes([FromForm] UpdateLesDto request)
     {
         var result = await _lesService.Update(request);
         if (!result)

@@ -2,8 +2,7 @@
 using ICDE.Data.Repositories.Base;
 
 namespace ICDE.Data.Repositories.Interfaces;
-public interface ICursusRepository : IRepositoryBase<Cursus>
+public interface ICursusRepository : IVersionableRepository<Cursus>
 {
-    Task<Cursus?> GetLatestByGroupId(Guid groupId);
     Task<Cursus?> GetFullObjectTreeByGroupId(Guid vakGroupId);
 }

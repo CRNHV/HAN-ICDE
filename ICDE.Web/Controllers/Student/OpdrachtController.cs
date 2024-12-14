@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ICDE.Data.Entities;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Opdracht;
+using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        var opdrachten = await _opdrachtService.Allemaal();
+        var opdrachten = await _opdrachtService.AlleUnieke();
         return View("/Views/Student/Opdracht/Index.cshtml", opdrachten);
     }
 

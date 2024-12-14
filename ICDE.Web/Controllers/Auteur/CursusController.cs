@@ -24,7 +24,7 @@ public class CursusController : ControllerBase
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
-        var cursussen = await _cursusService.Allemaal();
+        var cursussen = await _cursusService.AlleUnieke();
         return View("/Views/Auteur/Cursus/Index.cshtml", cursussen);
     }
 
@@ -36,7 +36,7 @@ public class CursusController : ControllerBase
         {
             return NotFound();
         }
-        List<CursusDto> eerdereVersies = await _cursusService.HaalEerdereVersiesOp(cursusGroupId, cursus.Id);
+        List<CursusDto> eerdereVersies = await _cursusService.EerdereVersies(cursusGroupId, cursus.Id);
         return View("/Views/Auteur/Cursus/BekijkCursus.cshtml", new BekijkCursusViewModel()
         {
             Cursus = cursus,

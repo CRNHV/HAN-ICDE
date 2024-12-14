@@ -2,7 +2,6 @@
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
-using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.IO;
@@ -31,7 +30,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<OpdrachtInzendingDto?> HaalInzendingDataOp(int inzendingId)
     {
-        var inzending = await _ingeleverdeOpdrachtRepository.Get(inzendingId);
+        var inzending = await _ingeleverdeOpdrachtRepository.VoorId(inzendingId);
         if (inzending is null)
         {
             return null;
@@ -53,7 +52,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(Guid opdrachtId)
     {
-        List<IngeleverdeOpdracht> dbInzendingen = await _ingeleverdeOpdrachtRepository.GetList(x => x.Opdracht.GroupId == opdrachtId);
+        List<IngeleverdeOpdracht> dbInzendingen = await _ingeleverdeOpdrachtRepository.Lijst(x => x.Opdracht.GroupId == opdrachtId);
         if (dbInzendingen.Count == 0)
         {
             return new List<IngeleverdeOpdrachtDto>();
@@ -67,7 +66,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
     {
-        var dbOpdracht = await _opdrachtRepository.Get(opdracht.OpdrachtId);
+        var dbOpdracht = await _opdrachtRepository.VoorId(opdracht.OpdrachtId);
         if (dbOpdracht is null)
             return false;
 
@@ -92,7 +91,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
             StudentNummer = studentNummer.Value,
         };
 
-        await _ingeleverdeOpdrachtRepository.Create(ingeleverdeOpdracht);
+        await _ingeleverdeOpdrachtRepository.Maak(ingeleverdeOpdracht);
         return true;
     }
 
@@ -101,11 +100,11 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
         if (request.Cijfer <= 0 || request.Cijfer >= 11)
             return false;
 
-        var dbIngeleverdeOpdracht = await _ingeleverdeOpdrachtRepository.Get(request.InzendingId);
+        var dbIngeleverdeOpdracht = await _ingeleverdeOpdrachtRepository.VoorId(request.InzendingId);
         if (dbIngeleverdeOpdracht is null)
             return false;
 
-        await _opdrachtBeoordelingRepository.Create(new OpdrachtBeoordeling()
+        await _opdrachtBeoordelingRepository.Maak(new OpdrachtBeoordeling()
         {
             Cijfer = request.Cijfer,
             Feedback = request.Feedback,

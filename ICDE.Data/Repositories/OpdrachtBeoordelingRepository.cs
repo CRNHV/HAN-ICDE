@@ -4,7 +4,7 @@ using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-public class OpdrachtBeoordelingRepository : RepositoryBase<OpdrachtBeoordeling>, IOpdrachtBeoordelingRepository
+public class OpdrachtBeoordelingRepository : CrudRepositoryBase<OpdrachtBeoordeling>, IOpdrachtBeoordelingRepository
 {
     private readonly AppDbContext _context;
 

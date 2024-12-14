@@ -1,5 +1,4 @@
-﻿using ICDE.Data.Entities;
-using ICDE.Data.Repositories.Interfaces;
+﻿using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Lib.Validator;
 using ICDE.Lib.Validator.Interfaces;

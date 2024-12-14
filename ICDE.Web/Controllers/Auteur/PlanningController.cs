@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
-using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Web.Models.Planning;
@@ -35,7 +34,7 @@ public class PlanningController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        List<PlanningZonderItemsDto> plannings = await _planningService.Allemaal();
+        List<PlanningZonderItemsDto> plannings = await _planningService.AlleUnieke();
         return View("/Views/Auteur/Planning/Index.cshtml", plannings);
     }
 
@@ -47,14 +46,14 @@ public class PlanningController : ControllerBase
     [HttpGet("bekijk/{planningId}")]
     public async Task<IActionResult> BekijkPlanning([FromRoute] int planningId)
     {
-        var planning = await _planningService.ZoekMetId(planningId);
+        var planning = await _planningService.VoorId(planningId);
         if (planning is null)
         {
             return NotFound();
         }
-        var cursussen = await _cursusService.Allemaal();
-        var opdrachten = await _opdrachtService.Allemaal();
-        var lessen = await _lesService.Allemaal();
+        var cursussen = await _cursusService.AlleUnieke();
+        var opdrachten = await _opdrachtService.AlleUnieke();
+        var lessen = await _lesService.AlleUnieke();
         var lessenInPlanning = await _planningService.HaalLessenOpVoorPlanning(planningId);
 
         return View("/Views/Auteur/Planning/ViewPlanning.cshtml", new BekijkPlanningViewModel()

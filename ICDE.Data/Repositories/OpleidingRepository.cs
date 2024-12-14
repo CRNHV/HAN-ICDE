@@ -4,7 +4,7 @@ using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-internal class OpleidingRepository : RepositoryBase<Opleiding>, IOpleidingRepository
+internal class OpleidingRepository : VersionableRepositoryBase<Opleiding>, IOpleidingRepository
 {
     private readonly AppDbContext _context;
 
@@ -41,20 +41,19 @@ internal class OpleidingRepository : RepositoryBase<Opleiding>, IOpleidingReposi
         return opleiding;
     }
 
-    public async Task<Opleiding?> GetLatestByGroupId(Guid opleidingGroupId)
+    public override async Task<Opleiding?> NieuwsteVoorGroepId(Guid groupId)
     {
         return await _context.Opleidingen
             .Include(x => x.Vakken)
-            .Where(x => x.GroupId == opleidingGroupId)
+            .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
     }
 
-    public override async Task<List<Opleiding>> GetList()
+    public override async Task<Opleiding?> Versie(Guid groupId, int versieNummer)
     {
         return await _context.Opleidingen
-            .GroupBy(l => l.GroupId)
-            .Select(g => g.OrderByDescending(l => l.VersieNummer).First())
-            .ToListAsync();
+            .Where(x => x.GroupId == groupId && x.VersieNummer == versieNummer)
+            .FirstOrDefaultAsync();
     }
 }
