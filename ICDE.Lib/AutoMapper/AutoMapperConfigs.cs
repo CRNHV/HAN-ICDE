@@ -17,12 +17,19 @@ internal class AutoMapperConfigs : Profile
     public AutoMapperConfigs()
     {
         CreateCursusMappings();
-        CreateSimpleDtoMappings();
+        CreateLukMappings();
         CreateVakMappings();
         CreateOpleidingMappings();
         CreatePlanningMappings();
         CreateOpdrachtMappings();
         CreateLesMappings();
+        CreateBeoordelingCritereaMappings();
+    }
+
+    private void CreateBeoordelingCritereaMappings()
+    {
+        CreateMap<BeoordelingCriterea, BeoordelingCritereaDto>();
+        CreateMap<MaakBeoordelingCritereaDto, BeoordelingCriterea>();
     }
 
     private void CreateOpdrachtMappings()
@@ -81,7 +88,7 @@ internal class AutoMapperConfigs : Profile
         CreateMap<Les, LesMetLeeruitkomstenDto>();
     }
 
-    private void CreateSimpleDtoMappings()
+    private void CreateLukMappings()
     {
         CreateMap<Leeruitkomst, LeeruitkomstDto>().ReverseMap();
     }
