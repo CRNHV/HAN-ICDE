@@ -26,7 +26,7 @@ public class BeoordelingCritereaController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        List<BeoordelingCritereaDto> beoordelingCritereas = await _beoordelingCritereaService.Unieke();
+        List<BeoordelingCritereaDto> beoordelingCritereas = await _beoordelingCritereaService.AlleUnieke();
         return View("/Views/Auteur/BeoordelingCritereas/index.cshtml", beoordelingCritereas);
     }
 
@@ -39,7 +39,7 @@ public class BeoordelingCritereaController : ControllerBase
             return NotFound();
         }
 
-        var leeruitkomsten = await _leeruitkomstService.Allemaal();
+        var leeruitkomsten = await _leeruitkomstService.AlleUnieke();
         return View("/Views/Auteur/BeoordelingCritereas/BekijkCriterea.cshtml", new BekijkBeoorderlingCritereaViewModel()
         {
             BeoordelingCriterea = beoorderlingCriterea.BeoordelingCriterea,

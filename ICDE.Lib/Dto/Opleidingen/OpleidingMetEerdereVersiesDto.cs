@@ -1,6 +1,4 @@
-﻿using ICDE.Lib.Dto.Planning;
-
-namespace ICDE.Lib.Dto.Opleidingen;
+﻿namespace ICDE.Lib.Dto.Opleidingen;
 public class OpleidingMetEerdereVersiesDto
 {
     public OpleidingMetVakkenDto OpleidingDto { get; set; } = new();

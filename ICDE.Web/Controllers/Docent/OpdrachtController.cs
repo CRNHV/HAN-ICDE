@@ -24,7 +24,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
-        var opdrachten = await _opdrachtService.Allemaal();
+        var opdrachten = await _opdrachtService.AlleUnieke();
         return View("/Views/Docent/Opdracht/Index.cshtml", new OpdrachtenIndexViewModel()
         {
             Opdrachten = opdrachten,
@@ -39,7 +39,7 @@ public class OpdrachtController : ControllerBase
     [HttpGet("bekijk/{opdrachtGroupId}")]
     public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
-        var opdracht = await _opdrachtService.Bekijk(opdrachtGroupId);
+        var opdracht = await _opdrachtService.NieuwsteVoorGroepId(opdrachtGroupId);
         if (opdracht is null)
         {
             return NotFound();

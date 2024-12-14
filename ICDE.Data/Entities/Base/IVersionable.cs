@@ -1,5 +1,5 @@
 ﻿namespace ICDE.Data.Entities.Base;
-internal interface IVersionable
+public interface IVersionable
 {
     public int Id { get; set; }
     public int VersieNummer { get; set; }

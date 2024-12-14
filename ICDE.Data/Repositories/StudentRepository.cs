@@ -4,7 +4,7 @@ using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
-internal class StudentRepository : RepositoryBase<Student>, IStudentRepository
+internal class StudentRepository : CrudRepositoryBase<Student>, IStudentRepository
 {
     private readonly AppDbContext _context;
 

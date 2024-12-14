@@ -2,9 +2,7 @@
 using ICDE.Data.Repositories.Base;
 
 namespace ICDE.Data.Repositories.Interfaces;
-public interface IOpleidingRepository : IRepositoryBase<Opleiding>
+public interface IOpleidingRepository : IVersionableRepository<Opleiding>
 {
-    Task<Opleiding?> GetLatestByGroupId(Guid opleidingGroupId);
-
     Task<Opleiding?> GetFullObjectTreeByGroupId(Guid groupId);
 }

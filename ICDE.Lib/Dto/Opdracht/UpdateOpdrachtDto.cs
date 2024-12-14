@@ -1,5 +1,5 @@
 ﻿namespace ICDE.Lib.Dto.Opdracht;
-public class OpdrachtUpdateDto
+public class UpdateOpdrachtDto
 {
     public string Naam { get; set; }
     public string Beschrijving { get; set; }

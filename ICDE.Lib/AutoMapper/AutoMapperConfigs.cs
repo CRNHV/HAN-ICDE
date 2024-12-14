@@ -6,6 +6,7 @@ using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
+using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Dto.Vak;
@@ -49,7 +50,7 @@ internal class AutoMapperConfigs : Profile
     {
         CreateMap<Opleiding, OpleidingDto>().ReverseMap();
         CreateMap<Opleiding, OpleidingMetVakkenDto>();
-        CreateMap<CreateOpleiding, Opleiding>();
+        CreateMap<MaakOpleidingDto, Opleiding>();
     }
     private void CreatePlanningMappings()
     {
