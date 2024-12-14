@@ -21,7 +21,7 @@ public class Vak : OnderwijsOnderdeel, IVersionable, ICloneable
             Cursussen = Cursussen,
             Naam = Naam,
             Beschrijving = Beschrijving,
-            Leeruitkomsten = Leeruitkomsten
+            Leeruitkomsten = Leeruitkomsten,
         };
     }
 }

@@ -26,7 +26,7 @@ internal class BeoordelingCritereaService : VersionableServiceBase<BeoordelingCr
         }
         var criterea = _mapper.Map<BeoordelingCritereaDto>(dbCriterea);
 
-        var earlierVersions = EerdereVersies(critereaGroupId, dbCriterea.VersieNummer);
+        var earlierVersions = await EerdereVersies(critereaGroupId, dbCriterea.VersieNummer);
 
         return new BeoordelingCritereaMetEerdereVersiesDto()
         {
@@ -35,13 +35,38 @@ internal class BeoordelingCritereaService : VersionableServiceBase<BeoordelingCr
         };
     }
 
-    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
+    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        throw new NotImplementedException();
+        var dbCriterea = await _beoordelingCritereaRepository.Versie(groupId, versieNummer);
+        var critereaClone = (BeoordelingCriterea)dbCriterea.Clone();
+        critereaClone.GroupId = Guid.NewGuid();
+        await _beoordelingCritereaRepository.Maak(critereaClone);
+        return critereaClone.GroupId;
     }
 
-    public override Task<bool> Update(UpdateBeoordelingCritereaDto request)
+    public override async Task<bool> Update(UpdateBeoordelingCritereaDto request)
     {
-        throw new NotImplementedException();
+        var dbCriterea = await _beoordelingCritereaRepository.NieuwsteVoorGroepId(request.GroupId);
+        if (dbCriterea is null)
+            return false;
+
+        dbCriterea.Naam = request.Naam;
+        dbCriterea.Beschrijving = request.Beschrijving;
+
+        var updateResult = await _beoordelingCritereaRepository.Update(dbCriterea);
+        if (!updateResult)
+            return false;
+
+        var updatedCriterea = await _beoordelingCritereaRepository.NieuwsteVoorGroepId(request.GroupId);
+        if (updatedCriterea is null)
+            return false;
+
+        if (dbCriterea.Leeruitkomsten.Count == 0)
+            return true;
+
+        updatedCriterea.Leeruitkomsten.AddRange(dbCriterea.Leeruitkomsten);
+        updatedCriterea.RelationshipChanged = true;
+
+        return await _beoordelingCritereaRepository.Update(updatedCriterea);
     }
 }

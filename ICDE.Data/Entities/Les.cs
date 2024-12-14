@@ -3,7 +3,7 @@ using ICDE.Data.Entities.Base;
 
 namespace ICDE.Data.Entities;
 
-public class Les : OnderwijsOnderdeel, IVersionable
+public class Les : OnderwijsOnderdeel, IVersionable, ICloneable
 {
     public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
 
@@ -12,4 +12,14 @@ public class Les : OnderwijsOnderdeel, IVersionable
 
     [NotMapped]
     public bool RelationshipChanged { get; set; }
+
+    public object Clone()
+    {
+        return new Les()
+        {
+            Naam = Naam,
+            Beschrijving = Beschrijving,
+            Leeruitkomsten = Leeruitkomsten,
+        };
+    }
 }

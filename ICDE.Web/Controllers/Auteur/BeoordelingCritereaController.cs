@@ -48,15 +48,57 @@ public class BeoordelingCritereaController : ControllerBase
         });
     }
 
-    [HttpGet("maak")]
-    public async Task<IActionResult> Maak([FromRoute] Guid opleidingGuid)
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateBeoordelingCriterea([FromForm] UpdateBeoordelingCritereaDto request)
     {
-        return Ok();
+        var result = await _beoordelingCritereaService.Update(request);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/criterea/get/{request.GroupId}");
     }
 
     [HttpGet("koppelluk")]
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid opleidingGuid)
     {
         return Ok();
+    }
+
+    [HttpGet("{groupId}/bekijkversie/{versieId}")]
+    public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versieId)
+    {
+        var cursus = await _beoordelingCritereaService.BekijkVersie(groupId, versieId);
+        if (cursus is null)
+        {
+            return NotFound();
+        }
+        return View("/Views/Auteur/BeoordelingCritereas/BekijkVersie.cshtml", cursus);
+
+    }
+
+    [HttpGet("{groupId}/kopie/{versieId}")]
+    public async Task<IActionResult> MaakKopieVanVersie([FromRoute] Guid groupId, [FromRoute] int versieId)
+    {
+        Guid cursus = await _beoordelingCritereaService.MaakKopie(groupId, versieId);
+        if (cursus == Guid.Empty)
+        {
+            return BadRequest();
+        }
+        return Redirect($"/auteur/BeoordelingCritereas/get/{cursus}");
+
+    }
+
+    [HttpGet("delete/{groupId}/{versieId}")]
+    public async Task<IActionResult> VerwijderVersie([FromRoute] Guid groupId, [FromRoute] int versieId)
+    {
+        var result = await _beoordelingCritereaService.VerwijderVersie(groupId, versieId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/BeoordelingCritereas/index");
     }
 }

@@ -9,9 +9,9 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form method="post" enctype="multipart/form-data" asp-action="UpdateLeeruitkomst">
+        <form method="post" enctype="multipart/form-data" asp-action="UpdateCursus">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <input name="Id" class="form-control" value="@Model.Opleiding.Id" hidden /> *@
+            <input name="GroupId" class="form-control" value="@Model.Cursus.GroupId" hidden />
             <div class="form-group">
                 <label name="Naam" class="control-label"></label>
                 <input name="Naam" class="form-control" value="@Model.Cursus.Naam" />
@@ -74,7 +74,7 @@
                             <td>@item.Naam</td>
                             <td>@item.Beschrijving</td>
                             <td>@item.VersieNummer</td>
-                            <td><a href="/auteur/leeruitkomst/bekijkversie/@item.GroupId/@item.VersieNummer">Bekijk</a></td>
+                            <td><a href="/auteur/cursus/@item.GroupId/bekijkversie/@item.VersieNummer">Bekijk</a></td>
                         </tr>
                     }
                 </tbody>
@@ -83,7 +83,7 @@
     </div>
     <div class="col-md-6">
         <h4> Planning </h4>
-        
+
         @if (Model.Cursus.Planning != null && Model.Cursus.Planning.Items.Count > 0)
         {
             <a href="/auteur/planning/bekijk/@Model.Cursus.Planning.Id">Bekijk planning</a>

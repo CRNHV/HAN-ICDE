@@ -33,6 +33,15 @@ internal class CursusRepository : VersionableRepositoryBase<Cursus>, ICursusRepo
     public override async Task<Cursus?> Versie(Guid groupId, int versieNummer)
     {
         return await _context.Cursussen
+            .Include(c => c.Planning)
+                        .ThenInclude(p => p.PlanningItems)
+                            .ThenInclude(pi => pi.Opdracht)
+                                .ThenInclude(o => o.BeoordelingCritereas)
+                                    .ThenInclude(bc => bc.Leeruitkomsten)
+                    .Include(c => c.Planning)
+                        .ThenInclude(p => p.PlanningItems)
+                            .ThenInclude(pi => pi.Les)
+                                .ThenInclude(l => l.Leeruitkomsten)
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();

@@ -1,0 +1,30 @@
+﻿@using ICDE.Lib.Dto.BeoordelingCriterea
+@model BeoordelingCritereaDto
+
+@{
+    ViewData["Title"] = "Bekijk criterea versie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bekijk criterea versie</h1>
+<a href="/auteur/criterea/@Model.GroupId/kopie/@Model.VersieNummer">Maak kopie</a>
+<a href="/auteur/criterea/delete/@Model.GroupId/@Model.VersieNummer">Verwijder versie</a>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label name="Naam" class="control-label"></label>
+                <input name="Naam" class="form-control" value="@Model.Naam" readonly />
+                <span name="Naam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label name="Beschrijving" class="control-label"></label>
+                <input name="Beschrijving" class="form-control" value="@Model.Beschrijving" readonly />
+                <span name="Beschrijving" class="text-danger"></span>
+            </div>
+        </form>
+    </div>
+</div>
+

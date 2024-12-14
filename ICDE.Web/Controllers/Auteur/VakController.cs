@@ -35,10 +35,6 @@ public class VakController : Controller
         });
     }
 
-    /// <summary>
-    /// UC9
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("maak")]
     public async Task<IActionResult> MaakVak([FromForm] MaakVakViewModel request)
     {
@@ -53,10 +49,6 @@ public class VakController : Controller
         return BadRequest();
     }
 
-    /// <summary>
-    /// UC9
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("get/{vakGroupId}")]
     public async Task<IActionResult> BekijkVak([FromRoute] Guid vakGroupId)
     {
@@ -78,12 +70,28 @@ public class VakController : Controller
         });
     }
 
-    /// <summary>
-    /// UC9
-    /// </summary>
-    /// <returns></returns>
 
-    [HttpGet("delete/{vakGroupId}/{vakVersieId}")]
+    [HttpGet("bekijkversie/{vakGroupId}/{vakVersie}")]
+    public async Task<IActionResult> BekijkVersie([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
+    {
+        VakDto? result = await _vakService.BekijkVersie(vakGroupId, vakVersie);
+        if (result is null)
+            return BadRequest();
+
+        return View("Views/Auteur/Vak/BekijkVersie.cshtml", result);
+    }
+
+    [HttpGet("{vakGroupId}/kopie/{vakVersie}")]
+    public async Task<IActionResult> Kopie([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
+    {
+        Guid groupId = await _vakService.MaakKopie(vakGroupId, vakVersie);
+        if (groupId == Guid.Empty)
+            return BadRequest();
+
+        return Redirect($"/auteur/vak/get/{groupId}");
+    }
+
+    [HttpGet("delete/{vakGroupId}/{vakVersie}")]
     public async Task<IActionResult> VerwijderVak([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
     {
         var result = await _vakService.VerwijderVersie(vakGroupId, vakVersie);
@@ -93,10 +101,7 @@ public class VakController : Controller
         return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 
-    /// <summary>
-    /// UC9
-    /// </summary>
-    /// <returns></returns>
+    [HttpPost("update")]
     public async Task<IActionResult> UpdateVak([FromForm] UpdateVakDto request)
     {
         var result = await _vakService.Update(request);
@@ -106,10 +111,6 @@ public class VakController : Controller
         return Redirect($"/auteur/vak/get/{request.GroupId}");
     }
 
-    /// <summary>
-    /// UC13
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("koppelcursus/{vakGroupId}/{cursusGroupId}")]
     public async Task<IActionResult> KoppelCursus([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
     {
@@ -121,10 +122,6 @@ public class VakController : Controller
         return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
 
-    /// <summary>
-    /// UC13
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("koppelluk/{vakGroupId}/{lukGroupId}")]
     public async Task<IActionResult> KoppelLeeruitkomst([FromRoute] Guid vakGroupId, [FromRoute] Guid lukGroupId)
     {

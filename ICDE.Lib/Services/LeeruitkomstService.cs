@@ -46,4 +46,15 @@ internal class LeeruitkomstService : VersionableServiceBase<Leeruitkomst, Leerui
     {
         throw new NotImplementedException();
     }
+
+    public async Task<Guid> MaakKopieVanVersie(Guid groupId, int versieId)
+    {
+        var dbLuks = await _leeruitkomstRepository.Lijst(x => x.GroupId == groupId && x.VersieNummer == versieId);
+        var luk = dbLuks.First();
+
+        var lukClone = (Leeruitkomst)luk.Clone();
+        lukClone.GroupId = Guid.NewGuid();
+        await _leeruitkomstRepository.Maak(lukClone);
+        return lukClone.GroupId;
+    }
 }
