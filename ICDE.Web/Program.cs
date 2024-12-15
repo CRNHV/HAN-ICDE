@@ -93,6 +93,8 @@ public class Program
 
     private static async void SeedDatabase(WebApplication app)
     {
+        return;
+
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
