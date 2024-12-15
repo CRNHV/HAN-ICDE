@@ -1,0 +1,60 @@
+﻿@using ICDE.Lib.Dto.Cursus
+@model CursusMetPlanningDto;
+
+@{
+    ViewData["Title"] = "Bekijk cursus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Cursus informatie</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4> Leeruitkomsten</h4>
+        @if (Model.Leeruitkomsten.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Leeruitkomsten)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4> Planning </h4>
+
+        @if (Model.Planning != null && Model.Planning.Items.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Naam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Planning.Items.OrderBy(x => x.Index))
+                    {
+                        <tr>
+                            <td>@item.Index</td>
+                            <td>@item.PlanningItemNaam</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+

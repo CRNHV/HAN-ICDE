@@ -1,0 +1,42 @@
+﻿@using ICDE.Lib.Dto.Cursus
+@model List<CursusDto>
+@{
+    ViewData["Title"] = "Bekijk cursussen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>cursussen</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h2> Cursussen </h2>
+        @if (Model.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Beschrijving</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Naam</td>
+                            <td>@item.Beschrijving</td>
+                            <td><a href="/Student/cursus/get/@item.GroupId">Bekijk</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h3>Er zijn geen cursussen om te bekijken!</h3>
+        }
+    </div>
+
+</div>

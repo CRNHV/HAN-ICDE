@@ -7,13 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Views\Student\Cursus\**" />
-	  <Content Remove="Views\Student\Cursus\**" />
-	  <EmbeddedResource Remove="Views\Student\Cursus\**" />
-	  <None Remove="Views\Student\Cursus\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
