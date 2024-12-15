@@ -1,5 +1,5 @@
-﻿@using ICDE.Lib.Validator
-@model List<ValidationResult>
+﻿@using ICDE.Web.Models.Rapportage
+@model RapportageResultViewModel
 @{
     ViewData["Title"] = "Genereer rapportage";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,11 +9,13 @@
 
 <h1>Genereer rapportage</h1>
 
+<h3>De rapportage voor @Model.Type is @(Model.Success == true ? "geslaagd" : "gefaald")</h3>
+<a href="/auteur/rapportage/@Model.Type/@Model.GroupId/download">Download rapportage</a>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <h2> Opleidingen </h2>
-        @if (Model.Count > 0)
+        @if (Model.Results.Count > 0)
         {
 
             ctr += 1;
@@ -27,13 +29,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var result in Model.Results)
                     {
-                        <tr>
-                            <td>@ctr</td>
-                            <td>@item.Success</td>
-                            <td>@item.Message</td>
-                        </tr>
+                        @foreach (var message in result.Messages)
+                        {
+                            <tr>
+                                <td>@ctr</td>
+                                <td>@result.Success</td>
+                                <td>@message</td>
+                            </tr>
+                        }
+                        ctr += 1;
                     }
                 </tbody>
             </table>

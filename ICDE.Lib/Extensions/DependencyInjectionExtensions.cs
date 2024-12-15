@@ -1,6 +1,6 @@
-﻿
-using System.Reflection;
+﻿using System.Reflection;
 using ICDE.Lib.IO;
+using ICDE.Lib.Reports;
 using ICDE.Lib.Services;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Lib.Validator;
@@ -28,6 +28,10 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IIngeleverdeOpdrachtService, IngeleverdeOpdrachtService>();
         services.AddScoped<IBeoordelingCritereaService, BeoordelingCritereaService>();
         services.AddScoped<IOpdrachtBeoordelingService, OpdrachtBeoordelingService>();
+        services.AddScoped<IReportExporter, PdfReportExporter>();
+        services.AddKeyedTransient<IReportGenerator, CursusReportGenerator>("CursusReportGenerator");
+        services.AddKeyedTransient<IReportGenerator, VakReportGenerator>("VakReportGenerator");
+        services.AddKeyedTransient<IReportGenerator, OpleidingReportGenerator>("OpleidingReportGenerator");
 
         return services;
     }
