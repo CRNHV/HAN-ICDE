@@ -76,7 +76,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
             return false;
         }
 
-        var bestandsLocatie = await _fileManager.SlaBestandOp(opdracht.Bestand.FileName, opdracht.Bestand);
+        var bestandsLocatie = await _fileManager.SlaOpdrachtOp(opdracht.Bestand.FileName, opdracht.Bestand);
         if (string.IsNullOrEmpty(bestandsLocatie))
         {
             return false;

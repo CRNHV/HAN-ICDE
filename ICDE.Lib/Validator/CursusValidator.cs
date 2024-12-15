@@ -13,13 +13,13 @@ public class CursusValidator : IValidator
 
     public ValidationResult Validate()
     {
+        var result = new ValidationResult();
+
         if (_cursus.Planning is null)
         {
-            return new ValidationResult()
-            {
-                Message = $"Cursus: {_cursus.Naam} does not have a planning.",
-                Success = false,
-            };
+            result.Messages.Add($"Cursus: {_cursus.Naam} heeft geen planning.");
+            result.Success = false;
+            return result;
         }
 
         var allPlanningItemsLeeruitkomsten = _cursus.Planning.PlanningItems
@@ -29,38 +29,30 @@ public class CursusValidator : IValidator
             .Distinct()
             .ToList();
 
+        result.Messages.Add($"Cursus: {_cursus.Naam} heeft verwachte leeruitkomsten: {String.Join(",", allPlanningItemsLeeruitkomsten.Select(x => x.Naam))}");
+
         if (!allPlanningItemsLeeruitkomsten.All(l => _cursus.Leeruitkomsten.Contains(l)))
         {
-            return new ValidationResult()
-            {
-                Success = false,
-                Message = $"Cursus: {_cursus.Naam}'s planning does not cover all leeruitkomsten expected.",
-            };
+            var missing = _cursus.Leeruitkomsten.Except(allPlanningItemsLeeruitkomsten);
+
+            result.Messages.Add($"Cursus: {_cursus.Naam} mist leeruitkomsten: {String.Join(",", missing.Select(x => x.Naam))}");
+            result.Success = false;
+
+            return result;
         }
 
         if (allPlanningItemsLeeruitkomsten.Any(l => !_cursus.Leeruitkomsten.Contains(l)))
         {
-            return new ValidationResult()
-            {
-                Success = false,
-                Message = $"Cursus: {_cursus.Naam}'s planning has extra leeruitkomsten which aren't expected by the cursus."
-            };
+            var extra = allPlanningItemsLeeruitkomsten.Except(_cursus.Leeruitkomsten);
+
+            result.Messages.Add($"Cursus: {_cursus.Naam} heeft de volgende extra leeruitkomsten in de planning: {String.Join(",", extra.Select(x => x.Naam))}");
+            result.Success = false;
+
+            return result;
         }
 
-        var cursusLeeruitkomsten = _cursus.Leeruitkomsten.ToList();
-        if (!cursusLeeruitkomsten.All(l => allPlanningItemsLeeruitkomsten.Contains(l)))
-        {
-            return new ValidationResult()
-            {
-                Success = false,
-                Message = $"Cursus: {_cursus.Naam}'s planning does not cover all leeruitkomsten expected.",
-            };
-        }
-
-        return new ValidationResult()
-        {
-            Message = $"Cursus: {_cursus.Naam} has passed validation.",
-            Success = true,
-        };
+        result.Success = true;
+        result.Messages.Add($"Cursus: {_cursus.Naam} is succesvol gevalideerd.");
+        return result;
     }
 }

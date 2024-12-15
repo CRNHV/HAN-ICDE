@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Services.Interfaces;
@@ -40,24 +41,27 @@ public class RapportageController : ControllerBase
         });
     }
 
-    [HttpGet("opleiding/{groupGuid}")]
-    public async Task<IActionResult> GenerateOpleidingReport([FromRoute] Guid groupGuid)
+    [HttpGet("{type}/{groupGuid}/")]
+    public async Task<IActionResult> GenereerRapportage([FromRoute] string type, [FromRoute] Guid groupGuid)
     {
-        var result = await _rapportageService.GenereerRapportVoorOpleiding(groupGuid);
-        return View("/Views/Auteur/Rapportage/ViewReport.cshtml", result);
+        var result = await _rapportageService.GenereerRapportage(type, groupGuid);
+        return View("/Views/Auteur/Rapportage/ViewReport.cshtml", new RapportageResultViewModel()
+        {
+            GroupId = groupGuid,
+            Results = result,
+            Success = result.All(x => x.Success),
+            Type = type
+        });
     }
 
-    [HttpGet("vak/{groupGuid}")]
-    public async Task<IActionResult> GenerateVakReport([FromRoute] Guid groupGuid)
+    [HttpGet("{type}/{groupGuid}/download")]
+    public async Task<IActionResult> DownloadRapportage([FromRoute] string type, [FromRoute] Guid groupGuid)
     {
-        var result = await _rapportageService.GenereerRapportVoorVak(groupGuid);
-        return View("/Views/Auteur/Rapportage/ViewReport.cshtml", result);
-    }
-
-    [HttpGet("cursus/{groupGuid}")]
-    public async Task<IActionResult> GenerateCursusReport([FromRoute] Guid groupGuid)
-    {
-        var result = await _rapportageService.GenereerRapportVoorCursus(groupGuid);
-        return View("/Views/Auteur/Rapportage/ViewReport.cshtml", result);
+        var rapportage = await _rapportageService.ExporteerRapportage(type, groupGuid);
+        if (rapportage is null)
+        {
+            return BadRequest();
+        }
+        return File(rapportage.Bytes, "application/pdf", "rapportage.pdf");
     }
 }

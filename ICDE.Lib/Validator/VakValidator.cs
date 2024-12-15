@@ -13,33 +13,35 @@ public class VakValidator : IValidator
 
     public ValidationResult Validate()
     {
+        var result = new ValidationResult();
         var allCursusLeeruitkomsten = _vak.Cursussen
             .SelectMany(c => c.Leeruitkomsten)
             .Distinct()
             .ToList();
 
+        result.Messages.Add($"Vak: {_vak.Naam} heeft verwachte leeruitkomsten: {String.Join(",", _vak.Leeruitkomsten.Select(x => x.Naam))}");
+
         if (allCursusLeeruitkomsten.Any(l => !_vak.Leeruitkomsten.Contains(l)))
         {
-            return new ValidationResult()
-            {
-                Success = false,
-                Message = $"Vak: {_vak.Naam}'s cursussen has leeruitkomsten which aren't expected in the vak."
-            };
+            var extra = allCursusLeeruitkomsten.Except(_vak.Leeruitkomsten);
+
+            result.Success = false;
+            result.Messages.Add($"Vak: {_vak.Naam} heeft de volgende extra leeruitkomsten in de cursussen: {String.Join(",", extra.Select(x => x.Naam))}.");
+            return result;
         }
 
         if (!_vak.Leeruitkomsten.All(l => allCursusLeeruitkomsten.Contains(l)))
         {
-            return new ValidationResult()
-            {
-                Success = false,
-                Message = $"Vak: {_vak.Naam}'s leeruitkomsten are not covered by all cursussen.",
-            };
+            var missing = _vak.Leeruitkomsten.Except(allCursusLeeruitkomsten);
+
+            result.Success = false;
+            result.Messages.Add($"Vak: {_vak.Naam} heeft cursussen die niet alle leeruitkomsten dekken. Missende leeruitkomsten: {String.Join(",", missing.Select(x => x.Naam))}.");
+            return result;
         }
 
-        return new ValidationResult()
-        {
-            Message = $"Vak: {_vak.Naam} has passed the validation.",
-            Success = true,
-        };
+        result.Success = true;
+        result.Messages.Add($"Vak: {_vak.Naam} has passed the validation.");
+
+        return result;
     }
 }

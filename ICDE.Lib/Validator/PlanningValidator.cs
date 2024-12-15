@@ -14,8 +14,9 @@ public class PlanningValidator : IValidator
     public ValidationResult Validate()
     {
         var sortedPlanningItems = _planning.PlanningItems.OrderBy(pi => pi.Index).ToList();
-
         var coveredLeeruitkomsten = new HashSet<Leeruitkomst>();
+        var result = new ValidationResult();
+        bool isSucces = true;
 
         foreach (var planningItem in sortedPlanningItems)
         {
@@ -35,21 +36,21 @@ public class PlanningValidator : IValidator
                     {
                         if (!coveredLeeruitkomsten.Contains(leeruitkomst))
                         {
-                            return new ValidationResult()
-                            {
-                                Success = false,
-                                Message = $"Planning: {_planning.Name} has a test for {leeruitkomst.Naam} before it is covered by a lesson."
-                            };
+                            isSucces = false;
+                            result.Messages.Add($"Planning: {_planning.Name} toetst {leeruitkomst.Naam} voordat de leeruitkomst behandeld wordt in een les.");
                         }
                     }
                 }
             }
         }
 
-        return new ValidationResult()
+        result.Success = isSucces;
+        if (!isSucces)
         {
-            Message = $"Planning: {_planning.Name} has passed validation.",
-            Success = true,
-        };
+            return result;
+        }
+
+        result.Messages.Add($"Planning: {_planning.Name} is succesvol gevalideerd.");
+        return result;
     }
 }
