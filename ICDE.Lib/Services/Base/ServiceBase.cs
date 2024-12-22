@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities.Base;
 using ICDE.Data.Repositories.Base;
+using ICDE.Data.Repositories.Interfaces;
 
 namespace ICDE.Lib.Services.Base;
 
@@ -18,13 +20,14 @@ public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpd
 {
     private readonly IVersionableRepository<TEntity> _repository;
     private readonly IMapper _mapper;
+    private readonly IValidator<TCreateDto> _createValidator;
 
-    protected VersionableServiceBase(IVersionableRepository<TEntity> repository, IMapper mapper) : base(repository, mapper)
+    protected VersionableServiceBase(IVersionableRepository<TEntity> repository, IMapper mapper, IValidator<TCreateDto> createValidator) : base(repository, mapper, createValidator)
     {
         _repository = repository;
         _mapper = mapper;
+        _createValidator = createValidator;
     }
-
 
     public async Task<List<TReadDto>> AlleUnieke()
     {
@@ -49,7 +52,6 @@ public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpd
         await _repository.Verwijder(dbEntity);
         return true;
     }
-
     public async Task<TReadDto?> BekijkVersie(Guid groupId, int versieNummer)
     {
         TEntity? dbVersie = await _repository.Versie(groupId, versieNummer);
@@ -63,9 +65,16 @@ public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpd
 
     public new async Task<TReadDto?> Maak(TCreateDto request)
     {
+        _createValidator.ValidateAndThrow(request);
+
         var createEntity = _mapper.Map<TEntity>(request);
+        if (createEntity is null)
+        {
+            return default;
+        }
+
         ((IVersionable)createEntity).GroupId = Guid.NewGuid();
-        TEntity result = await _repository.Maak(createEntity);
+        TEntity? result = await _repository.Maak(createEntity);
         if (result is null)
         {
             return default;
@@ -98,18 +107,29 @@ public interface ICrudServiceBase<TDto, TCreateDto, TUpdateDto>
 public abstract class CrudServiceBase<TEntity, TDto, TCreateDto, TUpdateDto> : ICrudServiceBase<TDto, TCreateDto> where TEntity : class
 {
     private readonly ICrudRepository<TEntity> _repository;
+    private readonly IValidator<TCreateDto> _createValidator;
     private readonly IMapper _mapper;
+    private IVersionableRepository<TEntity> repository;
+    private IMapper mapper;
 
-    protected CrudServiceBase(ICrudRepository<TEntity> repository, IMapper mapper)
+    protected CrudServiceBase(ICrudRepository<TEntity> repository, IMapper mapper, IValidator<TCreateDto> createValidator)
     {
         _repository = repository;
         _mapper = mapper;
+        _createValidator = createValidator;
     }
 
     public async Task<TDto?> Maak(TCreateDto request)
     {
+        _createValidator.ValidateAndThrow(request);
+
         var createEntity = _mapper.Map<TEntity>(request);
-        TEntity result = await _repository.Maak(createEntity);
+        if (createEntity is null)
+        {
+            return default;
+        }
+
+        TEntity? result = await _repository.Maak(createEntity);
         if (result is null)
         {
             return default;

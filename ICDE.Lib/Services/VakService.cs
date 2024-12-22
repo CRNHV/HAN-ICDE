@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -13,16 +15,20 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
     private readonly ICursusRepository _cursusRepository;
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateVakDto> _updateValidator;
 
     public VakService(IVakRepository vakRepository,
         ICursusRepository cursusRepository,
         ILeeruitkomstRepository leeruitkomstRepository,
-        IMapper mapper) : base(vakRepository, mapper)
+        IMapper mapper,
+        IValidator<MaakVakDto> createValidator,
+        IValidator<UpdateVakDto> updateValidator) : base(vakRepository, mapper, createValidator)
     {
         _vakRepository = vakRepository;
         _cursusRepository = cursusRepository;
         _leeruitkomstRepository = leeruitkomstRepository;
         _mapper = mapper;
+        _updateValidator = updateValidator;
     }
 
     public async Task<VakMetOnderwijsOnderdelenDto?> HaalVolledigeVakDataOp(Guid vakGroupId)
@@ -100,6 +106,8 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
 
     public override async Task<bool> Update(UpdateVakDto request)
     {
+        _updateValidator.Validate(request);
+
         var vak = await _vakRepository.NieuwsteVoorGroepId(request.GroupId);
         if (vak is null)
         {

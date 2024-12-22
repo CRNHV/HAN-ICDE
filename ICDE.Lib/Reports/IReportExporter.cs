@@ -1,4 +1,4 @@
-﻿using ICDE.Lib.Validator;
+﻿using ICDE.Lib.Validation.Leeruitkomsten;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;

@@ -1,4 +1,4 @@
-﻿namespace ICDE.Lib.Validator.Interfaces;
+﻿namespace ICDE.Lib.Validation.Leeruitkomsten;
 public interface IValidator
 {
     ValidationResult Validate();
