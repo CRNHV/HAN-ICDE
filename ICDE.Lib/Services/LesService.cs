@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Services.Base;
@@ -13,12 +15,18 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
     private readonly ILesRepository _lesRepository;
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateLesDto> _updateValidator;
 
-    public LesService(ILesRepository lesRepository, ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper) : base(lesRepository, mapper)
+    public LesService(ILesRepository lesRepository,
+                      ILeeruitkomstRepository leeruitkomstRepository,
+                      IMapper mapper,
+                      IValidator<MaakLesDto> createValidator,
+                      IValidator<UpdateLesDto> updateValidator) : base(lesRepository, mapper, createValidator)
     {
         _lesRepository = lesRepository;
         _leeruitkomstRepository = leeruitkomstRepository;
         _mapper = mapper;
+        _updateValidator = updateValidator;
     }
 
     public async Task<LesMetEerdereVersies?> HaalLessenOpMetEerdereVersies(Guid groupId)
@@ -94,6 +102,8 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
 
     public override async Task<bool> Update(UpdateLesDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         var les = await _lesRepository.NieuwsteVoorGroepId(request.GroupId);
         if (les is null)
         {
@@ -105,6 +115,10 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
         await _lesRepository.Update(les);
 
         var updatedLes = await _lesRepository.NieuwsteVoorGroepId(request.GroupId);
+        if (updatedLes is null)
+        {
+            return false;
+        }
         updatedLes.Leeruitkomsten = les.Leeruitkomsten;
         updatedLes.RelationshipChanged = true;
         await _lesRepository.Update(updatedLes);

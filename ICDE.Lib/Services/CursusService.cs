@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -11,12 +13,18 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
     private readonly ICursusRepository _cursusRepository;
     private readonly IPlanningRepository _planningRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateCursusDto> _updateValidator;
 
-    public CursusService(ICursusRepository cursusRepository, IMapper mapper, IPlanningRepository planningRepository) : base(cursusRepository, mapper)
+    public CursusService(ICursusRepository cursusRepository,
+                         IMapper mapper,
+                         IPlanningRepository planningRepository,
+                         IValidator<UpdateCursusDto> updateValidator,
+                         IValidator<MaakCursusDto> createValidator) : base(cursusRepository, mapper, createValidator)
     {
         _cursusRepository = cursusRepository;
         _mapper = mapper;
         _planningRepository = planningRepository;
+        _updateValidator = updateValidator;
     }
 
 
@@ -49,6 +57,10 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
     public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
         var cursus = await _cursusRepository.Versie(groupId, versieNummer);
+        if (cursus is null)
+        {
+            return Guid.Empty;
+        }
         var cursusClone = (Cursus)cursus.Clone();
         cursusClone.GroupId = Guid.NewGuid();
         await _cursusRepository.Maak(cursusClone);
@@ -57,6 +69,8 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
 
     public override async Task<bool> Update(UpdateCursusDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         var dbCursus = await _cursusRepository.GetFullObjectTreeByGroupId(request.GroupId);
         if (dbCursus is null)
             return false;

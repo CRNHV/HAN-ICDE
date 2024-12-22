@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
@@ -14,13 +15,21 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
     private readonly IFileManager _fileManager;
     private readonly IBeoordelingCritereaRepository _beoordelingCritereaRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateOpdrachtDto> _updateValidator;
 
-    public OpdrachtService(IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IMapper mapper, IBeoordelingCritereaRepository beoordelingCritereaRepository) : base(opdrachtRepository, mapper)
+
+    public OpdrachtService(IOpdrachtRepository opdrachtRepository,
+                           IFileManager fileManager,
+                           IMapper mapper,
+                           IBeoordelingCritereaRepository beoordelingCritereaRepository,
+                           IValidator<MaakOpdrachtDto> createValidator,
+                           IValidator<UpdateOpdrachtDto> updateValidator) : base(opdrachtRepository, mapper, createValidator)
     {
         _opdrachtRepository = opdrachtRepository;
         _fileManager = fileManager;
         _mapper = mapper;
         _beoordelingCritereaRepository = beoordelingCritereaRepository;
+        _updateValidator = updateValidator;
     }
 
     public async Task<OpdrachtVolledigeDataDto?> HaalAlleDataOp(Guid opdrachtGroupId)
@@ -87,13 +96,23 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
 
     public override async Task<bool> Update(UpdateOpdrachtDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         var opdracht = await _opdrachtRepository.GetFullDataByGroupId(request.GroupId);
+        if (opdracht is null)
+        {
+            return false;
+        }
         opdracht.Naam = request.Naam;
         opdracht.Beschrijving = request.Beschrijving;
         opdracht.Type = request.IsToets ? OpdrachtType.Toets : OpdrachtType.Casus;
         await _opdrachtRepository.Update(opdracht);
 
         var updatedOpdracht = await _opdrachtRepository.GetFullDataByGroupId(opdracht.GroupId);
+        if (updatedOpdracht is null)
+        {
+            return false;
+        }
 
         foreach (var item in opdracht.BeoordelingCritereas)
         {

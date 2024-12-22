@@ -1,6 +1,5 @@
 ﻿using ICDE.Data.Repositories.Interfaces;
-using ICDE.Lib.Validator;
-using ICDE.Lib.Validator.Interfaces;
+using ICDE.Lib.Validation.Leeruitkomsten;
 
 namespace ICDE.Lib.Reports;
 internal class OpleidingReportGenerator : IReportGenerator

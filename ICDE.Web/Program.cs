@@ -8,7 +8,9 @@ using ICDE.Data.Entities.Identity;
 using ICDE.Data.Extensions;
 using ICDE.Data.Interceptors;
 using ICDE.Lib.Extensions;
+using ICDE.Web.Middleware;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,6 +75,8 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();

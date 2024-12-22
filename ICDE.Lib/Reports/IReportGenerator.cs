@@ -1,4 +1,4 @@
-﻿using ICDE.Lib.Validator;
+﻿using ICDE.Lib.Validation.Leeruitkomsten;
 
 namespace ICDE.Lib.Reports;
 internal interface IReportGenerator

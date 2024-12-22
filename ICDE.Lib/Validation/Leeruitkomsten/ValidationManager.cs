@@ -1,6 +1,4 @@
-﻿using ICDE.Lib.Validator.Interfaces;
-
-namespace ICDE.Lib.Validator;
+﻿namespace ICDE.Lib.Validation.Leeruitkomsten;
 public class ValidationManager : IValidationManager
 {
     private readonly List<IValidator> _validators;

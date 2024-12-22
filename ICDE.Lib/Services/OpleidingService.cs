@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -11,46 +13,14 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
     private readonly IOpleidingRepository _opleidingRepository;
     private readonly IVakRepository _vakRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateOpleidingDto> _updateValidator;
 
-    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository, IMapper mapper) : base(opleidingRepository, mapper)
+    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository, IMapper mapper, IValidator<MaakOpleidingDto> createValidator, IValidator<UpdateOpleidingDto> updateValidator) : base(opleidingRepository, mapper, createValidator)
     {
         _opleidingRepository = opleidingRepository;
         _vakRepository = vakRepository;
         _mapper = mapper;
-    }
-
-    public async Task<Guid> Kopie(Guid opleidingGroupId)
-    {
-        var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(opleidingGroupId);
-        if (opleiding is null)
-        {
-            return Guid.Empty;
-        }
-
-        var opleidingCopy = (Opleiding)opleiding.Clone();
-        opleidingCopy.Naam += $" | KOPIE {DateTime.Now.ToShortDateString()}";
-
-        opleidingCopy.GroupId = Guid.NewGuid();
-        var createdOpleiding = await _opleidingRepository.Maak(opleidingCopy);
-        if (createdOpleiding is null)
-        {
-            return Guid.Empty;
-        }
-
-        return createdOpleiding.GroupId;
-    }
-
-    public async Task<OpleidingDto?> Maak(MaakOpleidingDto request)
-    {
-        var opleiding = _mapper.Map<Opleiding>(request);
-        opleiding.GroupId = Guid.NewGuid();
-        var result = await _opleidingRepository.Maak(opleiding);
-        if (result is null)
-        {
-            return null;
-        }
-
-        return _mapper.Map<OpleidingDto>(result);
+        _updateValidator = updateValidator;
     }
 
     public async Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId)
@@ -93,13 +63,31 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
         };
     }
 
-    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
+    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        throw new NotImplementedException();
+        var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(groupId);
+        if (opleiding is null)
+        {
+            return Guid.Empty;
+        }
+
+        var opleidingCopy = (Opleiding)opleiding.Clone();
+        opleidingCopy.Naam += $" | KOPIE {DateTime.Now.ToShortDateString()}";
+
+        opleidingCopy.GroupId = Guid.NewGuid();
+        var createdOpleiding = await _opleidingRepository.Maak(opleidingCopy);
+        if (createdOpleiding is null)
+        {
+            return Guid.Empty;
+        }
+
+        return createdOpleiding.GroupId;
     }
 
     public override async Task<bool> Update(UpdateOpleidingDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         var opleidingToUpdate = await _opleidingRepository.NieuwsteVoorGroepId(request.GroupId);
         if (opleidingToUpdate is null)
         {

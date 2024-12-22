@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
@@ -10,11 +11,16 @@ internal class BeoordelingCritereaService : VersionableServiceBase<BeoordelingCr
 {
     private readonly IBeoordelingCritereaRepository _beoordelingCritereaRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateBeoordelingCritereaDto> _updateValidator;
 
-    public BeoordelingCritereaService(IBeoordelingCritereaRepository beoordelingCritereaRepository, IMapper mapper) : base(beoordelingCritereaRepository, mapper)
+    public BeoordelingCritereaService(IBeoordelingCritereaRepository beoordelingCritereaRepository,
+                                      IMapper mapper,
+                                      IValidator<MaakBeoordelingCritereaDto> createValidator,
+                                      IValidator<UpdateBeoordelingCritereaDto> updateValidator) : base(beoordelingCritereaRepository, mapper, createValidator)
     {
         _beoordelingCritereaRepository = beoordelingCritereaRepository;
         _mapper = mapper;
+        _updateValidator = updateValidator;
     }
 
     public async Task<BeoordelingCritereaMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid critereaGroupId)
@@ -46,6 +52,8 @@ internal class BeoordelingCritereaService : VersionableServiceBase<BeoordelingCr
 
     public override async Task<bool> Update(UpdateBeoordelingCritereaDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         var dbCriterea = await _beoordelingCritereaRepository.NieuwsteVoorGroepId(request.GroupId);
         if (dbCriterea is null)
             return false;

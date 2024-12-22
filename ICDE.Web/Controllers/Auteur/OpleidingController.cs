@@ -144,7 +144,7 @@ public class OpleidingController : Controller
     [HttpGet("{opleidingGroupId}/copy")]
     public async Task<IActionResult> KopieerOpleiding([FromRoute] Guid opleidingGroupId)
     {
-        var resultGuid = await _opleidingService.Kopie(opleidingGroupId);
+        var resultGuid = await _opleidingService.MaakKopie(opleidingGroupId, 0);
         if (resultGuid == Guid.Empty)
         {
             return BadRequest();
