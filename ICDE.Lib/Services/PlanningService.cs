@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Base;
@@ -13,13 +15,20 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly ILesRepository _lesRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdatePlanningDto> _updateValidator;
 
-    public PlanningService(IPlanningRepository planningRepository, IMapper mapper, IOpdrachtRepository opdrachtRepository, ILesRepository lesRepository) : base(planningRepository, mapper)
+    public PlanningService(IPlanningRepository planningRepository,
+                           IMapper mapper,
+                           IOpdrachtRepository opdrachtRepository,
+                           ILesRepository lesRepository,
+                           IValidator<MaakPlanningDto> createValidator,
+                           IValidator<UpdatePlanningDto> updateValidator) : base(planningRepository, mapper, createValidator)
     {
         _planningRepository = planningRepository;
         _mapper = mapper;
         _opdrachtRepository = opdrachtRepository;
         _lesRepository = lesRepository;
+        _updateValidator = updateValidator;
     }
 
     public async Task<PlanningZonderItemsDto?> VoegOpdrachtToe(int planningId, Guid groupId)
@@ -103,6 +112,8 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
 
     public override Task<bool> Update(UpdatePlanningDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         throw new NotImplementedException();
     }
 

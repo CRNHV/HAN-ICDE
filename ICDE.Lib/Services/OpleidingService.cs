@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -11,12 +13,14 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
     private readonly IOpleidingRepository _opleidingRepository;
     private readonly IVakRepository _vakRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateOpleidingDto> _updateValidator;
 
-    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository, IMapper mapper) : base(opleidingRepository, mapper)
+    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository, IMapper mapper, IValidator<MaakOpleidingDto> createValidator, IValidator<UpdateOpleidingDto> updateValidator) : base(opleidingRepository, mapper, createValidator)
     {
         _opleidingRepository = opleidingRepository;
         _vakRepository = vakRepository;
         _mapper = mapper;
+        _updateValidator = updateValidator;
     }
 
     public async Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId)
@@ -82,6 +86,8 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
 
     public override async Task<bool> Update(UpdateOpleidingDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         var opleidingToUpdate = await _opleidingRepository.NieuwsteVoorGroepId(request.GroupId);
         if (opleidingToUpdate is null)
         {
