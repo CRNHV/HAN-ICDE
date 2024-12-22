@@ -19,40 +19,6 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
         _mapper = mapper;
     }
 
-    public async Task<Guid> Kopie(Guid opleidingGroupId)
-    {
-        var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(opleidingGroupId);
-        if (opleiding is null)
-        {
-            return Guid.Empty;
-        }
-
-        var opleidingCopy = (Opleiding)opleiding.Clone();
-        opleidingCopy.Naam += $" | KOPIE {DateTime.Now.ToShortDateString()}";
-
-        opleidingCopy.GroupId = Guid.NewGuid();
-        var createdOpleiding = await _opleidingRepository.Maak(opleidingCopy);
-        if (createdOpleiding is null)
-        {
-            return Guid.Empty;
-        }
-
-        return createdOpleiding.GroupId;
-    }
-
-    public async Task<OpleidingDto?> Maak(MaakOpleidingDto request)
-    {
-        var opleiding = _mapper.Map<Opleiding>(request);
-        opleiding.GroupId = Guid.NewGuid();
-        var result = await _opleidingRepository.Maak(opleiding);
-        if (result is null)
-        {
-            return null;
-        }
-
-        return _mapper.Map<OpleidingDto>(result);
-    }
-
     public async Task<bool> KoppelVakAanOpleiding(Guid opleidingGroupId, Guid vakGroupId)
     {
         var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(opleidingGroupId);
@@ -93,9 +59,25 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
         };
     }
 
-    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
+    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
-        throw new NotImplementedException();
+        var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(groupId);
+        if (opleiding is null)
+        {
+            return Guid.Empty;
+        }
+
+        var opleidingCopy = (Opleiding)opleiding.Clone();
+        opleidingCopy.Naam += $" | KOPIE {DateTime.Now.ToShortDateString()}";
+
+        opleidingCopy.GroupId = Guid.NewGuid();
+        var createdOpleiding = await _opleidingRepository.Maak(opleidingCopy);
+        if (createdOpleiding is null)
+        {
+            return Guid.Empty;
+        }
+
+        return createdOpleiding.GroupId;
     }
 
     public override async Task<bool> Update(UpdateOpleidingDto request)

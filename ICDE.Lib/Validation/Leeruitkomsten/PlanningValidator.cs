@@ -1,7 +1,6 @@
 ﻿using ICDE.Data.Entities;
-using ICDE.Lib.Validator.Interfaces;
 
-namespace ICDE.Lib.Validator;
+namespace ICDE.Lib.Validation.Leeruitkomsten;
 public class PlanningValidator : IValidator
 {
     private readonly Planning _planning;

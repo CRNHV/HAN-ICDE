@@ -1,6 +1,5 @@
 ﻿using ICDE.Data.Entities;
-using ICDE.Lib.Validator;
-using ICDE.Lib.Validator.Interfaces;
+using ICDE.Lib.Validation.Leeruitkomsten;
 
 public class CursusValidator : IValidator
 {

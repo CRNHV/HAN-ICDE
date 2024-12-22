@@ -1,7 +1,7 @@
 ﻿using ICDE.Lib.IO;
 using ICDE.Lib.Reports;
 using ICDE.Lib.Services.Interfaces;
-using ICDE.Lib.Validator;
+using ICDE.Lib.Validation.Leeruitkomsten;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ICDE.Lib.Services;
