@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
@@ -16,9 +17,18 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly IFileManager _fileManager;
     private readonly IMapper _mapper;
+    private readonly IValidator<LeverOpdrachtInDto> _leverOpdrachtInValidator;
+    private readonly IValidator<OpdrachtBeoordelingDto> _opdrachtBeoordelingValidator;
 
 
-    public IngeleverdeOpdrachtService(IIngeleverdeOpdrachtRepository ingeleverdeOpdrachtRepository, IOpdrachtRepository opdrachtRepository, IFileManager fileManager, IOpdrachtBeoordelingRepository opdrachtBeoordelingRepository, IMapper mapper, IStudentRepository studentRepository)
+    public IngeleverdeOpdrachtService(IIngeleverdeOpdrachtRepository ingeleverdeOpdrachtRepository,
+                                      IOpdrachtRepository opdrachtRepository,
+                                      IFileManager fileManager,
+                                      IOpdrachtBeoordelingRepository opdrachtBeoordelingRepository,
+                                      IMapper mapper,
+                                      IStudentRepository studentRepository,
+                                      IValidator<OpdrachtBeoordelingDto> opdrachtBeoordelingValidator,
+                                      IValidator<LeverOpdrachtInDto> leverOpdrachtInValidator)
     {
         _ingeleverdeOpdrachtRepository = ingeleverdeOpdrachtRepository;
         _opdrachtRepository = opdrachtRepository;
@@ -26,6 +36,8 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
         _opdrachtBeoordelingRepository = opdrachtBeoordelingRepository;
         _mapper = mapper;
         _studentRepository = studentRepository;
+        _opdrachtBeoordelingValidator = opdrachtBeoordelingValidator;
+        _leverOpdrachtInValidator = leverOpdrachtInValidator;
     }
 
     public async Task<OpdrachtInzendingDto?> HaalInzendingDataOp(int inzendingId)
@@ -66,6 +78,8 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht)
     {
+        _leverOpdrachtInValidator.ValidateAndThrow(opdracht);
+
         var dbOpdracht = await _opdrachtRepository.VoorId(opdracht.OpdrachtId);
         if (dbOpdracht is null)
             return false;
@@ -97,8 +111,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request)
     {
-        if (request.Cijfer <= 0 || request.Cijfer >= 11)
-            return false;
+        _opdrachtBeoordelingValidator.Validate(request);
 
         var dbIngeleverdeOpdracht = await _ingeleverdeOpdrachtRepository.VoorId(request.InzendingId);
         if (dbIngeleverdeOpdracht is null)
