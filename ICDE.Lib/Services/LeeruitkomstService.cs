@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Luk;
+using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -10,11 +12,16 @@ internal class LeeruitkomstService : VersionableServiceBase<Leeruitkomst, Leerui
 {
     private readonly ILeeruitkomstRepository _leeruitkomstRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<UpdateLeeruitkomstDto> _updateValidator;
 
-    public LeeruitkomstService(ILeeruitkomstRepository leeruitkomstRepository, IMapper mapper) : base(leeruitkomstRepository, mapper)
+    public LeeruitkomstService(ILeeruitkomstRepository leeruitkomstRepository,
+                               IMapper mapper,
+                               IValidator<UpdateLeeruitkomstDto> updateValidator,
+                               IValidator<MaakLeeruitkomstDto> createValidator) : base(leeruitkomstRepository, mapper, createValidator)
     {
         _leeruitkomstRepository = leeruitkomstRepository;
         _mapper = mapper;
+        _updateValidator = updateValidator;
     }
 
     public async Task<LeeruitkomstMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid leeruitkomstId)
@@ -44,6 +51,8 @@ internal class LeeruitkomstService : VersionableServiceBase<Leeruitkomst, Leerui
 
     public override Task<bool> Update(UpdateLeeruitkomstDto request)
     {
+        _updateValidator.ValidateAndThrow(request);
+
         throw new NotImplementedException();
     }
 

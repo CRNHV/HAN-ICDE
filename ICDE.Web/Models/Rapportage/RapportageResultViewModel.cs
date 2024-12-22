@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICDE.Lib.Validator;
+using ICDE.Lib.Validation.Leeruitkomsten;
 
 namespace ICDE.Web.Models.Rapportage;
 
