@@ -7,7 +7,7 @@ internal class CursusReportGenerator : IReportGenerator
     private readonly ICursusRepository _cursusRepository;
     private readonly IValidationManager _validationManager;
 
-    public CursusReportGenerator(ICursusRepository cursusRepository, IValidationManager validationManager)
+    public CursusReportGenerator(IValidationManager validationManager, ICursusRepository cursusRepository)
     {
         _cursusRepository = cursusRepository;
         _validationManager = validationManager;

@@ -7,7 +7,7 @@ internal class VakReportGenerator : IReportGenerator
     private readonly IValidationManager _validationManager;
     private readonly IVakRepository _vakRepository;
 
-    public VakReportGenerator(IVakRepository vakRepository, IValidationManager validationManager)
+    public VakReportGenerator(IValidationManager validationManager, IVakRepository vakRepository)
     {
         _vakRepository = vakRepository;
         _validationManager = validationManager;
