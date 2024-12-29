@@ -12,21 +12,18 @@ namespace ICDE.Lib.Services;
 internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, OpdrachtDto, MaakOpdrachtDto, UpdateOpdrachtDto>, IOpdrachtService
 {
     private readonly IOpdrachtRepository _opdrachtRepository;
-    private readonly IFileManager _fileManager;
     private readonly IBeoordelingCritereaRepository _beoordelingCritereaRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<UpdateOpdrachtDto> _updateValidator;
 
 
     public OpdrachtService(IOpdrachtRepository opdrachtRepository,
-                           IFileManager fileManager,
                            IMapper mapper,
                            IBeoordelingCritereaRepository beoordelingCritereaRepository,
                            IValidator<MaakOpdrachtDto> createValidator,
                            IValidator<UpdateOpdrachtDto> updateValidator) : base(opdrachtRepository, mapper, createValidator)
     {
         _opdrachtRepository = opdrachtRepository;
-        _fileManager = fileManager;
         _mapper = mapper;
         _beoordelingCritereaRepository = beoordelingCritereaRepository;
         _updateValidator = updateValidator;
