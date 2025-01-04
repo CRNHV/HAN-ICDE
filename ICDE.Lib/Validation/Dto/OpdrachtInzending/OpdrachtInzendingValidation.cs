@@ -8,6 +8,7 @@ internal class OpdrachtInzendingValidation : AbstractValidator<LeverOpdrachtInDt
     {
         RuleFor(dto => dto.OpdrachtId).NotEmpty();
         RuleFor(dto => dto.Naam).NotEmpty();
-        RuleFor(dto => dto.Bestand).Must(x => x.Length >= 1);
+        RuleFor(dto => dto.Bestand).NotNull();
+        RuleFor(dto => dto.Bestand).Must(x => x?.Length >= 1);
     }
 }

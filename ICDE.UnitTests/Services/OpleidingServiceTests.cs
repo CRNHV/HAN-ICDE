@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Services;
+using ICDE.Lib.Validation.Dto.Opleiding;
 using Moq;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,7 +21,7 @@ public class OpleidingServiceTests
     private Mock<IVakRepository> mockVakRepository;
     private Mock<IMapper> mockMapper;
     private Mock<IValidator<MaakOpleidingDto>> mockValidatorMaakOpleidingDto;
-    private Mock<IValidator<UpdateOpleidingDto>> mockValidatorUpdateOpleidingDto;
+    private IValidator<UpdateOpleidingDto> validatorUpdateOpleiding = new UpdateOpleidingValidation();
 
     public OpleidingServiceTests()
     {
@@ -28,7 +31,6 @@ public class OpleidingServiceTests
         this.mockVakRepository = this.mockRepository.Create<IVakRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
         this.mockValidatorMaakOpleidingDto = this.mockRepository.Create<IValidator<MaakOpleidingDto>>();
-        this.mockValidatorUpdateOpleidingDto = this.mockRepository.Create<IValidator<UpdateOpleidingDto>>();
     }
 
     private OpleidingService CreateService()
@@ -38,7 +40,7 @@ public class OpleidingServiceTests
             this.mockVakRepository.Object,
             this.mockMapper.Object,
             this.mockValidatorMaakOpleidingDto.Object,
-            this.mockValidatorUpdateOpleidingDto.Object);
+            validatorUpdateOpleiding);
     }
 
     [Fact]
@@ -46,8 +48,30 @@ public class OpleidingServiceTests
     {
         // Arrange
         var service = this.CreateService();
-        Guid opleidingGroupId = default(global::System.Guid);
-        Guid vakGroupId = default(global::System.Guid);
+        Guid opleidingGroupId = Guid.NewGuid();
+        Guid vakGroupId = Guid.NewGuid();
+
+        var dbOpleiding = new Opleiding()
+        {
+            GroupId = opleidingGroupId,
+        };
+
+        var dbVak = new Vak()
+        {
+            GroupId = vakGroupId,
+        };
+
+        mockOpleidingRepository
+            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
+            .ReturnsAsync(dbOpleiding);
+
+        mockVakRepository
+            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbVak.GroupId)))
+            .ReturnsAsync(dbVak);
+
+        mockOpleidingRepository
+            .Setup(x => x.Update(It.Is<Opleiding>(x => x.Vakken.Contains(dbVak))))
+            .ReturnsAsync(true);
 
         // Act
         var result = await service.KoppelVakAanOpleiding(
@@ -55,7 +79,7 @@ public class OpleidingServiceTests
             vakGroupId);
 
         // Assert
-        Assert.True(false);
+        Assert.True(result);
         this.mockRepository.VerifyAll();
     }
 
@@ -64,14 +88,30 @@ public class OpleidingServiceTests
     {
         // Arrange
         var service = this.CreateService();
-        Guid groupId = default(global::System.Guid);
+        Guid opleidingGroupId = Guid.NewGuid();
+        var dbOpleiding = new Opleiding()
+        {
+            GroupId = opleidingGroupId,
+        };
+        mockOpleidingRepository
+            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
+            .ReturnsAsync(dbOpleiding);
+        mockOpleidingRepository
+            .Setup(x => x.Lijst(It.IsAny<Expression<Func<Opleiding, bool>>>()))
+            .ReturnsAsync(new List<Opleiding>()
+            {
+                new Opleiding(),
+            });
+        mockMapper.Setup(x => x.Map<OpleidingMetVakkenDto>(It.IsAny<Opleiding>()))
+            .Returns(new OpleidingMetVakkenDto());
+        mockMapper.Setup(x => x.Map<List<OpleidingDto>>(It.IsAny<List<Opleiding>>()))
+            .Returns(new List<OpleidingDto>());
 
         // Act
-        var result = await service.ZoekOpleidingMetEerdereVersies(
-            groupId);
+        var result = await service.ZoekOpleidingMetEerdereVersies(opleidingGroupId);
 
         // Assert
-        Assert.True(false);
+        Assert.NotNull(result);
         this.mockRepository.VerifyAll();
     }
 
@@ -80,16 +120,31 @@ public class OpleidingServiceTests
     {
         // Arrange
         var service = this.CreateService();
-        Guid groupId = default(global::System.Guid);
         int versieNummer = 0;
+
+        Guid opleidingGroupId = Guid.NewGuid();
+        var dbOpleiding = new Opleiding()
+        {
+            GroupId = opleidingGroupId,
+        };
+        mockOpleidingRepository
+            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
+            .ReturnsAsync(dbOpleiding);
+
+        mockOpleidingRepository
+            .Setup(x => x.Maak(It.IsAny<Opleiding>()))
+            .ReturnsAsync(new Opleiding()
+            {
+                GroupId = Guid.NewGuid(),
+            });
 
         // Act
         var result = await service.MaakKopie(
-            groupId,
+            opleidingGroupId,
             versieNummer);
 
         // Assert
-        Assert.True(false);
+        Assert.True(result != Guid.NewGuid());
         this.mockRepository.VerifyAll();
     }
 
@@ -98,14 +153,31 @@ public class OpleidingServiceTests
     {
         // Arrange
         var service = this.CreateService();
-        UpdateOpleidingDto request = null;
+        Guid opleidingGroupId = Guid.NewGuid();
+        UpdateOpleidingDto request = new UpdateOpleidingDto()
+        {
+            Naam = "Naam",
+            GroupId = opleidingGroupId,
+            Beschrijving = "Beschrijving"
+        };
+
+        var dbOpleiding = new Opleiding()
+        {
+            GroupId = opleidingGroupId,
+        };
+        mockOpleidingRepository
+            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
+            .ReturnsAsync(dbOpleiding);
+
+        mockOpleidingRepository
+            .Setup(x => x.Update(It.Is<Opleiding>(x => x == dbOpleiding)))
+            .ReturnsAsync(true);
 
         // Act
-        var result = await service.Update(
-            request);
+        var result = await service.Update(request);
 
         // Assert
-        Assert.True(false);
+        Assert.True(result);
         this.mockRepository.VerifyAll();
     }
 }

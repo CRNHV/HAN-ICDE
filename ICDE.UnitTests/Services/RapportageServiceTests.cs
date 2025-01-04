@@ -61,7 +61,20 @@ public class RapportageServiceTests
         string type = "cursus";
         Guid groupId = default(global::System.Guid);
 
-        var dbCursus = new Cursus();
+        var leeruitkomst1 = new Leeruitkomst()
+        {
+            Id = 1,
+            Naam = "Luk1",
+        };
+
+        var leeruitkomst2 = new Leeruitkomst()
+        {
+            Id = 2,
+            Naam = "Luk2",
+        };
+
+
+        var dbCursus = CreateCursus(leeruitkomst1, leeruitkomst2);
 
         mockCursusRepository
             .Setup(x => x.GetFullObjectTreeByGroupId(It.IsAny<Guid>()))
@@ -85,7 +98,28 @@ public class RapportageServiceTests
         string type = "opleiding";
         Guid groupId = default(global::System.Guid);
 
-        var dbOpleiding = new Opleiding();
+        Leeruitkomst leeruitkomst1 = new Leeruitkomst(), leeruitkomst2 = new Leeruitkomst(), leeruitkomst3 = new Leeruitkomst();
+        Leeruitkomst leeruitkomst4 = new Leeruitkomst(), leeruitkomst5 = new Leeruitkomst(), leeruitkomst6 = new Leeruitkomst();
+
+        var dbOpleiding = new Opleiding()
+        {
+            Vakken = new List<Vak>()
+            {
+                new Vak()
+                {
+                    Leeruitkomsten = new List<Leeruitkomst>()
+                    {
+                        leeruitkomst1, leeruitkomst2, leeruitkomst3,
+                        leeruitkomst4, leeruitkomst5, leeruitkomst6
+                    },
+                    Cursussen = new List<Cursus>()
+                    {
+                        CreateCursus(leeruitkomst1, leeruitkomst2, leeruitkomst3),
+                        CreateCursus(leeruitkomst4, leeruitkomst5, leeruitkomst6)
+                    }
+                }
+            }
+        };
 
         mockOpleidingRepository
             .Setup(x => x.GetFullObjectTreeByGroupId(It.IsAny<Guid>()))
@@ -97,7 +131,7 @@ public class RapportageServiceTests
             groupId);
 
         // Assert
-        Assert.True(false);
+        Assert.True(result.All(x => x.Success));
         this.mockRepository.VerifyAll();
     }
 
@@ -109,7 +143,22 @@ public class RapportageServiceTests
         string type = "vak";
         Guid groupId = default(global::System.Guid);
 
-        var dbVak = new Vak();
+        Leeruitkomst leeruitkomst1 = new Leeruitkomst(), leeruitkomst2 = new Leeruitkomst(), leeruitkomst3 = new Leeruitkomst();
+        Leeruitkomst leeruitkomst4 = new Leeruitkomst(), leeruitkomst5 = new Leeruitkomst(), leeruitkomst6 = new Leeruitkomst();
+
+        var dbVak = new Vak()
+        {
+            Leeruitkomsten = new List<Leeruitkomst>()
+                    {
+                        leeruitkomst1, leeruitkomst2, leeruitkomst3,
+                        leeruitkomst4, leeruitkomst5, leeruitkomst6
+                    },
+            Cursussen = new List<Cursus>()
+                    {
+                        CreateCursus(leeruitkomst1, leeruitkomst2, leeruitkomst3),
+                        CreateCursus(leeruitkomst4, leeruitkomst5, leeruitkomst6)
+                    }
+        };
 
         mockVakRepository
             .Setup(x => x.GetFullObjectTreeByGroupId(It.IsAny<Guid>()))
@@ -121,7 +170,7 @@ public class RapportageServiceTests
             groupId);
 
         // Assert
-        Assert.True(false);
+        Assert.True(result.All(x => x.Success));
         this.mockRepository.VerifyAll();
     }
 
@@ -142,4 +191,40 @@ public class RapportageServiceTests
     //    Assert.True(false);
     //    this.mockRepository.VerifyAll();
     //}
+
+    private Cursus CreateCursus(params Leeruitkomst[] leeruitkomsten)
+    {
+        return new Cursus()
+        {
+            Leeruitkomsten = leeruitkomsten.ToList(),
+            Planning = new Planning()
+            {
+                PlanningItems = new List<PlanningItem>()
+                {
+                    new PlanningItem()
+                    {
+                        Les = new Les()
+                        {
+                            Id = 1,
+                             Leeruitkomsten = leeruitkomsten.ToList(),
+                        }
+                    },
+                    new PlanningItem()
+                    {
+                        Opdracht = new Opdracht()
+                        {
+                            Id = 1,
+                            BeoordelingCritereas = new List<BeoordelingCriterea>()
+                            {
+                               new BeoordelingCriterea()
+                               {
+                                    Leeruitkomsten = leeruitkomsten.ToList(),
+                               }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
 }

@@ -4,7 +4,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace ICDE.Lib.Reports;
-internal interface IReportExporter
+public interface IReportExporter
 {
     byte[] ExportData(List<ValidationResult> validationResults);
 }

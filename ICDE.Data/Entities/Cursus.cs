@@ -18,7 +18,7 @@ public class Cursus : OnderwijsOnderdeel, IVersionable, ICloneable
     {
         return new Cursus()
         {
-            Planning = (Planning)Planning.Clone(),
+            Planning = (Planning?)Planning?.Clone(),
             Leeruitkomsten = Leeruitkomsten,
             Beschrijving = Beschrijving,
             Naam = Naam,
