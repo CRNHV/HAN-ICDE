@@ -7,6 +7,6 @@ internal class OpdrachtBeoordelingValidation : AbstractValidator<OpdrachtBeoorde
     public OpdrachtBeoordelingValidation()
     {
         RuleFor(dto => dto.Feedback).NotEmpty();
-        RuleFor(dto => dto.Cijfer).Must(x => x >= 1 && x <= 11);
+        RuleFor(dto => dto.Cijfer).Must(x => x >= 1 && x < 11);
     }
 }

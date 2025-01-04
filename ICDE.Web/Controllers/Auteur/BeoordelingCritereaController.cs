@@ -60,10 +60,28 @@ public class BeoordelingCritereaController : ControllerBase
         return Redirect($"/auteur/criterea/get/{request.GroupId}");
     }
 
-    [HttpGet("koppelluk")]
-    public async Task<IActionResult> KoppelLuk([FromRoute] Guid opleidingGuid)
+    [HttpGet("{beoordelingCritereaGroupId}/koppelluk/{leeruitkomstGroupId}")]
+    public async Task<IActionResult> KoppelLuk([FromRoute] Guid beoordelingCritereaGroupId, [FromRoute] Guid leeruitkomstGroupId)
     {
-        return Ok();
+        bool result = await _beoordelingCritereaService.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/criterea/get/{beoordelingCritereaGroupId}");
+    }
+
+    [HttpGet("{beoordelingCritereaGroupId}/VerwijderLuk/{leeruitkomstGroupId}")]
+    public async Task<IActionResult> VerwijderLuk([FromRoute] Guid beoordelingCritereaGroupId, [FromRoute] Guid leeruitkomstGroupId)
+    {
+        bool result = await _beoordelingCritereaService.VerwijderLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/criterea/get/{beoordelingCritereaGroupId}");
     }
 
     [HttpGet("{groupId}/bekijkversie/{versieId}")]

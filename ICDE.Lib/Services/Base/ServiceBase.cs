@@ -109,8 +109,6 @@ public abstract class CrudServiceBase<TEntity, TDto, TCreateDto, TUpdateDto> : I
     private readonly ICrudRepository<TEntity> _repository;
     private readonly IValidator<TCreateDto> _createValidator;
     private readonly IMapper _mapper;
-    private IVersionableRepository<TEntity> repository;
-    private IMapper mapper;
 
     protected CrudServiceBase(ICrudRepository<TEntity> repository, IMapper mapper, IValidator<TCreateDto> createValidator)
     {

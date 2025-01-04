@@ -17,6 +17,11 @@ internal class OpdrachtBeoordelingService : IOpdrachtBeoordelingService
 
     public async Task<List<OpdrachtMetBeoordelingDto>> HaalBeoordelingenOpVoorUser(int? userId)
     {
+        if (userId is null)
+        {
+            return new List<OpdrachtMetBeoordelingDto>();
+        }
+
         var beoordelingen = await _beoordelingRepository.HaalBeoordelingenOpVoorStudent(userId.Value);
         return _mapper.Map<List<OpdrachtMetBeoordelingDto>>(beoordelingen);
     }

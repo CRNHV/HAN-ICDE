@@ -54,15 +54,15 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
             return false;
         }
 
-        var criterea = await _beoordelingCritereaRepository.Lijst(x => x.GroupId == critereaGroupId);
-        if (criterea.Count == 0)
+        var criterea = await _beoordelingCritereaRepository.NieuwsteVoorGroepId(critereaGroupId);
+        if (criterea is null)
         {
             return false;
         }
 
         foreach (var item in opdrachten)
         {
-            item.BeoordelingCritereas.Add(criterea.First());
+            item.BeoordelingCritereas.Add(criterea);
             item.RelationshipChanged = true;
             await _opdrachtRepository.Update(item);
         }

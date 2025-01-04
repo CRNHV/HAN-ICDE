@@ -6,6 +6,7 @@ using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services;
+using ICDE.Lib.Validation.Dto.Vak;
 using Moq;
 using System;
 using System.Linq.Expressions;
@@ -23,7 +24,7 @@ public class VakServiceTests
     private Mock<ILeeruitkomstRepository> mockLeeruitkomstRepository;
     private Mock<IMapper> mockMapper;
     private Mock<IValidator<MaakVakDto>> mockValidatorMaakVakDto;
-    private Mock<IValidator<UpdateVakDto>> mockValidatorUpdateVakDto;
+    private IValidator<UpdateVakDto> validatorUpdateVak;
 
     public VakServiceTests()
     {
@@ -34,7 +35,7 @@ public class VakServiceTests
         this.mockLeeruitkomstRepository = this.mockRepository.Create<ILeeruitkomstRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
         this.mockValidatorMaakVakDto = this.mockRepository.Create<IValidator<MaakVakDto>>();
-        this.mockValidatorUpdateVakDto = this.mockRepository.Create<IValidator<UpdateVakDto>>();
+        this.validatorUpdateVak = new UpdateVakValidation();
     }
 
     private VakService CreateService()
@@ -45,7 +46,7 @@ public class VakServiceTests
             this.mockLeeruitkomstRepository.Object,
             this.mockMapper.Object,
             this.mockValidatorMaakVakDto.Object,
-            this.mockValidatorUpdateVakDto.Object);
+            this.validatorUpdateVak);
     }
 
     [Fact]
@@ -206,10 +207,6 @@ public class VakServiceTests
             Beschrijving = "UpdatedBeschrijving",
         };
         Vak dbVak = new Vak();
-
-        mockValidatorUpdateVakDto
-            .Setup(x => x.Validate(It.IsAny<IValidationContext>()))
-            .Returns(new ValidationResult() { });
 
         mockVakRepository
             .Setup(x => x.NieuwsteVoorGroepId(It.IsAny<Guid>()))

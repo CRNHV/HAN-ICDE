@@ -15,7 +15,11 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
     private readonly IMapper _mapper;
     private readonly IValidator<UpdateOpleidingDto> _updateValidator;
 
-    public OpleidingService(IOpleidingRepository opleidingRepository, IVakRepository vakRepository, IMapper mapper, IValidator<MaakOpleidingDto> createValidator, IValidator<UpdateOpleidingDto> updateValidator) : base(opleidingRepository, mapper, createValidator)
+    public OpleidingService(IOpleidingRepository opleidingRepository,
+                            IVakRepository vakRepository,
+                            IMapper mapper,
+                            IValidator<MaakOpleidingDto> createValidator,
+                            IValidator<UpdateOpleidingDto> updateValidator) : base(opleidingRepository, mapper, createValidator)
     {
         _opleidingRepository = opleidingRepository;
         _vakRepository = vakRepository;
@@ -40,9 +44,7 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
         opleiding.Vakken.Add(vak);
         opleiding.RelationshipChanged = true;
 
-        await _opleidingRepository.Update(opleiding);
-
-        return true;
+        return await _opleidingRepository.Update(opleiding);
     }
 
     public async Task<OpleidingMetEerdereVersiesDto?> ZoekOpleidingMetEerdereVersies(Guid groupId)
@@ -99,10 +101,13 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
 
         await _opleidingRepository.Update(opleidingToUpdate);
         var updatedOpleiding = await _opleidingRepository.NieuwsteVoorGroepId(request.GroupId);
+        if (updatedOpleiding is null)
+        {
+            return false;
+        }
         updatedOpleiding.RelationshipChanged = true;
         updatedOpleiding.Vakken = opleidingToUpdate.Vakken;
 
-        await _opleidingRepository.Update(updatedOpleiding);
-        return true;
+        return await _opleidingRepository.Update(updatedOpleiding);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ICDE.Lib.Validation.Leeruitkomsten;
 
 namespace ICDE.Lib.Reports;
-internal interface IReportGenerator
+public interface IReportGenerator
 {
     Task<List<ValidationResult>> GenerateReport(Guid groupId);
 }

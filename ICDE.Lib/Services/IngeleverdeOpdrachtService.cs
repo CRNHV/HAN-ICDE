@@ -111,7 +111,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 
     public async Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request)
     {
-        _opdrachtBeoordelingValidator.Validate(request);
+        _opdrachtBeoordelingValidator.ValidateAndThrow(request);
 
         var dbIngeleverdeOpdracht = await _ingeleverdeOpdrachtRepository.VoorId(request.InzendingId);
         if (dbIngeleverdeOpdracht is null)
