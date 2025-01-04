@@ -40,16 +40,14 @@ public class LesController : Controller
     /// </summary>
     /// <returns></returns>    
     [HttpPost("create")]
-    public async Task<IActionResult> MaakLes([FromForm] MaakLesViewModel request)
+    public async Task<IActionResult> MaakLes([FromForm] MaakLesDto request)
     {
-        //LesDto les = await _lesService.Maak(request.Naam, request.Beschrijving);
-        //if (les is null)
-        //{
-        //    return BadRequest();
-        //}
-        //return Redirect($"get/{les.GroupId}");
-
-        throw new NotImplementedException();
+        var result = await _lesService.Maak(request);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+        return Redirect($"get/{result.GroupId}");
     }
 
     /// <summary>

@@ -38,9 +38,16 @@ public class PlanningController : ControllerBase
         return View("/Views/Auteur/Planning/Index.cshtml", plannings);
     }
 
-    public async Task<IActionResult> MaakPlanning()
+
+    [HttpPost("maak")]
+    public async Task<IActionResult> MaakPlanning([FromForm] MaakPlanningDto request)
     {
-        return null;
+        var result = await _planningService.Maak(request);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+        return Redirect($"bekijk/{result.Id}");
     }
 
     [HttpGet("bekijk/{planningId}")]

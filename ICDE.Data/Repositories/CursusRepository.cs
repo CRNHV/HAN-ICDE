@@ -54,4 +54,12 @@ internal class CursusRepository : VersionableRepositoryBase<Cursus>, ICursusRepo
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<List<Cursus>> GetCursussenWithPlanningByPlanningId(int planningId)
+    {
+        return await _context.Cursussen
+            .Include(c => c.Planning)
+            .Where(c => c.Planning != null && c.Planning.Id == planningId)
+            .ToListAsync();
+    }
 }

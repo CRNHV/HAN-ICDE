@@ -26,15 +26,15 @@ internal class PlanningRepository : CrudRepositoryBase<Planning>, IPlanningRepos
         return newPlanning;
     }
 
-    //public override async Task<Planning?> Get(int id)
-    //{
-    //    return await _context.Plannings
-    //        .Include(x => x.PlanningItems)
-    //        .ThenInclude(x => x.Les)
-    //        .ThenInclude(x => x.Leeruitkomsten)
-    //        .Include(x => x.PlanningItems)
-    //        .ThenInclude(x => x.Opdracht)
-    //        .Where(x => x.Id == id)
-    //        .FirstOrDefaultAsync();
-    //}
+    public async Task<Planning?> Get(int id)
+    {
+        return await _context.Plannings
+            .Include(x => x.PlanningItems)
+            .ThenInclude(x => x.Les)
+            .ThenInclude(x => x.Leeruitkomsten)
+            .Include(x => x.PlanningItems)
+            .ThenInclude(x => x.Opdracht)
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+    }
 }

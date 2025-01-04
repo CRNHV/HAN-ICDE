@@ -126,13 +126,4 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
 
         return true;
     }
-
-    public override async Task<Guid> MaakKopie(Guid vakGroupId, int vakVersie)
-    {
-        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
-        var vakClone = (Vak)vak.First().Clone();
-        vakClone.GroupId = Guid.NewGuid();
-        await _vakRepository.Maak(vakClone);
-        return vakClone.GroupId;
-    }
 }

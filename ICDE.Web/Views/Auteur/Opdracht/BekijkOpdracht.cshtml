@@ -7,7 +7,7 @@
 }
 
 <h1>Bekijk opdracht</h1>
-<a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/verwijder">Verwijder</a>
+<a href="/auteur/opdracht/verwijder/@Model.Opdracht.Opdracht.GroupId/@Model.Opdracht.Opdracht.VersieNummer">Verwijder</a>
 
 <hr />
 <div class="row">
@@ -42,95 +42,95 @@
     <div class="col-md-6">
         @if (Model.Opdracht.EerdereVersies.Count > 0)
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Beschrijving</th>
-                        <th>Type</th>
-                        <th>URL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Opdracht.EerdereVersies)
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>Type</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Opdracht.EerdereVersies)
                     {
-                        <tr>
-                            <td>@item.Naam</td>
-                            <td>@item.Beschrijving</td>
-                            <td>@item.Type</td>
-                            <td><a href="/auteur/opdracht/@item.GroupId/bekijkversie/@item.VersieNummer">Bekijk versie</a></td>
-                        </tr>
+                <tr>
+                    <td>@item.Naam</td>
+                    <td>@item.Beschrijving</td>
+                    <td>@item.Type</td>
+                    <td><a href="/auteur/opdracht/@item.GroupId/bekijkversie/@item.VersieNummer">Bekijk versie</a></td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
         }
         else
         {
-            <h4>Er zijn geen eerdere versies voor deze opdracht.</h4>
+        <h4>Er zijn geen eerdere versies voor deze opdracht.</h4>
         }
     </div>
     <div class="col-md-6">
         @if (Model.Opdracht.BeoordelingCritereas.Count > 0)
         {
-            <h4>BeoordelingCritereas</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Beschrijving</th>
-                        <th>Bekijk</th>
-                        <th>Verwijder</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var beoordelingCriterea in Model.Opdracht.BeoordelingCritereas)
+        <h4>BeoordelingCritereas</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>Bekijk</th>
+                    <th>Verwijder</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var beoordelingCriterea in Model.Opdracht.BeoordelingCritereas)
                     {
-                        <tr>
-                            <td>@beoordelingCriterea.Naam</td>
-                            <td>@beoordelingCriterea.Beschrijving</td>
-                            <td><a href="/auteur/beoordelingcriterea/bekijk/@beoordelingCriterea.GroupId">Bekijk</a></td>
-                            <td><a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/verwijdercriterea/@beoordelingCriterea.GroupId">Verwijder</a></td>
-                        </tr>
+                <tr>
+                    <td>@beoordelingCriterea.Naam</td>
+                    <td>@beoordelingCriterea.Beschrijving</td>
+                    <td><a href="/auteur/beoordelingcriterea/bekijk/@beoordelingCriterea.GroupId">Bekijk</a></td>
+                    <td><a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/verwijdercriterea/@beoordelingCriterea.GroupId">Verwijder</a></td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
 
         }
         else
         {
-            <h4>Er zijn geen beoordelingscriterea's voor deze opdracht.</h4>
+        <h4>Er zijn geen beoordelingscriterea's voor deze opdracht.</h4>
         }
     </div>
     <div class="col-md-6">
         @if (Model.BeoordelingCritereas.Count > 0)
         {
-            <h4>Voeg beoordelingcriterea toe</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Beschrijving</th>
-                        <th>Bekijk</th>
-                        <th>Voeg toe</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var beoordelingCriterea in Model.BeoordelingCritereas)
+        <h4>Voeg beoordelingcriterea toe</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Beschrijving</th>
+                    <th>Bekijk</th>
+                    <th>Voeg toe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var beoordelingCriterea in Model.BeoordelingCritereas)
                     {
-                        <tr>
-                            <td>@beoordelingCriterea.Naam</td>
-                            <td>@beoordelingCriterea.Beschrijving</td>
-                            <td><a href="/auteur/beoordelingcriterea/bekijk/@beoordelingCriterea.GroupId">Bekijk</a></td>
-                            <td><a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/voegcritereatoe/@beoordelingCriterea.GroupId">Voeg toe</a></td>
-                        </tr>
+                <tr>
+                    <td>@beoordelingCriterea.Naam</td>
+                    <td>@beoordelingCriterea.Beschrijving</td>
+                    <td><a href="/auteur/beoordelingcriterea/bekijk/@beoordelingCriterea.GroupId">Bekijk</a></td>
+                    <td><a href="/auteur/opdracht/@Model.Opdracht.Opdracht.GroupId/voegcritereatoe/@beoordelingCriterea.GroupId">Voeg toe</a></td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
 
         }
         else
         {
-            <h4>Er zijn geen beoordelingscriterea's om toe te voegen.</h4>
+        <h4>Er zijn geen beoordelingscriterea's om toe te voegen.</h4>
         }
     </div>
 

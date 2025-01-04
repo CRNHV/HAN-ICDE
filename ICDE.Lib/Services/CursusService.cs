@@ -54,19 +54,6 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
         return result != null;
     }
 
-    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
-    {
-        var cursus = await _cursusRepository.Versie(groupId, versieNummer);
-        if (cursus is null)
-        {
-            return Guid.Empty;
-        }
-        var cursusClone = (Cursus)cursus.Clone();
-        cursusClone.GroupId = Guid.NewGuid();
-        await _cursusRepository.Maak(cursusClone);
-        return cursusClone.GroupId;
-    }
-
     public override async Task<bool> Update(UpdateCursusDto request)
     {
         _updateValidator.ValidateAndThrow(request);

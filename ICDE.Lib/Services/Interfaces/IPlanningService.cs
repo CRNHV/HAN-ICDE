@@ -10,4 +10,5 @@ public interface IPlanningService : ICrudServiceBase<PlanningDto, MaakPlanningDt
     Task<List<LesMetLeeruitkomstenDto>> HaalLessenOpVoorPlanning(int planningId);
     Task<List<PlanningZonderItemsDto>> AlleUnieke();
     Task<PlanningDto?> VoorId(int planningId);
+    Task<bool> VerwijderPlanning(int planningId);
 }

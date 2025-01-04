@@ -2,20 +2,8 @@
 using FluentValidation;
 using ICDE.Data.Entities.Base;
 using ICDE.Data.Repositories.Base;
-using ICDE.Data.Repositories.Interfaces;
 
 namespace ICDE.Lib.Services.Base;
-
-public interface IVersionableServiceBase<TReadDto, TCreateDto, TUpdateDto> : ICrudServiceBase<TReadDto, TCreateDto, TUpdateDto>
-{
-    Task<List<TReadDto>> AlleUnieke();
-    Task<TReadDto?> BekijkVersie(Guid groupId, int versieNummer);
-    Task<List<TReadDto>> EerdereVersies(Guid groupId, int versieNummer);
-    Task<Guid> MaakKopie(Guid groupId, int versieNummer);
-    Task<bool> VerwijderVersie(Guid groupId, int versieNummer);
-    Task<TReadDto?> NieuwsteVoorGroepId(Guid groupId);
-}
-
 public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpdateDto> : CrudServiceBase<TEntity, TReadDto, TCreateDto, TUpdateDto>, IVersionableServiceBase<TReadDto, TCreateDto, TUpdateDto> where TEntity : class
 {
     private readonly IVersionableRepository<TEntity> _repository;
@@ -83,7 +71,32 @@ public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpd
         return _mapper.Map<TReadDto?>(result);
 
     }
-    public abstract Task<Guid> MaakKopie(Guid groupId, int versieNummer);
+    public async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
+    {
+        var dbEntity = await _repository.Versie(groupId, versieNummer);
+        if (dbEntity is null)
+        {
+            return Guid.Empty;
+        }
+
+        var clonedEntity = ((ICloneable)dbEntity).Clone();
+        if (clonedEntity is null)
+        {
+            return Guid.Empty;
+        }
+
+        ((IVersionable)clonedEntity).GroupId = Guid.NewGuid();
+
+        var result = await _repository.Maak((TEntity)clonedEntity);
+        if (result is null)
+        {
+            return Guid.Empty;
+        }
+
+        // We're in a _versionable_ repository so we can cast it knowing it's IVersionable. 
+        var resultGuid = ((IVersionable)result).GroupId;
+        return resultGuid;
+    }
 
     public async Task<TReadDto?> NieuwsteVoorGroepId(Guid groupId)
     {
@@ -95,59 +108,4 @@ public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpd
 
         return _mapper.Map<TReadDto>(dbEntity);
     }
-}
-
-public interface ICrudServiceBase<TDto, TCreateDto, TUpdateDto>
-{
-    Task<TDto?> Maak(TCreateDto request);
-    Task<bool> Update(TUpdateDto request);
-    Task<bool> Verwijder(int id);
-}
-
-public abstract class CrudServiceBase<TEntity, TDto, TCreateDto, TUpdateDto> : ICrudServiceBase<TDto, TCreateDto> where TEntity : class
-{
-    private readonly ICrudRepository<TEntity> _repository;
-    private readonly IValidator<TCreateDto> _createValidator;
-    private readonly IMapper _mapper;
-
-    protected CrudServiceBase(ICrudRepository<TEntity> repository, IMapper mapper, IValidator<TCreateDto> createValidator)
-    {
-        _repository = repository;
-        _mapper = mapper;
-        _createValidator = createValidator;
-    }
-
-    public async Task<TDto?> Maak(TCreateDto request)
-    {
-        _createValidator.ValidateAndThrow(request);
-
-        var createEntity = _mapper.Map<TEntity>(request);
-        if (createEntity is null)
-        {
-            return default;
-        }
-
-        TEntity? result = await _repository.Maak(createEntity);
-        if (result is null)
-        {
-            return default;
-        }
-
-        return _mapper.Map<TDto?>(result);
-
-    }
-
-    public async Task<bool> Verwijder(int id)
-    {
-        TEntity? dbEntity = await _repository.VoorId(id);
-        if (dbEntity is null)
-        {
-            return false;
-        }
-
-        await _repository.Verwijder(dbEntity);
-        return true;
-    }
-
-    public abstract Task<bool> Update(TUpdateDto request);
 }

@@ -86,11 +86,6 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
         };
     }
 
-    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
-    {
-        throw new NotImplementedException();
-    }
-
     public override async Task<bool> Update(UpdateOpdrachtDto request)
     {
         _updateValidator.ValidateAndThrow(request);

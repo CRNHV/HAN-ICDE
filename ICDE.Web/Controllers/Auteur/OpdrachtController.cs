@@ -75,13 +75,16 @@ public class OpdrachtController : ControllerBase
     /// UC8
     /// </summary>
     /// <returns></returns>
-    [HttpGet("{opdrachtGroupId}/verwijder")]
-    public async Task<IActionResult> VerwijderOpdracht([FromRoute] Guid opdrachtGroupId)
+    [HttpGet("verwijder/{groupId}/{versie}")]
+    public async Task<IActionResult> VerwijderOpdracht([FromRoute] Guid groupId, [FromRoute] int versie)
     {
-        //await _opdrachtService.Verwijder(opdrachtGroupId);
-        //return Redirect("/auteur/opdracht/bekijkalle");
+        bool result = await _opdrachtService.VerwijderVersie(groupId, versie);
+        if (!result)
+        {
+            return BadRequest();
+        }
 
-        throw new NotImplementedException();
+        return RedirectToAction("BekijkAlle");
     }
 
     /// <summary>

@@ -71,15 +71,6 @@ internal class BeoordelingCritereaService : VersionableServiceBase<BeoordelingCr
         return await _beoordelingCritereaRepository.Update(beoordelingCriterea);
     }
 
-    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
-    {
-        var dbCriterea = await _beoordelingCritereaRepository.Versie(groupId, versieNummer);
-        var critereaClone = (BeoordelingCriterea)dbCriterea.Clone();
-        critereaClone.GroupId = Guid.NewGuid();
-        await _beoordelingCritereaRepository.Maak(critereaClone);
-        return critereaClone.GroupId;
-    }
-
     public override async Task<bool> Update(UpdateBeoordelingCritereaDto request)
     {
         _updateValidator.ValidateAndThrow(request);

@@ -60,17 +60,19 @@ public class OpdrachtRepository : VersionableRepositoryBase<Opdracht>, IOpdracht
             await trans.RollbackAsync();
         }
     }
-
-    public async override Task<Opdracht?> Versie(Guid groupId, int versieNummer)
-    {
-        throw new NotImplementedException();
-    }
-
+       
     public async override Task<Opdracht?> NieuwsteVoorGroepId(Guid groupId)
     {
         return await _context.Opdrachten
             .Where(x => x.GroupId == groupId)
             .OrderByDescending(x => x.VersieNummer)
             .FirstOrDefaultAsync();
+    }
+
+    public async override Task<Opdracht?> Versie(Guid groupId, int versieNummer)
+    {
+        return await _context.Opdrachten
+           .Where(x => x.GroupId == groupId && x.VersieNummer == versieNummer)
+           .FirstOrDefaultAsync();
     }
 }

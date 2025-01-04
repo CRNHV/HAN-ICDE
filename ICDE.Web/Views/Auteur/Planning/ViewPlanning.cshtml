@@ -7,17 +7,17 @@
 }
 
 <h1>Bekijk & update planning</h1>
-
+<a href="/auteur/planning/verwijder/@Model.Planning.Id">verwijder</a>
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form method="post" enctype="multipart/form-data" asp-action="UpdateLeeruitkomst">
+        <form method="post" enctype="multipart/form-data" asp-action="UpdatePlanning">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input name="Id" class="form-control" value="@Model.Planning.Id" hidden />
             <div class="form-group">
-                <label name="Naam" class="control-label"></label>
-                <input name="Naam" class="form-control" value="@Model.Planning.Name" />
-                <span name="Naam" class="text-danger"></span>
+                <label name="Name" class="control-label"></label>
+                <input name="Name" class="form-control" value="@Model.Planning.Name" />
+                <span name="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Update" class="btn btn-primary" />
@@ -28,116 +28,116 @@
         <h4> Planning </h4>
         @if (Model.Planning.Items != null && Model.Planning.Items.Count > 0)
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Naam</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Planning.Items.OrderBy(x => x.Index))
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Naam</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Planning.Items.OrderBy(x => x.Index))
                     {
-                        <tr>
-                            <td>@item.Index</td>
-                            <td>@item.PlanningItemNaam</td>
-                        </tr>
+                <tr>
+                    <td>@item.Index</td>
+                    <td>@item.PlanningItemNaam</td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
         }
     </div>
     <div class="col-md-6">
         <h4> Voeg toe aan cursus </h4>
         @if (Model.Cursussen != null && Model.Cursussen.Count > 0)
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Url</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Cursussen)
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Url</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Cursussen)
                     {
-                        <tr>
-                            <td>@item.Naam</td>
-                            <td><a href="/auteur/planning/@Model.Planning.Id/voegcursustoe/@item.GroupId">Voeg toe</a></td>
-                        </tr>
+                <tr>
+                    <td>@item.Naam</td>
+                    <td><a href="/auteur/planning/@Model.Planning.Id/voegcursustoe/@item.GroupId">Voeg toe</a></td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
         }
     </div>
     <div class="col-md-6">
         <h4> Voeg opdracht toe </h4>
         @if (Model.Opdrachten != null && Model.Opdrachten.Count > 0)
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Url</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Opdrachten)
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Url</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Opdrachten)
                     {
-                        <tr>
-                            <td>@item.Naam</td>
-                            <td><a href="/auteur/planning/@Model.Planning.Id/voegopdrachttoe/@item.GroupId">Voeg toe</a></td>
-                        </tr>
+                <tr>
+                    <td>@item.Naam</td>
+                    <td><a href="/auteur/planning/@Model.Planning.Id/voegopdrachttoe/@item.GroupId">Voeg toe</a></td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
         }
     </div>
     <div class="col-md-6">
         <h4> Voeg les toe </h4>
         @if (Model.Lessen != null && Model.Lessen.Count > 0)
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Naam</th>
-                        <th>Url</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Lessen)
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Url</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Lessen)
                     {
-                        <tr>
-                            <td>@item.Naam</td>
-                            <td><a href="/auteur/planning/@Model.Planning.Id/voeglestoe/@item.GroupId">Voeg toe</a></td>
-                        </tr>
+                <tr>
+                    <td>@item.Naam</td>
+                    <td><a href="/auteur/planning/@Model.Planning.Id/voeglestoe/@item.GroupId">Voeg toe</a></td>
+                </tr>
                     }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
         }
     </div>
     <div class="col-md-6">
         <h4> Overzicht leeruitkomsten van planning </h4>
         @if (Model.Lessen != null && Model.Lessen.Count > 0)
         {
-            @foreach (var les in Model.LessenInPlanning)
+            foreach (var les in Model.LessenInPlanning)
             {
-                <li>
-                    <strong>@les.Naam</strong>
-                    @if (les.Leeruitkomsten.Any())
-                    {
-                        <ul>
-                            @foreach (var leeruitkomst in les.Leeruitkomsten)
-                            {
-                                <li>@leeruitkomst.Naam | @leeruitkomst.Beschrijving</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <p><em>No Leeruitkomsten available</em></p>
-                    }
-                </li>
+            <li>
+                <strong>@les.Naam</strong>
+                @if (les.Leeruitkomsten.Any())
+                        {
+                <ul>
+                    @foreach (var leeruitkomst in les.Leeruitkomsten)
+                                {
+                    <li>@leeruitkomst.Naam | @leeruitkomst.Beschrijving</li>
+                                }
+                </ul>
+                        }
+                        else
+                        {
+                <p><em>No Leeruitkomsten available</em></p>
+                        }
+            </li>
             }
         }
     </div>

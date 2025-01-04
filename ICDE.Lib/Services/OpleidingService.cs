@@ -65,27 +65,6 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
         };
     }
 
-    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
-    {
-        var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(groupId);
-        if (opleiding is null)
-        {
-            return Guid.Empty;
-        }
-
-        var opleidingCopy = (Opleiding)opleiding.Clone();
-        opleidingCopy.Naam += $" | KOPIE {DateTime.Now.ToShortDateString()}";
-
-        opleidingCopy.GroupId = Guid.NewGuid();
-        var createdOpleiding = await _opleidingRepository.Maak(opleidingCopy);
-        if (createdOpleiding is null)
-        {
-            return Guid.Empty;
-        }
-
-        return createdOpleiding.GroupId;
-    }
-
     public override async Task<bool> Update(UpdateOpleidingDto request)
     {
         _updateValidator.ValidateAndThrow(request);

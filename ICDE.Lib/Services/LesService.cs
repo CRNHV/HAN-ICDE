@@ -91,15 +91,6 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
         return true;
     }
 
-    public override async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
-    {
-        var les = await _lesRepository.Lijst(x => x.GroupId == groupId && x.VersieNummer == versieNummer);
-        var lesClone = (Les)les.First().Clone();
-        lesClone.GroupId = Guid.NewGuid();
-        await _lesRepository.Maak(lesClone);
-        return lesClone.GroupId;
-    }
-
     public override async Task<bool> Update(UpdateLesDto request)
     {
         _updateValidator.ValidateAndThrow(request);

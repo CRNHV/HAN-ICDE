@@ -7,10 +7,12 @@ using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Lib.Services;
 internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlanningDto, UpdatePlanningDto>, IPlanningService
 {
+    private readonly ICursusRepository _cursusRepository;
     private readonly IPlanningRepository _planningRepository;
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly ILesRepository _lesRepository;
@@ -19,6 +21,7 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
 
     public PlanningService(IPlanningRepository planningRepository,
                            IMapper mapper,
+                           ICursusRepository cursusRepository,
                            IOpdrachtRepository opdrachtRepository,
                            ILesRepository lesRepository,
                            IValidator<MaakPlanningDto> createValidator,
@@ -29,6 +32,7 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
         _opdrachtRepository = opdrachtRepository;
         _lesRepository = lesRepository;
         _updateValidator = updateValidator;
+        _cursusRepository = cursusRepository;
     }
 
     public async Task<PlanningZonderItemsDto?> VoegOpdrachtToe(int planningId, Guid groupId)
@@ -110,11 +114,20 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
         return _mapper.Map<List<LesMetLeeruitkomstenDto>>(lessons);
     }
 
-    public override Task<bool> Update(UpdatePlanningDto request)
+    public override async Task<bool> Update(UpdatePlanningDto request)
     {
         _updateValidator.ValidateAndThrow(request);
 
-        throw new NotImplementedException();
+        var planningToUpdate = await _planningRepository.VoorId(request.Id);
+        if (planningToUpdate is null)
+        {
+            return false;
+        }
+
+        planningToUpdate.Name = request.Name;
+
+        await _planningRepository.Update(planningToUpdate);
+        return true;
     }
 
     public async Task<List<PlanningZonderItemsDto>> AlleUnieke()
@@ -135,5 +148,25 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
             return null;
         }
         return _mapper.Map<PlanningDto>(planning);
+    }
+
+    public async Task<bool> VerwijderPlanning(int planningid)
+    {
+        var cursussen = await _cursusRepository.GetCursussenWithPlanningByPlanningId(planningid);
+
+        foreach (var cursus in cursussen)
+        {
+            cursus.RelationshipChanged = true;
+            cursus.Planning = null;
+            await _cursusRepository.Update(cursus);
+        }
+
+        var planning = await _planningRepository.Get(planningid);
+        if (planning == null)
+        {
+            return false;
+        }
+
+        return await _planningRepository.Verwijder(planning);
     }
 }

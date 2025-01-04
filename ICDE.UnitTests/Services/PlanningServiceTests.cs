@@ -38,10 +38,12 @@ public class PlanningServiceTests
         return new PlanningService(
             this.mockPlanningRepository.Object,
             this.mockMapper.Object,
+            null,
             this.mockOpdrachtRepository.Object,
             this.mockLesRepository.Object,
             this.mockValidatorMaakPlanningDto.Object,
-            this.mockValidatorUpdatePlanningDto.Object);
+            this.mockValidatorUpdatePlanningDto.Object
+            );
     }
 
     [Fact]

@@ -6,8 +6,6 @@ internal class UpdatePlanningValidation : AbstractValidator<UpdatePlanningDto>
 {
     public UpdatePlanningValidation()
     {
-        RuleFor(dto => dto.Naam).NotEmpty();
-        RuleFor(dto => dto.GroupId).NotEqual(Guid.Empty);
-        RuleFor(dto => dto.Beschrijving).NotEmpty();
+        RuleFor(dto => dto.Name).NotEmpty();
     }
 }

@@ -36,17 +36,14 @@ public class VakController : Controller
     }
 
     [HttpPost("maak")]
-    public async Task<IActionResult> MaakVak([FromForm] MaakVakViewModel request)
+    public async Task<IActionResult> MaakVak([FromForm] MaakVakDto request)
     {
-        //Guid groupId = await _vakService.MaakVak(request.Naam, request.Beschrijving);
-        //if (groupId == Guid.Empty)
-        //{
-        //    return BadRequest();
-        //}
-
-        //return Redirect($"get/{groupId}");
-
-        return BadRequest();
+        var result = await _vakService.Maak(request);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+        return Redirect($"get/{result.GroupId}");
     }
 
     [HttpGet("get/{vakGroupId}")]

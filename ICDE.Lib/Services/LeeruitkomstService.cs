@@ -43,12 +43,6 @@ internal class LeeruitkomstService : VersionableServiceBase<Leeruitkomst, Leerui
 
         return luk;
     }
-
-    public override Task<Guid> MaakKopie(Guid groupId, int versieNummer)
-    {
-        throw new NotImplementedException();
-    }
-
     public override Task<bool> Update(UpdateLeeruitkomstDto request)
     {
         _updateValidator.ValidateAndThrow(request);
