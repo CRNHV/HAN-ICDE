@@ -1,4 +1,5 @@
-﻿using ICDE.Lib.IO;
+﻿using ICDE.Lib.Dto.Rapportage;
+using ICDE.Lib.IO;
 using ICDE.Lib.Reports;
 using ICDE.Lib.Services.Interfaces;
 using ICDE.Lib.Validation.Leeruitkomsten;
@@ -60,8 +61,3 @@ internal class RapportageService : IRapportageService
     }
 }
 
-public class RapportageExportDto
-{
-    public byte[] Bytes { get; set; }
-    public string Type { get; set; }
-}

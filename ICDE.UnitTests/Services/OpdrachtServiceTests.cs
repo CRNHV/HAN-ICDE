@@ -1,15 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Services;
+using ICDE.Lib.Validation.Dto.Opdracht;
 using Moq;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -21,7 +19,7 @@ public class OpdrachtServiceTests
     private Mock<IMapper> mockMapper;
     private Mock<IBeoordelingCritereaRepository> mockBeoordelingCritereaRepository;
     private Mock<IValidator<MaakOpdrachtDto>> mockValidatorMaakOpdrachtDto;
-    private Mock<IValidator<UpdateOpdrachtDto>> mockValidatorUpdateOpdrachtDto;
+    private IValidator<UpdateOpdrachtDto> mockValidatorUpdateOpdrachtDto;
 
     public OpdrachtServiceTests()
     {
@@ -31,7 +29,7 @@ public class OpdrachtServiceTests
         this.mockMapper = this.mockRepository.Create<IMapper>();
         this.mockBeoordelingCritereaRepository = this.mockRepository.Create<IBeoordelingCritereaRepository>();
         this.mockValidatorMaakOpdrachtDto = this.mockRepository.Create<IValidator<MaakOpdrachtDto>>();
-        this.mockValidatorUpdateOpdrachtDto = this.mockRepository.Create<IValidator<UpdateOpdrachtDto>>();
+        this.mockValidatorUpdateOpdrachtDto = new UpdateOpdrachtValidation();
     }
 
     private OpdrachtService CreateService()
@@ -41,7 +39,7 @@ public class OpdrachtServiceTests
             this.mockMapper.Object,
             this.mockBeoordelingCritereaRepository.Object,
             this.mockValidatorMaakOpdrachtDto.Object,
-            this.mockValidatorUpdateOpdrachtDto.Object);
+            this.mockValidatorUpdateOpdrachtDto);
     }
 
     [Fact]
@@ -94,7 +92,7 @@ public class OpdrachtServiceTests
 
         mockOpdrachtRepository
             .Setup(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()))
-            .ReturnsAsync(new List<Opdracht>()); // No opdrachten found
+            .ReturnsAsync(new List<Opdracht>());
 
         var service = CreateService();
 
@@ -120,7 +118,7 @@ public class OpdrachtServiceTests
 
         mockBeoordelingCritereaRepository
             .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
-            .ReturnsAsync((BeoordelingCriterea?)null); // No criterea found
+            .ReturnsAsync((BeoordelingCriterea?)null);
 
         var service = CreateService();
 
@@ -244,37 +242,41 @@ public class OpdrachtServiceTests
         mockMapper.Verify(mapper => mapper.Map<List<BeoordelingCritereaDto>>(opdracht.BeoordelingCritereas), Times.Once);
     }
 
-    //[Fact]
-    //public async Task MaakKopie_StateUnderTest_ExpectedBehavior()
-    //{
-    //    // Arrange
-    //    var service = this.CreateService();
-    //    Guid groupId = default(global::System.Guid);
-    //    int versieNummer = 0;
+    [Fact]
+    public async Task Update_HappyPath_ReturnsTrue()
+    {
+        // Arrange
+        var service = this.CreateService();
 
-    //    // Act
-    //    var result = await service.MaakKopie(
-    //        groupId,
-    //        versieNummer);
+        var request = new UpdateOpdrachtDto
+        {
+            GroupId = Guid.NewGuid(),
+            Naam = "Updated Name",
+            Beschrijving = "Updated Description",
+            IsToets = true
+        };
+        var existingOpdracht = new Opdracht
+        {
+            GroupId = request.GroupId,
+            Naam = "Original Name",
+            Beschrijving = "Original Description",
+            Type = OpdrachtType.Casus,
+            BeoordelingCritereas = new List<BeoordelingCriterea>()
+        };
+        this.mockOpdrachtRepository
+            .Setup(repo => repo.GetFullDataByGroupId(request.GroupId))
+            .ReturnsAsync(existingOpdracht);
+        this.mockOpdrachtRepository
+            .Setup(repo => repo.Update(It.IsAny<Opdracht>()))
+            .ReturnsAsync(true);
 
-    //    // Assert
-    //    Assert.True(false);
-    //    this.mockRepository.VerifyAll();
-    //}
+        // Act
+        var result = await service.Update(request);
 
-    //[Fact]
-    //public async Task Update_StateUnderTest_ExpectedBehavior()
-    //{
-    //    // Arrange
-    //    var service = this.CreateService();
-    //    UpdateOpdrachtDto request = null;
-
-    //    // Act
-    //    var result = await service.Update(
-    //        request);
-
-    //    // Assert
-    //    Assert.True(false);
-    //    this.mockRepository.VerifyAll();
-    //}
+        // Assert
+        Assert.True(result);
+        this.mockOpdrachtRepository.Verify(repo => repo.GetFullDataByGroupId(request.GroupId), Times.Exactly(2));
+        this.mockOpdrachtRepository.Verify(repo => repo.Update(It.IsAny<Opdracht>()), Times.Exactly(2));
+        this.mockRepository.VerifyAll();
+    }
 }

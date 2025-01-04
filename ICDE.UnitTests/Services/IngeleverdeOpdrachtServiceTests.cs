@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
@@ -10,12 +11,7 @@ using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Validation.Dto.OpdrachtInzending;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Moq;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -142,7 +138,6 @@ public class IngeleverdeOpdrachtServiceTests
         var service = this.CreateService();
         Guid opdrachtId = Guid.NewGuid();
 
-        // Mock setup
         mockIngeleverdeOpdrachtRepository.Setup(x => x.Lijst(It.IsAny<Expression<Func<IngeleverdeOpdracht, bool>>>()))
             .Returns(Task.FromResult(new List<IngeleverdeOpdracht>()));
 
@@ -167,7 +162,6 @@ public class IngeleverdeOpdrachtServiceTests
             new IngeleverdeOpdracht() { Id = 2, Naam = "Test Inzending 2"},
         };
 
-        // Mock setup
         mockIngeleverdeOpdrachtRepository.Setup(x => x.Lijst(It.IsAny<Expression<Func<IngeleverdeOpdracht, bool>>>()))
             .Returns(Task.FromResult(mockInzendingen));
 
@@ -202,7 +196,6 @@ public class IngeleverdeOpdrachtServiceTests
             OpdrachtId = 1,
         };
 
-        // Mock setups
         mockOpdrachtRepository.Setup(x => x.VoorId(It.IsAny<int>())).ReturnsAsync(mockOpdracht);
         mockStudentRepository.Setup(x => x.ZoekStudentNummerVoorUserId(It.IsAny<int>())).ReturnsAsync(1);
         mockFileManager.Setup(x => x.SlaOpdrachtOp(It.IsAny<string>(), It.IsAny<IFormFile>())).Returns(Task.FromResult("fileLocation"));

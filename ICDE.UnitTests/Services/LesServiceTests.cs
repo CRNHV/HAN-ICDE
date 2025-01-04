@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
@@ -6,13 +7,8 @@ using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Services;
-using ICDE.Lib.Services.Interfaces;
 using ICDE.Lib.Validation.Dto.Lessen;
 using Moq;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -72,7 +68,6 @@ public class LesServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(currentVersion.Id, result.Les.Id);
-        // Assert other properties of LesDto and LesLeeruitkomstenDto
         mockLesRepository.VerifyAll();
         mockMapper.VerifyAll();
     }
@@ -135,28 +130,6 @@ public class LesServiceTests
             l.Id == les.Id &&
             l.Leeruitkomsten.Count == 1 &&
             l.Leeruitkomsten.All(lu => lu.GroupId != lukGroupId))), Times.Once);
-    }
-
-    [Fact]
-    public async Task MaakKopie_ExistingLes_ReturnsNewGroupId()
-    {
-        // Arrange
-        Guid originalGroupId = Guid.NewGuid();
-        int versieNummer = 1;
-        var originalLes = new Les { GroupId = originalGroupId, VersieNummer = versieNummer };
-        mockLesRepository.Setup(x => x.Lijst(It.IsAny<Expression<Func<Les, bool>>>()))
-            .ReturnsAsync(new List<Les> { originalLes });
-        mockLesRepository.Setup(x => x.Maak(It.IsAny<Les>())).ReturnsAsync(new Les());
-
-        var service = this.CreateService();
-
-        // Act
-        var newGroupId = await service.MaakKopie(originalGroupId, versieNummer);
-
-        // Assert
-        Assert.NotEqual(originalGroupId, newGroupId);
-        mockLesRepository.Verify(x => x.Lijst(It.Is<Expression<Func<Les, bool>>>(expr => expr.Compile()(originalLes))), Times.Once);
-        mockLesRepository.Verify(x => x.Maak(It.Is<Les>(l => l.GroupId == newGroupId)), Times.Once);
     }
 
     [Fact]

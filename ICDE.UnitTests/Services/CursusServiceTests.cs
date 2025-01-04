@@ -6,9 +6,6 @@ using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.Cursus;
 using Moq;
-using System;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -54,17 +51,14 @@ public class CursusServiceTests
         {
             GroupId = Guid.NewGuid(),
             Naam = "Sample Cursus"
-            // Add more properties as needed
         };
 
         var expectedDto = new CursusMetPlanningDto
         {
             GroupId = mockCursus.GroupId,
             Naam = mockCursus.Naam
-            // Add more properties as needed
         };
 
-        // Setup mocks
         mockCursusRepository
             .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
             .ReturnsAsync(mockCursus);
@@ -91,7 +85,6 @@ public class CursusServiceTests
         var service = this.CreateService();
         Guid cursusGroupId = Guid.NewGuid();
 
-        // Setup mocks
         mockCursusRepository
             .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
             .ReturnsAsync((Cursus)null);

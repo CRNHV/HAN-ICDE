@@ -5,9 +5,6 @@ using ICDE.Lib.Reports;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Leeruitkomsten;
 using Moq;
-using System;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -174,23 +171,23 @@ public class RapportageServiceTests
         this.mockRepository.VerifyAll();
     }
 
-    //[Fact]
-    //public async Task ExporteerRapportage_StateUnderTest_ExpectedBehavior()
-    //{
-    //    // Arrange
-    //    var service = this.CreateService();
-    //    string type = null;
-    //    Guid groupId = default(global::System.Guid);
+    [Fact]
+    public async Task ExporteerRapportage_StateUnderTest_ExpectedBehavior()
+    {
+        // Arrange
+        var service = this.CreateService();
+        string type = null;
+        Guid groupId = default(global::System.Guid);
 
-    //    // Act
-    //    var result = await service.ExporteerRapportage(
-    //        type,
-    //        groupId);
+        // Act
+        var result = await service.ExporteerRapportage(
+            type,
+            groupId);
 
-    //    // Assert
-    //    Assert.True(false);
-    //    this.mockRepository.VerifyAll();
-    //}
+        // Assert
+        Assert.True(false);
+        this.mockRepository.VerifyAll();
+    }
 
     private Cursus CreateCursus(params Leeruitkomst[] leeruitkomsten)
     {

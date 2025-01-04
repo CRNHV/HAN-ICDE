@@ -3,7 +3,6 @@ using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
-using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -96,12 +95,6 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         }
 
         return true;
-    }
-
-    public async Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie)
-    {
-        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
-        return _mapper.Map<VakDto?>(vak.First());
     }
 
     public override async Task<bool> Update(UpdateVakDto request)

@@ -4,7 +4,6 @@ using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Opdracht;
-using ICDE.Lib.IO;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
 
@@ -106,10 +105,7 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
             return false;
         }
 
-        foreach (var item in opdracht.BeoordelingCritereas)
-        {
-            updatedOpdracht.BeoordelingCritereas.Add(item);
-        }
+        updatedOpdracht.BeoordelingCritereas.AddRange(opdracht.BeoordelingCritereas);
         updatedOpdracht.RelationshipChanged = true;
         return await _opdrachtRepository.Update(updatedOpdracht);
     }

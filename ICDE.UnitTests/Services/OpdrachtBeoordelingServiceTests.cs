@@ -4,9 +4,6 @@ using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Services;
 using Moq;
-using System;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -36,7 +33,7 @@ public class OpdrachtBeoordelingServiceTests
     public async Task HaalBeoordelingenOpVoorUser_UserIdProvided_ReturnsMappedBeoordelingen()
     {
         // Arrange
-        var userId = 1; // Example user ID
+        var userId = 1;
         var mockBeoordelingen = new List<OpdrachtBeoordeling>
         {
             new OpdrachtBeoordeling { Cijfer = 8 },
@@ -48,12 +45,10 @@ public class OpdrachtBeoordelingServiceTests
             new OpdrachtMetBeoordelingDto { Cijfer = 9 }
         };
 
-        // Mock the repository to return mock data
         mockOpdrachtBeoordelingRepository
             .Setup(repo => repo.HaalBeoordelingenOpVoorStudent(userId))
             .ReturnsAsync(mockBeoordelingen);
 
-        // Mock the mapper to map the data
         mockMapper
             .Setup(mapper => mapper.Map<List<OpdrachtMetBeoordelingDto>>(mockBeoordelingen))
             .Returns(mappedResult);

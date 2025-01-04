@@ -10,7 +10,6 @@ using ICDE.Data.Interceptors;
 using ICDE.Lib.Extensions;
 using ICDE.Web.Middleware;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

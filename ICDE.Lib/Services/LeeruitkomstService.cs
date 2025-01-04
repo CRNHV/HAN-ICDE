@@ -2,7 +2,6 @@
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Luk;
-using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -43,21 +42,20 @@ internal class LeeruitkomstService : VersionableServiceBase<Leeruitkomst, Leerui
 
         return luk;
     }
-    public override Task<bool> Update(UpdateLeeruitkomstDto request)
+
+    public override async Task<bool> Update(UpdateLeeruitkomstDto request)
     {
         _updateValidator.ValidateAndThrow(request);
 
-        throw new NotImplementedException();
-    }
+        var dbLuk = await _leeruitkomstRepository.NieuwsteVoorGroepId(request.GroupId);
+        if (dbLuk is null)
+        {
+            return false;
+        }
 
-    public async Task<Guid> MaakKopieVanVersie(Guid groupId, int versieId)
-    {
-        var dbLuks = await _leeruitkomstRepository.Lijst(x => x.GroupId == groupId && x.VersieNummer == versieId);
-        var luk = dbLuks.First();
+        dbLuk.Naam = request.Naam;
+        dbLuk.Beschrijving = request.Beschrijving;
 
-        var lukClone = (Leeruitkomst)luk.Clone();
-        lukClone.GroupId = Guid.NewGuid();
-        await _leeruitkomstRepository.Maak(lukClone);
-        return lukClone.GroupId;
+        return await _leeruitkomstRepository.Update(dbLuk);
     }
 }

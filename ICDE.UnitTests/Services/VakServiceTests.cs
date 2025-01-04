@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using ICDE.Data.Entities;
@@ -8,10 +9,6 @@ using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.Vak;
 using Moq;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -24,7 +21,7 @@ public class VakServiceTests
     private Mock<ILeeruitkomstRepository> mockLeeruitkomstRepository;
     private Mock<IMapper> mockMapper;
     private Mock<IValidator<MaakVakDto>> mockValidatorMaakVakDto;
-    private IValidator<UpdateVakDto> validatorUpdateVak;
+    private IValidator<UpdateVakDto> mockValidatorUpdateVakDto;
 
     public VakServiceTests()
     {
@@ -35,7 +32,7 @@ public class VakServiceTests
         this.mockLeeruitkomstRepository = this.mockRepository.Create<ILeeruitkomstRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
         this.mockValidatorMaakVakDto = this.mockRepository.Create<IValidator<MaakVakDto>>();
-        this.validatorUpdateVak = new UpdateVakValidation();
+        this.mockValidatorUpdateVakDto = new UpdateVakValidation();
     }
 
     private VakService CreateService()
@@ -46,7 +43,7 @@ public class VakServiceTests
             this.mockLeeruitkomstRepository.Object,
             this.mockMapper.Object,
             this.mockValidatorMaakVakDto.Object,
-            this.validatorUpdateVak);
+            this.mockValidatorUpdateVakDto);
     }
 
     [Fact]
@@ -179,12 +176,8 @@ public class VakServiceTests
             .Returns(new VakDto());
 
         mockVakRepository
-            .Setup(x => x.Lijst(It.IsAny<Expression<Func<Vak, bool>>>()))
-            .ReturnsAsync(new List<Vak>()
-            {
-               dbVak
-            }
-        );
+            .Setup(x => x.Versie(It.IsAny<Guid>(), It.IsAny<int>()))
+            .ReturnsAsync(dbVak);
 
         // Act
         var result = await service.BekijkVersie(
@@ -222,41 +215,6 @@ public class VakServiceTests
 
         // Assert
         Assert.True(result);
-        this.mockRepository.VerifyAll();
-    }
-
-    [Fact]
-    public async Task MaakKopie_StateUnderTest_ExpectedBehavior()
-    {
-        // Arrange
-        var service = this.CreateService();
-        Guid vakGroupId = Guid.NewGuid();
-        int vakVersie = 0;
-
-        var dbVak = new Vak()
-        {
-            GroupId = vakGroupId,
-        };
-
-        mockVakRepository
-            .Setup(x => x.Lijst(It.IsAny<Expression<Func<Vak, bool>>>()))
-            .ReturnsAsync(new List<Vak>()
-            {
-                dbVak
-            }
-        );
-
-        mockVakRepository
-            .Setup(x => x.Maak(It.IsAny<Vak>()))
-            .ReturnsAsync(dbVak);
-
-        // Act
-        var result = await service.MaakKopie(
-            vakGroupId,
-            vakVersie);
-
-        // Assert
-        Assert.NotEqual<Guid>(vakGroupId, result);
         this.mockRepository.VerifyAll();
     }
 }
