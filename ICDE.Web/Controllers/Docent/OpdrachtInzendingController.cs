@@ -13,10 +13,12 @@ namespace ICDE.Web.Controllers.Docent;
 public class OpdrachtInzendingController : ControllerBase
 {
     private readonly IIngeleverdeOpdrachtService _ingeleverdeService;
+    private readonly IOpdrachtBeoordelingService _opdrachtBeoordelingService;
 
-    public OpdrachtInzendingController(IIngeleverdeOpdrachtService ingeleverdeService)
+    public OpdrachtInzendingController(IIngeleverdeOpdrachtService ingeleverdeService, IOpdrachtBeoordelingService opdrachtBeoordelingService)
     {
         _ingeleverdeService = ingeleverdeService;
+        _opdrachtBeoordelingService = opdrachtBeoordelingService;
     }
 
     [HttpGet("{inzendingId}")]
@@ -37,7 +39,7 @@ public class OpdrachtInzendingController : ControllerBase
     [HttpPost("beoordeel")]
     public async Task<IActionResult> VoegBeoordelingToe([FromForm] OpdrachtBeoordelingDto request)
     {
-        var result = await _ingeleverdeService.SlaBeoordelingOp(request);
+        var result = await _opdrachtBeoordelingService.SlaBeoordelingOp(request);
         if (result == false)
         {
             return BadRequest();

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
 using ICDE.Lib.Services;
+using ICDE.Lib.Validation.Dto.OpdrachtBeoordeling;
 using Moq;
 
 namespace ICDE.UnitTests.Services;
@@ -13,6 +15,8 @@ public class OpdrachtBeoordelingServiceTests
 
     private Mock<IOpdrachtBeoordelingRepository> mockOpdrachtBeoordelingRepository;
     private Mock<IMapper> mockMapper;
+    private Mock<IIngeleverdeOpdrachtRepository> mockIngeleverdeOpdrachtRepository;
+    private IValidator<OpdrachtBeoordelingDto> opdrachtBeoordelingValidation = new OpdrachtBeoordelingValidation();
 
     public OpdrachtBeoordelingServiceTests()
     {
@@ -20,13 +24,17 @@ public class OpdrachtBeoordelingServiceTests
 
         this.mockOpdrachtBeoordelingRepository = this.mockRepository.Create<IOpdrachtBeoordelingRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
+        this.mockIngeleverdeOpdrachtRepository = this.mockRepository.Create<IIngeleverdeOpdrachtRepository>();
     }
 
     private OpdrachtBeoordelingService CreateService()
     {
         return new OpdrachtBeoordelingService(
             this.mockOpdrachtBeoordelingRepository.Object,
-            this.mockMapper.Object);
+            this.mockMapper.Object,
+            opdrachtBeoordelingValidation,
+            mockIngeleverdeOpdrachtRepository.Object
+            );
     }
 
     [Fact]
@@ -80,5 +88,38 @@ public class OpdrachtBeoordelingServiceTests
         Assert.Empty(result);
         mockOpdrachtBeoordelingRepository.Verify(repo => repo.HaalBeoordelingenOpVoorStudent(It.IsAny<int>()), Times.Never);
         mockMapper.Verify(mapper => mapper.Map<List<OpdrachtMetBeoordelingDto>>(It.IsAny<List<OpdrachtBeoordeling>>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SlaBeoordelingOp_ValidInput_ReturnsTrue()
+    {
+        // Arrange
+        var service = CreateService();
+        var request = new OpdrachtBeoordelingDto { Cijfer = 10, Feedback = "Well done!" };
+
+        mockIngeleverdeOpdrachtRepository.Setup(r => r.VoorId(It.IsAny<int>())).ReturnsAsync(new IngeleverdeOpdracht());
+
+        mockOpdrachtBeoordelingRepository.Setup(x => x.Maak(It.IsAny<OpdrachtBeoordeling>())).ReturnsAsync(new OpdrachtBeoordeling());
+
+        // Act
+        var result = await service.SlaBeoordelingOp(request);
+
+        // Assert
+        Assert.True(result);
+        mockOpdrachtBeoordelingRepository.Verify(r => r.Maak(It.IsAny<OpdrachtBeoordeling>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task SlaBeoordelingOp_InvalidInput_ReturnsFalse()
+    {
+        // Arrange
+        var service = CreateService();
+        var request = new OpdrachtBeoordelingDto { Cijfer = 11, Feedback = "Well done!" };
+
+        // Act
+        await Assert.ThrowsAsync<ValidationException>(() => service.SlaBeoordelingOp(request));
+
+        // Assert
+        mockOpdrachtBeoordelingRepository.Verify(r => r.Maak(It.IsAny<OpdrachtBeoordeling>()), Times.Never);
     }
 }

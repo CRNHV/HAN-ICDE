@@ -22,7 +22,6 @@ public class IngeleverdeOpdrachtServiceTests
     private Mock<IIngeleverdeOpdrachtRepository> mockIngeleverdeOpdrachtRepository;
     private Mock<IOpdrachtRepository> mockOpdrachtRepository;
     private Mock<IFileManager> mockFileManager;
-    private Mock<IOpdrachtBeoordelingRepository> mockOpdrachtBeoordelingRepository;
     private Mock<IMapper> mockMapper;
     private Mock<IStudentRepository> mockStudentRepository;
     private IValidator<OpdrachtBeoordelingDto> mockValidatorOpdrachtBeoordelingDto = new OpdrachtBeoordelingValidation();
@@ -35,7 +34,6 @@ public class IngeleverdeOpdrachtServiceTests
         this.mockIngeleverdeOpdrachtRepository = this.mockRepository.Create<IIngeleverdeOpdrachtRepository>();
         this.mockOpdrachtRepository = this.mockRepository.Create<IOpdrachtRepository>();
         this.mockFileManager = this.mockRepository.Create<IFileManager>();
-        this.mockOpdrachtBeoordelingRepository = this.mockRepository.Create<IOpdrachtBeoordelingRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
         this.mockStudentRepository = this.mockRepository.Create<IStudentRepository>();
     }
@@ -46,7 +44,6 @@ public class IngeleverdeOpdrachtServiceTests
             this.mockIngeleverdeOpdrachtRepository.Object,
             this.mockOpdrachtRepository.Object,
             this.mockFileManager.Object,
-            this.mockOpdrachtBeoordelingRepository.Object,
             this.mockMapper.Object,
             this.mockStudentRepository.Object,
             this.mockValidatorOpdrachtBeoordelingDto,
@@ -211,38 +208,5 @@ public class IngeleverdeOpdrachtServiceTests
         mockStudentRepository.Verify(x => x.ZoekStudentNummerVoorUserId(It.IsAny<int>()), Times.Once);
         mockFileManager.Verify(x => x.SlaOpdrachtOp(It.IsAny<string>(), It.IsAny<IFormFile>()), Times.Once);
         mockIngeleverdeOpdrachtRepository.Verify(x => x.Maak(It.IsAny<IngeleverdeOpdracht>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task SlaBeoordelingOp_ValidInput_ReturnsTrue()
-    {
-        // Arrange
-        var service = CreateService();
-        var request = new OpdrachtBeoordelingDto { Cijfer = 10, Feedback = "Well done!" };
-
-        mockIngeleverdeOpdrachtRepository.Setup(r => r.VoorId(It.IsAny<int>())).ReturnsAsync(new IngeleverdeOpdracht());
-
-        mockOpdrachtBeoordelingRepository.Setup(x => x.Maak(It.IsAny<OpdrachtBeoordeling>())).ReturnsAsync(new OpdrachtBeoordeling());
-
-        // Act
-        var result = await service.SlaBeoordelingOp(request);
-
-        // Assert
-        Assert.True(result);
-        mockOpdrachtBeoordelingRepository.Verify(r => r.Maak(It.IsAny<OpdrachtBeoordeling>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task SlaBeoordelingOp_InvalidInput_ReturnsFalse()
-    {
-        // Arrange
-        var service = CreateService();
-        var request = new OpdrachtBeoordelingDto { Cijfer = 11, Feedback = "Well done!" };
-
-        // Act
-        await Assert.ThrowsAsync<ValidationException>(() => service.SlaBeoordelingOp(request));
-
-        // Assert
-        mockOpdrachtBeoordelingRepository.Verify(r => r.Maak(It.IsAny<OpdrachtBeoordeling>()), Times.Never);
     }
 }

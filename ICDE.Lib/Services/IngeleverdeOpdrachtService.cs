@@ -12,7 +12,6 @@ namespace ICDE.Lib.Services;
 internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
 {
     private readonly IIngeleverdeOpdrachtRepository _ingeleverdeOpdrachtRepository;
-    private readonly IOpdrachtBeoordelingRepository _opdrachtBeoordelingRepository;
     private readonly IStudentRepository _studentRepository;
     private readonly IOpdrachtRepository _opdrachtRepository;
     private readonly IFileManager _fileManager;
@@ -24,7 +23,6 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
     public IngeleverdeOpdrachtService(IIngeleverdeOpdrachtRepository ingeleverdeOpdrachtRepository,
                                       IOpdrachtRepository opdrachtRepository,
                                       IFileManager fileManager,
-                                      IOpdrachtBeoordelingRepository opdrachtBeoordelingRepository,
                                       IMapper mapper,
                                       IStudentRepository studentRepository,
                                       IValidator<OpdrachtBeoordelingDto> opdrachtBeoordelingValidator,
@@ -33,7 +31,6 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
         _ingeleverdeOpdrachtRepository = ingeleverdeOpdrachtRepository;
         _opdrachtRepository = opdrachtRepository;
         _fileManager = fileManager;
-        _opdrachtBeoordelingRepository = opdrachtBeoordelingRepository;
         _mapper = mapper;
         _studentRepository = studentRepository;
         _opdrachtBeoordelingValidator = opdrachtBeoordelingValidator;
@@ -106,24 +103,6 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
         };
 
         await _ingeleverdeOpdrachtRepository.Maak(ingeleverdeOpdracht);
-        return true;
-    }
-
-    public async Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request)
-    {
-        _opdrachtBeoordelingValidator.ValidateAndThrow(request);
-
-        var dbIngeleverdeOpdracht = await _ingeleverdeOpdrachtRepository.VoorId(request.InzendingId);
-        if (dbIngeleverdeOpdracht is null)
-            return false;
-
-        await _opdrachtBeoordelingRepository.Maak(new OpdrachtBeoordeling()
-        {
-            Cijfer = request.Cijfer,
-            Feedback = request.Feedback,
-            IngeleverdeOpdracht = dbIngeleverdeOpdracht
-        });
-
         return true;
     }
 }

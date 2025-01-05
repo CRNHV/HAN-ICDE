@@ -91,8 +91,8 @@ public class OpdrachtServiceTests
         var critereaGroupId = Guid.NewGuid();
 
         mockOpdrachtRepository
-            .Setup(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()))
-            .ReturnsAsync(new List<Opdracht>());
+            .Setup(repo => repo.GetFullDataByGroupId(It.IsAny<Guid>()))
+            .ReturnsAsync((Opdracht?)null);
 
         var service = CreateService();
 
@@ -101,8 +101,7 @@ public class OpdrachtServiceTests
 
         // Assert
         Assert.False(result);
-        mockOpdrachtRepository.Verify(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()), Times.Once);
-        mockBeoordelingCritereaRepository.Verify(repo => repo.Lijst(It.IsAny<Expression<Func<BeoordelingCriterea, bool>>>()), Times.Never);
+        mockOpdrachtRepository.Verify(repo => repo.GetFullDataByGroupId(It.IsAny<Guid>()), Times.Once);
     }
 
     [Fact]
@@ -113,8 +112,8 @@ public class OpdrachtServiceTests
         var critereaGroupId = Guid.NewGuid();
 
         mockOpdrachtRepository
-            .Setup(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()))
-            .ReturnsAsync(new List<Opdracht> { new Opdracht { GroupId = opdrachtGroupId } });
+            .Setup(repo => repo.GetFullDataByGroupId(It.IsAny<Guid>()))
+            .ReturnsAsync(new Opdracht { GroupId = opdrachtGroupId });
 
         mockBeoordelingCritereaRepository
             .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
@@ -127,7 +126,7 @@ public class OpdrachtServiceTests
 
         // Assert
         Assert.False(result);
-        mockOpdrachtRepository.Verify(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()), Times.Once);
+        mockOpdrachtRepository.Verify(repo => repo.GetFullDataByGroupId(It.IsAny<Guid>()), Times.Once);
         mockBeoordelingCritereaRepository.Verify(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()), Times.Once);
     }
 
@@ -149,8 +148,8 @@ public class OpdrachtServiceTests
         };
 
         mockOpdrachtRepository
-            .Setup(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()))
-            .ReturnsAsync(opdrachten);
+            .Setup(repo => repo.GetFullDataByGroupId(It.IsAny<Guid>()))
+            .ReturnsAsync(new Opdracht { GroupId = opdrachtGroupId });
 
         mockBeoordelingCritereaRepository
             .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
@@ -167,7 +166,7 @@ public class OpdrachtServiceTests
 
         // Assert
         Assert.True(result);
-        mockOpdrachtRepository.Verify(repo => repo.Lijst(It.IsAny<Expression<Func<Opdracht, bool>>>()), Times.Once);
+        mockOpdrachtRepository.Verify(repo => repo.GetFullDataByGroupId(It.IsAny<Guid>()), Times.Once);
         mockBeoordelingCritereaRepository.Verify(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()), Times.Once);
         mockOpdrachtRepository.Verify(repo => repo.Update(It.IsAny<Opdracht>()), Times.Exactly(opdrachten.Count));
     }

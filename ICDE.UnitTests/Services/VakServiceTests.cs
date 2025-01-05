@@ -95,12 +95,8 @@ public class VakServiceTests
         var dbCursus = new Cursus();
 
         mockVakRepository
-           .Setup(x => x.Lijst(It.IsAny<Expression<Func<Vak, bool>>>()))
-           .ReturnsAsync(new List<Vak>()
-           {
-                dbVak
-           }
-       );
+           .Setup(x => x.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+           .ReturnsAsync(dbVak);
 
         mockCursusRepository
             .Setup(x => x.NieuwsteVoorGroepId(It.IsAny<Guid>()))
@@ -132,12 +128,8 @@ public class VakServiceTests
         var dbLeeruitkomst = new Leeruitkomst();
 
         mockVakRepository
-            .Setup(x => x.Lijst(It.IsAny<Expression<Func<Vak, bool>>>()))
-            .ReturnsAsync(new List<Vak>()
-            {
-                dbVak
-            }
-        );
+           .Setup(x => x.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+           .ReturnsAsync(dbVak);
 
         mockLeeruitkomstRepository
             .Setup(x => x.NieuwsteVoorGroepId(It.IsAny<Guid>()))
