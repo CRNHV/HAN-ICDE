@@ -129,4 +129,26 @@ public class VakController : Controller
         }
         return Redirect($"/auteur/vak/get/{vakGroupId}");
     }
+
+    [HttpGet("ontkoppelcursus/{vakGroupId}/{cursusGroupId}")]
+    public async Task<IActionResult> OntkoppelCursus([FromRoute] Guid vakGroupId, [FromRoute] Guid cursusGroupId)
+    {
+        var result = await _vakService.OntkoppelCursus(vakGroupId, cursusGroupId);
+        if (result is false)
+        {
+            return BadRequest();
+        }
+        return Redirect($"/auteur/vak/get/{vakGroupId}");
+    }
+
+    [HttpGet("ontkoppelluk/{vakGroupId}/{lukGroupId}")]
+    public async Task<IActionResult> OntkoppelLeeruitkomst([FromRoute] Guid vakGroupId, [FromRoute] Guid lukGroupId)
+    {
+        var result = await _vakService.OntkoppelLeeruitkomst(vakGroupId, lukGroupId);
+        if (result is false)
+        {
+            return BadRequest();
+        }
+        return Redirect($"/auteur/vak/get/{vakGroupId}");
+    }
 }

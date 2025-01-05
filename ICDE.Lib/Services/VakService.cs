@@ -47,8 +47,8 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
 
     public async Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId)
     {
-        var vakken = await _vakRepository.Lijst(x => x.GroupId == vakGroupId);
-        if (vakken.Count == 0)
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
         {
             return false;
         }
@@ -57,15 +57,13 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         {
             return false;
         }
-        foreach (var vak in vakken)
-        {
-            if (!vak.Cursussen.Contains(cursus))
-            {
-                vak.Cursussen.Add(cursus);
-                vak.RelationshipChanged = true;
 
-                await _vakRepository.Update(vak);
-            }
+        if (!dbVak.Cursussen.Contains(cursus))
+        {
+            dbVak.Cursussen.Add(cursus);
+            dbVak.RelationshipChanged = true;
+
+            await _vakRepository.Update(dbVak);
         }
 
         return true;
@@ -73,8 +71,8 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
 
     public async Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
     {
-        var vakken = await _vakRepository.Lijst(x => x.GroupId == vakGroupId);
-        if (vakken.Count == 0)
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
         {
             return false;
         }
@@ -83,16 +81,63 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         {
             return false;
         }
-        foreach (var vak in vakken)
+        if (!dbVak.Leeruitkomsten.Contains(luk))
         {
-            if (!vak.Leeruitkomsten.Contains(luk))
-            {
-                vak.Leeruitkomsten.Add(luk);
-                vak.RelationshipChanged = true;
+            dbVak.Leeruitkomsten.Add(luk);
+            dbVak.RelationshipChanged = true;
 
-                await _vakRepository.Update(vak);
-            }
+            await _vakRepository.Update(dbVak);
         }
+
+        return true;
+    }
+
+    public async Task<bool> OntkoppelCursus(Guid vakGroupId, Guid cursusGroupId)
+    {
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
+        {
+            return false;
+        }
+        var cursus = await _cursusRepository.NieuwsteVoorGroepId(cursusGroupId);
+        if (cursus is null)
+        {
+            return false;
+        }
+
+        if (!dbVak.Cursussen.Contains(cursus))
+        {
+            return true;
+        }
+        dbVak.Cursussen.Remove(cursus);
+        dbVak.RelationshipChanged = true;
+
+        await _vakRepository.Update(dbVak);
+
+        return true;
+    }
+
+    public async Task<bool> OntkoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
+    {
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
+        {
+            return false;
+        }
+        var luk = await _leeruitkomstRepository.NieuwsteVoorGroepId(lukGroupId);
+        if (luk is null)
+        {
+            return false;
+        }
+
+        if (!dbVak.Leeruitkomsten.Contains(luk))
+        {
+            return true;
+        }
+        dbVak.Leeruitkomsten.Remove(luk);
+        dbVak.RelationshipChanged = true;
+
+        await _vakRepository.Update(dbVak);
 
         return true;
     }

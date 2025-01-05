@@ -25,11 +25,6 @@ public class CursusController : ControllerBase
         return View("/Views/Student/Cursus/Index.cshtml", cursussen);
     }
 
-    /// <summary>
-    /// UC20
-    /// </summary>
-    /// <param name="cursusGroupId"></param>
-    /// <returns></returns>
     [HttpGet("get/{cursusGroupId}")]
     public async Task<IActionResult> BekijkCursus([FromRoute] Guid cursusGroupId)
     {

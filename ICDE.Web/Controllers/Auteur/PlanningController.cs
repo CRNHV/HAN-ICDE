@@ -94,10 +94,6 @@ public class PlanningController : ControllerBase
         return null;
     }
 
-    /// <summary>
-    /// UC22
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("{planningId}/voegopdrachttoe/{groupId}")]
     public async Task<IActionResult> VoegOpdrachtToe([FromRoute] int planningId, [FromRoute] Guid groupId)
     {
@@ -109,10 +105,6 @@ public class PlanningController : ControllerBase
         return Redirect($"/auteur/planning/bekijk/{planningId}");
     }
 
-    /// <summary>
-    /// UC22
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("{planningId}/voeglestoe/{groupId}")]
     public async Task<IActionResult> VoegLesTOe([FromRoute] int planningId, [FromRoute] Guid groupId)
     {

@@ -31,11 +31,6 @@ public class OpdrachtController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// UC2
-    /// </summary>
-    /// <param name="opdrachtGroupId"></param>
-    /// <returns></returns>
     [HttpGet("bekijk/{opdrachtGroupId}")]
     public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {

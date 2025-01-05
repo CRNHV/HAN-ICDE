@@ -30,10 +30,6 @@ public class OpdrachtController : ControllerBase
         return View("/Views/Auteur/Opdracht/BekijkAlle.cshtml", opdrachten);
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("maak")]
     [HttpPost("maak")]
     public async Task<IActionResult> MaakOpdracht([FromForm] MaakOpdrachtDto request)
@@ -78,10 +74,6 @@ public class OpdrachtController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("verwijder/{groupId}/{versie}")]
     public async Task<IActionResult> VerwijderOpdracht([FromRoute] Guid groupId, [FromRoute] int versie)
     {
@@ -94,10 +86,6 @@ public class OpdrachtController : ControllerBase
         return RedirectToAction("BekijkAlle");
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("update")]
     public async Task<IActionResult> UpdateOpdracht([FromForm] UpdateOpdrachtDto request)
     {
