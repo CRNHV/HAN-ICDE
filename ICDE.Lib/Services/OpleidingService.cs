@@ -40,6 +40,11 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
             return false;
         }
 
+        if (opleiding.Vakken.Contains(vak))
+        {
+            return true;
+        }
+
         opleiding.Vakken.Add(vak);
         opleiding.RelationshipChanged = true;
 
@@ -87,5 +92,30 @@ internal class OpleidingService : VersionableServiceBase<Opleiding, OpleidingDto
         updatedOpleiding.Vakken = opleidingToUpdate.Vakken;
 
         return await _opleidingRepository.Update(updatedOpleiding);
+    }
+
+    public async Task<bool> OntkoppelVakVanOpleiding(Guid opleidingGroupId, Guid vakGroupId)
+    {
+        var opleiding = await _opleidingRepository.NieuwsteVoorGroepId(opleidingGroupId);
+        if (opleiding is null)
+        {
+            return false;
+        }
+
+        var vak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (vak is null)
+        {
+            return false;
+        }
+
+        if (!opleiding.Vakken.Contains(vak))
+        {
+            return true;
+        }
+
+        opleiding.Vakken.Remove(vak);
+        opleiding.RelationshipChanged = true;
+
+        return await _opleidingRepository.Update(opleiding);
     }
 }

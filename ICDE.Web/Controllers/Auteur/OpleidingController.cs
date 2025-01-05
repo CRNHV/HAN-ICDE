@@ -34,6 +34,17 @@ public class OpleidingController : Controller
         return Redirect($"/auteur/opleiding/bekijk/{opleidingGroupId}");
     }
 
+    [HttpGet("ontkoppelvak/{opleidingGroupId}/{vakGroupId}")]
+    public async Task<IActionResult> OntkoppelVakVanOpleiding([FromRoute] Guid opleidingGroupId, [FromRoute] Guid vakGroupId)
+    {
+        bool result = await _opleidingService.OntkoppelVakVanOpleiding(opleidingGroupId, vakGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+        return Redirect($"/auteur/opleiding/bekijk/{opleidingGroupId}");
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> MaakOpleiding([FromForm] MaakOpleidingDto request)
     {
