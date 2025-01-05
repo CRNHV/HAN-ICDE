@@ -1,8 +1,9 @@
 ﻿using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Base;
+using ICDE.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace ICDE.Data.Repositories.Luk;
+namespace ICDE.Data.Repositories;
 public class LeeruitkomstRepository : VersionableRepositoryBase<Leeruitkomst>, ILeeruitkomstRepository
 {
     private readonly AppDbContext _context;

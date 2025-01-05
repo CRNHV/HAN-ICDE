@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
-using ICDE.Data.Repositories.Luk;
+using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;

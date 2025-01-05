@@ -2,7 +2,6 @@
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
-using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.BeoordelingCriterea;
