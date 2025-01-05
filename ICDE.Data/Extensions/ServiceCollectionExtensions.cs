@@ -1,6 +1,5 @@
 ﻿using ICDE.Data.Repositories;
 using ICDE.Data.Repositories.Interfaces;
-using ICDE.Data.Repositories.Luk;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ICDE.Data.Extensions;

@@ -2,7 +2,6 @@
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
-using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Services.Base;
