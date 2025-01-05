@@ -47,8 +47,8 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
 
     public async Task<bool> VoegCritereaToe(Guid opdrachtGroupId, Guid critereaGroupId)
     {
-        var opdrachten = await _opdrachtRepository.Lijst(x => x.GroupId == opdrachtGroupId);
-        if (opdrachten.Count == 0)
+        var opdracht = await _opdrachtRepository.GetFullDataByGroupId(opdrachtGroupId);
+        if (opdracht is null)
         {
             return false;
         }
@@ -59,14 +59,12 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
             return false;
         }
 
-        foreach (var item in opdrachten)
-        {
-            item.BeoordelingCritereas.Add(criterea);
-            item.RelationshipChanged = true;
-            await _opdrachtRepository.Update(item);
-        }
+        if (opdracht.BeoordelingCritereas.Contains(criterea))
+            return true;
 
-        return true;
+        opdracht.BeoordelingCritereas.Add(criterea);
+        opdracht.RelationshipChanged = true;
+        return await _opdrachtRepository.Update(opdracht);
     }
 
     public async Task<StudentOpdrachtDto?> HaalStudentOpdrachtDataOp(Guid opdrachtGroupId)
@@ -108,5 +106,27 @@ internal sealed class OpdrachtService : VersionableServiceBase<Opdracht, Opdrach
         updatedOpdracht.BeoordelingCritereas.AddRange(opdracht.BeoordelingCritereas);
         updatedOpdracht.RelationshipChanged = true;
         return await _opdrachtRepository.Update(updatedOpdracht);
+    }
+
+    public async Task<bool> RemoveCriterea(Guid opdrachtGroupId, Guid critereaGroupId)
+    {
+        var opdracht = await _opdrachtRepository.GetFullDataByGroupId(opdrachtGroupId);
+        if (opdracht is null)
+        {
+            return false;
+        }
+
+        var criterea = await _beoordelingCritereaRepository.NieuwsteVoorGroepId(critereaGroupId);
+        if (criterea is null)
+        {
+            return false;
+        }
+
+        if (!opdracht.BeoordelingCritereas.Contains(criterea))
+            return true;
+
+        opdracht.BeoordelingCritereas.Remove(criterea);
+        opdracht.RelationshipChanged = true;
+        return await _opdrachtRepository.Update(opdracht);
     }
 }

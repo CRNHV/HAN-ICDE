@@ -53,6 +53,13 @@ public class OpdrachtController : ControllerBase
         return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
     }
 
+    [HttpGet("{opdrachtGroupId}/verwijdercriterea/{critereaGroupId}")]
+    public async Task<IActionResult> RemoveCritereaFromAssignment([FromRoute] Guid opdrachtGroupId, [FromRoute] Guid critereaGroupId)
+    {
+        bool result = await _opdrachtService.RemoveCriterea(opdrachtGroupId, critereaGroupId);
+        return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
+    }
+
     [HttpGet("bekijk/{opdrachtGroupId}")]
     public async Task<IActionResult> BekijkOpdracht([FromRoute] Guid opdrachtGroupId)
     {
