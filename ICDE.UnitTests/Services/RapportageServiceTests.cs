@@ -5,9 +5,6 @@ using ICDE.Lib.Reports;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Leeruitkomsten;
 using Moq;
-using System;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -15,7 +12,7 @@ public class RapportageServiceTests
 {
     private MockRepository mockRepository;
 
-    private Mock<IReportExporter> mockReportExporter;
+    private IReportExporter mockReportExporter;
     private Mock<IFileManager> mockFileManager;
 
     private IReportGenerator cursusReportGenerator;
@@ -26,12 +23,10 @@ public class RapportageServiceTests
     private Mock<IVakRepository> mockVakRepository;
     private Mock<IOpleidingRepository> mockOpleidingRepository;
 
-    private Mock<IValidationManager> mockValidationManager;
-
     public RapportageServiceTests()
     {
         this.mockRepository = new MockRepository(MockBehavior.Strict);
-        this.mockReportExporter = this.mockRepository.Create<IReportExporter>();
+        this.mockReportExporter = new PdfReportExporter();
         this.mockFileManager = this.mockRepository.Create<IFileManager>();
 
         this.mockCursusRepository = this.mockRepository.Create<ICursusRepository>();
@@ -49,7 +44,7 @@ public class RapportageServiceTests
             cursusReportGenerator,
             vakReportGenerator,
             opleidingReportGenerator,
-            this.mockReportExporter.Object,
+            this.mockReportExporter,
             this.mockFileManager.Object);
     }
 
@@ -174,23 +169,54 @@ public class RapportageServiceTests
         this.mockRepository.VerifyAll();
     }
 
-    //[Fact]
-    //public async Task ExporteerRapportage_StateUnderTest_ExpectedBehavior()
-    //{
-    //    // Arrange
-    //    var service = this.CreateService();
-    //    string type = null;
-    //    Guid groupId = default(global::System.Guid);
+    [Fact]
+    public async Task ExporteerRapportage_StateUnderTest_ExpectedBehavior()
+    {
+        // Arrange
+        var service = this.CreateService();
+        string type = "opleiding";
+        Guid groupId = default(global::System.Guid);
 
-    //    // Act
-    //    var result = await service.ExporteerRapportage(
-    //        type,
-    //        groupId);
+        Leeruitkomst leeruitkomst1 = new Leeruitkomst(), leeruitkomst2 = new Leeruitkomst(), leeruitkomst3 = new Leeruitkomst();
+        Leeruitkomst leeruitkomst4 = new Leeruitkomst(), leeruitkomst5 = new Leeruitkomst(), leeruitkomst6 = new Leeruitkomst();
 
-    //    // Assert
-    //    Assert.True(false);
-    //    this.mockRepository.VerifyAll();
-    //}
+        var dbOpleiding = new Opleiding()
+        {
+            Vakken = new List<Vak>()
+            {
+                new Vak()
+                {
+                    Leeruitkomsten = new List<Leeruitkomst>()
+                    {
+                        leeruitkomst1, leeruitkomst2, leeruitkomst3,
+                        leeruitkomst4, leeruitkomst5, leeruitkomst6
+                    },
+                    Cursussen = new List<Cursus>()
+                    {
+                        CreateCursus(leeruitkomst1, leeruitkomst2, leeruitkomst3),
+                        CreateCursus(leeruitkomst4, leeruitkomst5, leeruitkomst6)
+                    }
+                }
+            }
+        };
+
+        mockOpleidingRepository
+            .Setup(x => x.GetFullObjectTreeByGroupId(It.IsAny<Guid>()))
+            .ReturnsAsync(dbOpleiding);
+
+        mockFileManager
+            .Setup(x => x.SlaRapportageOp(It.IsAny<string>(), It.Is<byte[]>(x => x.Length > 0)))
+            .ReturnsAsync("filepath");
+
+        // Act
+        var result = await service.ExporteerRapportage(
+            type,
+            groupId);
+
+        // Assert
+        Assert.NotNull(result);
+        this.mockRepository.VerifyAll();
+    }
 
     private Cursus CreateCursus(params Leeruitkomst[] leeruitkomsten)
     {

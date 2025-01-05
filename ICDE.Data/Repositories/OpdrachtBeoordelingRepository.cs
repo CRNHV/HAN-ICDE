@@ -23,8 +23,8 @@ public class OpdrachtBeoordelingRepository : CrudRepositoryBase<OpdrachtBeoordel
     .Where(s => s.User.Id == userId)
     .SelectMany(s => s.IngeleverdeOpdrachten)
     .SelectMany(io => io.Beoordelingen)
-    .GroupBy(b => b.IngeleverdeOpdracht.Opdracht) // Group by Opdracht
-    .Select(g => g.OrderByDescending(b => b.Cijfer).FirstOrDefault()) // Pick the highest Cijfer in each group
+    .GroupBy(b => b.IngeleverdeOpdracht.Opdracht)
+    .Select(g => g.OrderByDescending(b => b.Cijfer).FirstOrDefault())
     .ToListAsync();
     }
 }

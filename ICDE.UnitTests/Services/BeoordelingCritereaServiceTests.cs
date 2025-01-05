@@ -7,9 +7,6 @@ using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.BeoordelingCriterea;
 using Moq;
-using System;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -149,7 +146,7 @@ public class BeoordelingCritereaServiceTests
     {
         // Arrange
         var service = this.CreateService();
-        var request = new UpdateBeoordelingCritereaDto(); // Invalid DTO
+        var request = new UpdateBeoordelingCritereaDto();
 
         // Act & Assert
         await Assert.ThrowsAsync<ValidationException>(() => service.Update(request));

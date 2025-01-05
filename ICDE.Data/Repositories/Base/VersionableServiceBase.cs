@@ -63,7 +63,7 @@ public abstract class CrudRepositoryBase<TEntity> : ICrudRepository<TEntity> whe
         return result > 0;
     }
 
-    public async Task<TEntity?> VoorId(int id)
+    public virtual async Task<TEntity?> VoorId(int id)
     {
         return await _context.Set<TEntity>().FindAsync(id);
     }

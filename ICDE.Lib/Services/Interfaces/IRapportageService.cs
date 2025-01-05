@@ -1,4 +1,5 @@
-﻿using ICDE.Lib.Validation.Leeruitkomsten;
+﻿using ICDE.Lib.Dto.Rapportage;
+using ICDE.Lib.Validation.Leeruitkomsten;
 
 namespace ICDE.Lib.Services.Interfaces;
 public interface IRapportageService

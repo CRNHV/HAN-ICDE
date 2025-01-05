@@ -1,8 +1,7 @@
 ﻿using ICDE.Data.Entities.Identity;
 using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Identity;
 using ICDE.Lib.Services;
-using ICDE.UnitTests.Fakes;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
@@ -11,13 +10,13 @@ namespace ICDE.UnitTests.Services;
 public class AuthenticationServiceTests
 {
     private MockRepository mockRepository;
-    private Mock<FakeSignInManager> mockSignInManager;
+    private Mock<ISignInManager> mockSignInManager;
     private Mock<IUserRepository> mockUserRepository;
 
     public AuthenticationServiceTests()
     {
         this.mockRepository = new MockRepository(MockBehavior.Strict);
-        this.mockSignInManager = this.mockRepository.Create<FakeSignInManager>();
+        this.mockSignInManager = this.mockRepository.Create<ISignInManager>();
         this.mockUserRepository = this.mockRepository.Create<IUserRepository>();
 
         var resz = mockSignInManager.Object;
@@ -64,20 +63,6 @@ public class AuthenticationServiceTests
     }
 
     [Fact]
-    public async Task LogoutUser_StateUnderTest_ExpectedBehavior()
-    {
-        // Arrange
-        var service = this.CreateService();
-
-        // Act
-        await service.LogoutUser();
-
-        // Assert
-        Assert.True(false);
-        this.mockRepository.VerifyAll();
-    }
-
-    [Fact]
     public async Task Register_StateUnderTest_ExpectedBehavior()
     {
         // Arrange
@@ -111,7 +96,7 @@ public class AuthenticationServiceTests
             rol);
 
         // Assert
-        Assert.True(false);
+        Assert.True(result);
         this.mockRepository.VerifyAll();
     }
 }

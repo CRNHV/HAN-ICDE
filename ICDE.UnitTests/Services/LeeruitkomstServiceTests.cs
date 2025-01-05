@@ -1,14 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Luk;
 using ICDE.Lib.Dto.Leeruitkomst;
 using ICDE.Lib.Services;
+using ICDE.Lib.Validation.Dto.Leeruitkomst;
 using Moq;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -18,7 +16,7 @@ public class LeeruitkomstServiceTests
 
     private Mock<ILeeruitkomstRepository> mockLeeruitkomstRepository;
     private Mock<IMapper> mockMapper;
-    private Mock<IValidator<UpdateLeeruitkomstDto>> mockValidatorUpdateLeeruitkomstDto;
+    private IValidator<UpdateLeeruitkomstDto> mockValidatorUpdateLeeruitkomstDto;
     private Mock<IValidator<MaakLeeruitkomstDto>> mockValidatorMaakLeeruitkomstDto;
 
     public LeeruitkomstServiceTests()
@@ -27,7 +25,7 @@ public class LeeruitkomstServiceTests
 
         this.mockLeeruitkomstRepository = this.mockRepository.Create<ILeeruitkomstRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
-        this.mockValidatorUpdateLeeruitkomstDto = this.mockRepository.Create<IValidator<UpdateLeeruitkomstDto>>();
+        this.mockValidatorUpdateLeeruitkomstDto = new UpdateLeeruitkomstValidation();
         this.mockValidatorMaakLeeruitkomstDto = this.mockRepository.Create<IValidator<MaakLeeruitkomstDto>>();
     }
 
@@ -36,7 +34,7 @@ public class LeeruitkomstServiceTests
         return new LeeruitkomstService(
             this.mockLeeruitkomstRepository.Object,
             this.mockMapper.Object,
-            this.mockValidatorUpdateLeeruitkomstDto.Object,
+            this.mockValidatorUpdateLeeruitkomstDto,
             this.mockValidatorMaakLeeruitkomstDto.Object);
     }
 
@@ -49,7 +47,7 @@ public class LeeruitkomstServiceTests
 
         var mockLeeruitkomst = new Leeruitkomst();
         mockLeeruitkomstRepository.Setup(x => x.NieuwsteVoorGroepId(leeruitkomstId))
-            .Returns(Task.FromResult(mockLeeruitkomst));
+            .ReturnsAsync(mockLeeruitkomst);
 
         var mockEerdereVersies = new List<Leeruitkomst>();
         mockLeeruitkomstRepository.Setup(x => x.Lijst(It.IsAny<Expression<Func<Leeruitkomst, bool>>>()))
@@ -69,65 +67,48 @@ public class LeeruitkomstServiceTests
         mockMapper.VerifyAll();
     }
 
-    //[Fact]
-    //public async Task MaakKopie_StateUnderTest_ExpectedBehavior()
-    //{
-    //    // Arrange
-    //    var service = this.CreateService();
-    //    Guid groupId = default(global::System.Guid);
-    //    int versieNummer = 0;
-
-    //    // Act
-    //    var result = await service.MaakKopie(
-    //        groupId,
-    //        versieNummer);
-
-    //    // Assert
-    //    Assert.True(false);
-    //    this.mockRepository.VerifyAll();
-    //}
-
-    //[Fact]
-    //public async Task Update_StateUnderTest_ExpectedBehavior()
-    //{
-    //    // Arrange
-    //    var service = this.CreateService();
-    //    UpdateLeeruitkomstDto request = null;
-
-    //    // Act
-    //    var result = await service.Update(
-    //        request);
-
-    //    // Assert
-    //    Assert.True(false);
-    //    this.mockRepository.VerifyAll();
-    //}
-
     [Fact]
-    public async Task MaakKopieVanVersie_StateUnderTest_ExpectedBehavior()
+    public async Task Update_ValidRequest_ReturnsTrue()
     {
         // Arrange
-        Guid groupId = Guid.NewGuid();
-        int versieId = 1;
-        var originalLeeruitkomst = new Leeruitkomst { GroupId = groupId, VersieNummer = versieId };
-        var clonedLeeruitkomst = (Leeruitkomst)originalLeeruitkomst.Clone();
-        clonedLeeruitkomst.GroupId = Guid.NewGuid();
-
-        this.mockLeeruitkomstRepository
-            .Setup(x => x.Lijst(It.IsAny<Expression<Func<Leeruitkomst, bool>>>()))
-            .ReturnsAsync(new List<Leeruitkomst> { originalLeeruitkomst });
-
-        this.mockLeeruitkomstRepository
-            .Setup(x => x.Maak(It.IsAny<Leeruitkomst>()))
-            .ReturnsAsync(new Leeruitkomst());
-
         var service = this.CreateService();
 
+        var validRequest = new UpdateLeeruitkomstDto
+        {
+            GroupId = Guid.NewGuid(),
+            Naam = "Updated Name",
+            Beschrijving = "Updated Description"
+        };
+
+        var dbLuk = new Leeruitkomst
+        {
+            Id = 1,
+            Naam = "Old Name",
+            Beschrijving = "Old Description",
+            GroupId = validRequest.GroupId
+        };
+
+        this.mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(validRequest.GroupId))
+            .ReturnsAsync(dbLuk)
+            .Verifiable();
+
+        this.mockLeeruitkomstRepository
+            .Setup(repo => repo.Update(dbLuk))
+            .ReturnsAsync(true)
+            .Verifiable();
+
         // Act
-        var result = await service.MaakKopieVanVersie(groupId, versieId);
+        var result = await service.Update(validRequest);
 
         // Assert
-        Assert.NotEqual(clonedLeeruitkomst.GroupId, result);
-        this.mockLeeruitkomstRepository.VerifyAll();
+        Assert.True(result);
+
+        this.mockLeeruitkomstRepository.Verify();
+        this.mockLeeruitkomstRepository.Verify(repo => repo.Update(It.Is<Leeruitkomst>(
+            luk => luk.Naam == validRequest.Naam &&
+                   luk.Beschrijving == validRequest.Beschrijving &&
+                   luk.GroupId == validRequest.GroupId
+        )), Times.Once);
     }
 }

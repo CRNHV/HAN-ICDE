@@ -8,4 +8,6 @@ public interface IVakService : IVersionableServiceBase<VakDto, MaakVakDto, Updat
     Task<VakMetOnderwijsOnderdelenDto?> HaalVolledigeVakDataOp(Guid vakGroupId);
     Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId);
     Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId);
+    Task<bool> OntkoppelCursus(Guid vakGroupId, Guid cursusGroupId);
+    Task<bool> OntkoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId);
 }

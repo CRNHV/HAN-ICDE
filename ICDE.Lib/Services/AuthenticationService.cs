@@ -1,15 +1,14 @@
-﻿using ICDE.Data.Entities.Identity;
-using ICDE.Data.Repositories.Interfaces;
+﻿using ICDE.Data.Repositories.Interfaces;
+using ICDE.Lib.Identity;
 using ICDE.Lib.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 
 namespace ICDE.Lib.Services;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
-    private readonly SignInManager<User> _signInManager;
+    private readonly ISignInManager _signInManager;
 
-    public AuthenticationService(SignInManager<User> signInManager, IUserRepository userRepository)
+    public AuthenticationService(ISignInManager signInManager, IUserRepository userRepository)
     {
         _signInManager = signInManager;
         _userRepository = userRepository;

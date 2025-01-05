@@ -26,7 +26,7 @@ internal class PlanningRepository : CrudRepositoryBase<Planning>, IPlanningRepos
         return newPlanning;
     }
 
-    public async Task<Planning?> Get(int id)
+    public override async Task<Planning?> VoorId(int id)
     {
         return await _context.Plannings
             .Include(x => x.PlanningItems)

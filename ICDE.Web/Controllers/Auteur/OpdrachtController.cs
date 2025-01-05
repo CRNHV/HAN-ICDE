@@ -30,10 +30,6 @@ public class OpdrachtController : ControllerBase
         return View("/Views/Auteur/Opdracht/BekijkAlle.cshtml", opdrachten);
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("maak")]
     [HttpPost("maak")]
     public async Task<IActionResult> MaakOpdracht([FromForm] MaakOpdrachtDto request)
@@ -50,6 +46,13 @@ public class OpdrachtController : ControllerBase
     public async Task<IActionResult> AddCritereaToAssignment([FromRoute] Guid opdrachtGroupId, [FromRoute] Guid critereaGroupId)
     {
         bool result = await _opdrachtService.VoegCritereaToe(opdrachtGroupId, critereaGroupId);
+        return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
+    }
+
+    [HttpGet("{opdrachtGroupId}/verwijdercriterea/{critereaGroupId}")]
+    public async Task<IActionResult> RemoveCritereaFromAssignment([FromRoute] Guid opdrachtGroupId, [FromRoute] Guid critereaGroupId)
+    {
+        bool result = await _opdrachtService.RemoveCriterea(opdrachtGroupId, critereaGroupId);
         return Redirect($"/auteur/opdracht/bekijk/{opdrachtGroupId}");
     }
 
@@ -71,10 +74,6 @@ public class OpdrachtController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("verwijder/{groupId}/{versie}")]
     public async Task<IActionResult> VerwijderOpdracht([FromRoute] Guid groupId, [FromRoute] int versie)
     {
@@ -87,10 +86,6 @@ public class OpdrachtController : ControllerBase
         return RedirectToAction("BekijkAlle");
     }
 
-    /// <summary>
-    /// UC8
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("update")]
     public async Task<IActionResult> UpdateOpdracht([FromForm] UpdateOpdrachtDto request)
     {

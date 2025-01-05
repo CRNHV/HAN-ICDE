@@ -60,7 +60,7 @@ public class OpdrachtRepository : VersionableRepositoryBase<Opdracht>, IOpdracht
             await trans.RollbackAsync();
         }
     }
-       
+
     public async override Task<Opdracht?> NieuwsteVoorGroepId(Guid groupId)
     {
         return await _context.Opdrachten

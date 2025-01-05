@@ -7,4 +7,5 @@ public interface IOpdrachtService : IVersionableServiceBase<OpdrachtDto, MaakOpd
     Task<bool> VoegCritereaToe(Guid opdrachtGroupId, Guid critereaGroupId);
     Task<OpdrachtVolledigeDataDto?> HaalAlleDataOp(Guid opdrachtGroupId);
     Task<StudentOpdrachtDto?> HaalStudentOpdrachtDataOp(Guid opdrachtGroupId);
+    Task<bool> RemoveCriterea(Guid opdrachtGroupId, Guid critereaGroupId);
 }

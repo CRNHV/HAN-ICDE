@@ -3,7 +3,6 @@ using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Data.Repositories.Luk;
-using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Vak;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
@@ -48,8 +47,8 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
 
     public async Task<bool> KoppelCursus(Guid vakGroupId, Guid cursusGroupId)
     {
-        var vakken = await _vakRepository.Lijst(x => x.GroupId == vakGroupId);
-        if (vakken.Count == 0)
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
         {
             return false;
         }
@@ -58,15 +57,13 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         {
             return false;
         }
-        foreach (var vak in vakken)
-        {
-            if (!vak.Cursussen.Contains(cursus))
-            {
-                vak.Cursussen.Add(cursus);
-                vak.RelationshipChanged = true;
 
-                await _vakRepository.Update(vak);
-            }
+        if (!dbVak.Cursussen.Contains(cursus))
+        {
+            dbVak.Cursussen.Add(cursus);
+            dbVak.RelationshipChanged = true;
+
+            await _vakRepository.Update(dbVak);
         }
 
         return true;
@@ -74,8 +71,8 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
 
     public async Task<bool> KoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
     {
-        var vakken = await _vakRepository.Lijst(x => x.GroupId == vakGroupId);
-        if (vakken.Count == 0)
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
         {
             return false;
         }
@@ -84,24 +81,65 @@ internal class VakService : VersionableServiceBase<Vak, VakDto, MaakVakDto, Upda
         {
             return false;
         }
-        foreach (var vak in vakken)
+        if (!dbVak.Leeruitkomsten.Contains(luk))
         {
-            if (!vak.Leeruitkomsten.Contains(luk))
-            {
-                vak.Leeruitkomsten.Add(luk);
-                vak.RelationshipChanged = true;
+            dbVak.Leeruitkomsten.Add(luk);
+            dbVak.RelationshipChanged = true;
 
-                await _vakRepository.Update(vak);
-            }
+            await _vakRepository.Update(dbVak);
         }
 
         return true;
     }
 
-    public async Task<VakDto?> BekijkVersie(Guid vakGroupId, int vakVersie)
+    public async Task<bool> OntkoppelCursus(Guid vakGroupId, Guid cursusGroupId)
     {
-        var vak = await _vakRepository.Lijst(x => x.GroupId == vakGroupId && x.VersieNummer == vakVersie);
-        return _mapper.Map<VakDto?>(vak.First());
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
+        {
+            return false;
+        }
+        var cursus = await _cursusRepository.NieuwsteVoorGroepId(cursusGroupId);
+        if (cursus is null)
+        {
+            return false;
+        }
+
+        if (!dbVak.Cursussen.Contains(cursus))
+        {
+            return true;
+        }
+        dbVak.Cursussen.Remove(cursus);
+        dbVak.RelationshipChanged = true;
+
+        await _vakRepository.Update(dbVak);
+
+        return true;
+    }
+
+    public async Task<bool> OntkoppelLeeruitkomst(Guid vakGroupId, Guid lukGroupId)
+    {
+        var dbVak = await _vakRepository.NieuwsteVoorGroepId(vakGroupId);
+        if (dbVak is null)
+        {
+            return false;
+        }
+        var luk = await _leeruitkomstRepository.NieuwsteVoorGroepId(lukGroupId);
+        if (luk is null)
+        {
+            return false;
+        }
+
+        if (!dbVak.Leeruitkomsten.Contains(luk))
+        {
+            return true;
+        }
+        dbVak.Leeruitkomsten.Remove(luk);
+        dbVak.RelationshipChanged = true;
+
+        await _vakRepository.Update(dbVak);
+
+        return true;
     }
 
     public override async Task<bool> Update(UpdateVakDto request)

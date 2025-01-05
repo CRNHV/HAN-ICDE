@@ -7,5 +7,4 @@ public interface IIngeleverdeOpdrachtService
     Task<OpdrachtInzendingDto?> HaalInzendingDataOp(int inzendingId);
     Task<List<IngeleverdeOpdrachtDto>> HaalInzendingenOp(Guid opdrachtId);
     Task<bool> LeverOpdrachtIn(int userId, LeverOpdrachtInDto opdracht);
-    Task<bool> SlaBeoordelingOp(OpdrachtBeoordelingDto request);
 }

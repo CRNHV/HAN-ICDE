@@ -2,12 +2,10 @@
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
-using ICDE.Lib.Dto.BeoordelingCriterea;
 using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services.Base;
 using ICDE.Lib.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Lib.Services;
 internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlanningDto, UpdatePlanningDto>, IPlanningService
@@ -161,7 +159,7 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
             await _cursusRepository.Update(cursus);
         }
 
-        var planning = await _planningRepository.Get(planningid);
+        var planning = await _planningRepository.VoorId(planningid);
         if (planning == null)
         {
             return false;

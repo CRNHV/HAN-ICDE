@@ -10,6 +10,7 @@ using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Dto.Vak;
+using ICDE.Lib.Identity;
 using ICDE.Lib.IO;
 using ICDE.Lib.Reports;
 using ICDE.Lib.Services;
@@ -72,6 +73,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IValidator<UpdatePlanningDto>, UpdatePlanningValidation>();
         services.AddScoped<IValidator<MaakVakDto>, MaakVakValidation>();
         services.AddScoped<IValidator<UpdateVakDto>, UpdateVakValidation>();
+
+        services.AddScoped<ISignInManager, SignInManager>();
 
         return services;
     }

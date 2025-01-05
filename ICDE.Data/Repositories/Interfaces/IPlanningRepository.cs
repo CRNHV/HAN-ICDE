@@ -5,5 +5,4 @@ namespace ICDE.Data.Repositories.Interfaces;
 public interface IPlanningRepository : ICrudRepository<Planning>
 {
     public Task<Planning> CreateCloneOf(int id);
-    public Task<Planning?> Get(int id);
 }

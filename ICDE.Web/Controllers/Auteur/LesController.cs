@@ -22,10 +22,6 @@ public class LesController : Controller
         _leeruitkomstService = leeruitkomstService;
     }
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("")]
     public async Task<IActionResult> Index()
     {
@@ -35,10 +31,6 @@ public class LesController : Controller
     }
 
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>    
     [HttpPost("create")]
     public async Task<IActionResult> MaakLes([FromForm] MaakLesDto request)
     {
@@ -50,10 +42,6 @@ public class LesController : Controller
         return Redirect($"get/{result.GroupId}");
     }
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("get/{groupId}")]
     public async Task<IActionResult> BekijkLes([FromRoute] Guid groupId)
     {
@@ -71,10 +59,6 @@ public class LesController : Controller
         });
     }
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("{groupId}/bekijkversie/{versionId}")]
     public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versionId)
     {
@@ -87,10 +71,6 @@ public class LesController : Controller
         return View("/Views/Auteur/Les/BekijkVersie.cshtml", les);
     }
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("{groupId}/kopie/{versionId}")]
     public async Task<IActionResult> KopieVersie([FromRoute] Guid groupId, [FromRoute] int versionId)
     {
@@ -103,10 +83,6 @@ public class LesController : Controller
         return Redirect($"/auteur/les/get/{groupId}");
     }
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>    
     [HttpGet("delete/{groupId}/{versionId}")]
     public async Task<IActionResult> VerwijderLes([FromRoute] Guid groupId, [FromRoute] int versionId)
     {
@@ -117,10 +93,6 @@ public class LesController : Controller
         return Redirect("/auteur/les");
     }
 
-    /// <summary>
-    /// UC6
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("update")]
     public async Task<IActionResult> UpdateLes([FromForm] UpdateLesDto request)
     {
@@ -131,10 +103,6 @@ public class LesController : Controller
         return Redirect($"/auteur/les/get/{request.GroupId}");
     }
 
-    /// <summary>
-    /// UC15
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("koppelluk/{lesGroupId}/{lukGroupId}")]
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {
@@ -146,10 +114,6 @@ public class LesController : Controller
         return Redirect($"/auteur/les/get/{lesGroupId}");
     }
 
-    /// <summary>
-    /// UC15
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("ontkoppelluk/{lesGroupId}/{lukGroupId}")]
     public async Task<IActionResult> OntkoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {

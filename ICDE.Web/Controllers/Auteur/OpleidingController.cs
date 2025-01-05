@@ -23,11 +23,6 @@ public class OpleidingController : Controller
         _vakService = vakService;
     }
 
-
-    /// <summary>
-    /// UC10
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("koppelvak/{opleidingGroupId}/{vakGroupId}")]
     public async Task<IActionResult> KoppelVakAanOpleiding([FromRoute] Guid opleidingGroupId, [FromRoute] Guid vakGroupId)
     {
@@ -39,10 +34,17 @@ public class OpleidingController : Controller
         return Redirect($"/auteur/opleiding/bekijk/{opleidingGroupId}");
     }
 
-    /// <summary>
-    /// UC11
-    /// </summary>
-    /// <returns></returns>
+    [HttpGet("ontkoppelvak/{opleidingGroupId}/{vakGroupId}")]
+    public async Task<IActionResult> OntkoppelVakVanOpleiding([FromRoute] Guid opleidingGroupId, [FromRoute] Guid vakGroupId)
+    {
+        bool result = await _opleidingService.OntkoppelVakVanOpleiding(opleidingGroupId, vakGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+        return Redirect($"/auteur/opleiding/bekijk/{opleidingGroupId}");
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> MaakOpleiding([FromForm] MaakOpleidingDto request)
     {
@@ -55,10 +57,6 @@ public class OpleidingController : Controller
         return Redirect($"/auteur/opleiding/bekijk/{result.GroupId}");
     }
 
-    /// <summary>
-    /// UC11
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
@@ -66,10 +64,6 @@ public class OpleidingController : Controller
         return View("/Views/Auteur/Opleiding/Index.cshtml", opleidingen);
     }
 
-    /// <summary>
-    /// UC11
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("bekijk/{groupId}")]
     public async Task<IActionResult> BekijkOpleiding([FromRoute] Guid groupId)
     {
@@ -89,10 +83,6 @@ public class OpleidingController : Controller
         return View("/Views/Auteur/Opleiding/BekijkOpleiding.cshtml", viewModel);
     }
 
-    /// <summary>
-    /// UC11
-    /// </summary>
-    /// <returns></returns>    
     [HttpGet("{groupId}/bekijkversie/{versie}")]
     public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versie)
     {
@@ -105,10 +95,6 @@ public class OpleidingController : Controller
         return View("/Views/Auteur/Opleiding/BekijkVersie.cshtml", opleiding);
     }
 
-    /// <summary>
-    /// UC11
-    /// </summary>
-    /// <returns></returns>    
     [HttpGet("verwijder/{groupId}/{versie}")]
     public async Task<IActionResult> VerwijderOpleiding([FromRoute] Guid groupId, [FromRoute] int versie)
     {
@@ -121,10 +107,6 @@ public class OpleidingController : Controller
         return RedirectToAction("Index");
     }
 
-    /// <summary>
-    /// UC11
-    /// </summary>
-    /// <returns></returns>
     [HttpPost("Update")]
     public async Task<IActionResult> UpdateOpleiding([FromForm] UpdateOpleidingDto request)
     {
@@ -137,10 +119,6 @@ public class OpleidingController : Controller
         return Redirect($"/auteur/opleiding/bekijk/{request.GroupId}");
     }
 
-    /// <summary>
-    /// UC12
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("{opleidingGroupId}/copy")]
     public async Task<IActionResult> KopieerOpleiding([FromRoute] Guid opleidingGroupId)
     {
@@ -151,25 +129,5 @@ public class OpleidingController : Controller
         }
 
         return Redirect($"/auteur/opleiding/bekijk/{resultGuid}");
-    }
-
-    [HttpGet("{vakGroupId}/kopie/{vakVersie}")]
-    public async Task<IActionResult> Kopie([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
-    {
-        Guid groupId = await _opleidingService.MaakKopie(vakGroupId, vakVersie);
-        if (groupId == Guid.Empty)
-            return BadRequest();
-
-        return Redirect($"/auteur/opleiding/bekijk/{groupId}");
-    }
-
-    [HttpGet("delete/{vakGroupId}/{vakVersie}")]
-    public async Task<IActionResult> VerwijderVak([FromRoute] Guid vakGroupId, [FromRoute] int vakVersie)
-    {
-        var result = await _opleidingService.VerwijderVersie(vakGroupId, vakVersie);
-        if (!result)
-            return BadRequest();
-
-        return Redirect($"/auteur/opleiding/bekijk/{vakGroupId}");
     }
 }

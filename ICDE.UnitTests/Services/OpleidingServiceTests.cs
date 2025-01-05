@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
@@ -6,10 +7,6 @@ using ICDE.Lib.Dto.Opleidingen;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.Opleiding;
 using Moq;
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ICDE.UnitTests.Services;
 
@@ -21,7 +18,7 @@ public class OpleidingServiceTests
     private Mock<IVakRepository> mockVakRepository;
     private Mock<IMapper> mockMapper;
     private Mock<IValidator<MaakOpleidingDto>> mockValidatorMaakOpleidingDto;
-    private IValidator<UpdateOpleidingDto> validatorUpdateOpleiding = new UpdateOpleidingValidation();
+    private IValidator<UpdateOpleidingDto> mockValidatorUpdateOpleidingDto;
 
     public OpleidingServiceTests()
     {
@@ -31,6 +28,7 @@ public class OpleidingServiceTests
         this.mockVakRepository = this.mockRepository.Create<IVakRepository>();
         this.mockMapper = this.mockRepository.Create<IMapper>();
         this.mockValidatorMaakOpleidingDto = this.mockRepository.Create<IValidator<MaakOpleidingDto>>();
+        this.mockValidatorUpdateOpleidingDto = new UpdateOpleidingValidation();
     }
 
     private OpleidingService CreateService()
@@ -40,144 +38,164 @@ public class OpleidingServiceTests
             this.mockVakRepository.Object,
             this.mockMapper.Object,
             this.mockValidatorMaakOpleidingDto.Object,
-            validatorUpdateOpleiding);
+            this.mockValidatorUpdateOpleidingDto);
     }
 
     [Fact]
-    public async Task KoppelVakAanOpleiding_StateUnderTest_ExpectedBehavior()
+    public async Task KoppelVakAanOpleiding_WhenOpleidingAndVakExist_ShouldReturnTrue()
     {
         // Arrange
         var service = this.CreateService();
-        Guid opleidingGroupId = Guid.NewGuid();
-        Guid vakGroupId = Guid.NewGuid();
 
-        var dbOpleiding = new Opleiding()
+        var opleidingGroupId = Guid.NewGuid();
+        var vakGroupId = Guid.NewGuid();
+
+        var mockOpleiding = new Opleiding
         {
-            GroupId = opleidingGroupId,
+            GroupId = Guid.NewGuid(),
+            Vakken = new List<Vak>(),
+            RelationshipChanged = false
         };
 
-        var dbVak = new Vak()
+        var mockVak = new Vak
         {
-            GroupId = vakGroupId,
+            GroupId = Guid.NewGuid()
         };
 
-        mockOpleidingRepository
-            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
-            .ReturnsAsync(dbOpleiding);
+        this.mockOpleidingRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(opleidingGroupId))
+            .ReturnsAsync(mockOpleiding);
 
-        mockVakRepository
-            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbVak.GroupId)))
-            .ReturnsAsync(dbVak);
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(vakGroupId))
+            .ReturnsAsync(mockVak);
 
-        mockOpleidingRepository
-            .Setup(x => x.Update(It.Is<Opleiding>(x => x.Vakken.Contains(dbVak))))
+        this.mockOpleidingRepository
+            .Setup(repo => repo.Update(mockOpleiding))
             .ReturnsAsync(true);
 
         // Act
-        var result = await service.KoppelVakAanOpleiding(
-            opleidingGroupId,
-            vakGroupId);
+        var result = await service.KoppelVakAanOpleiding(opleidingGroupId, vakGroupId);
 
         // Assert
         Assert.True(result);
+        Assert.Contains(mockVak, mockOpleiding.Vakken);
+        Assert.True(mockOpleiding.RelationshipChanged);
+
+        this.mockOpleidingRepository.Verify(repo => repo.NieuwsteVoorGroepId(opleidingGroupId), Times.Once);
+        this.mockVakRepository.Verify(repo => repo.NieuwsteVoorGroepId(vakGroupId), Times.Once);
+        this.mockOpleidingRepository.Verify(repo => repo.Update(mockOpleiding), Times.Once);
+
         this.mockRepository.VerifyAll();
     }
 
     [Fact]
-    public async Task ZoekOpleidingMetEerdereVersies_StateUnderTest_ExpectedBehavior()
+    public async Task ZoekOpleidingMetEerdereVersies_HappyPath_ReturnsExpectedResult()
     {
         // Arrange
         var service = this.CreateService();
-        Guid opleidingGroupId = Guid.NewGuid();
-        var dbOpleiding = new Opleiding()
+        Guid groupId = Guid.NewGuid();
+
+        // Mocked data
+        var nieuwsteOpleiding = new Opleiding // Example model, replace with your actual entity
         {
-            GroupId = opleidingGroupId,
+            GroupId = groupId,
+            Naam = "Opleiding 1"
         };
-        mockOpleidingRepository
-            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
-            .ReturnsAsync(dbOpleiding);
-        mockOpleidingRepository
-            .Setup(x => x.Lijst(It.IsAny<Expression<Func<Opleiding, bool>>>()))
-            .ReturnsAsync(new List<Opleiding>()
-            {
-                new Opleiding(),
-            });
-        mockMapper.Setup(x => x.Map<OpleidingMetVakkenDto>(It.IsAny<Opleiding>()))
-            .Returns(new OpleidingMetVakkenDto());
-        mockMapper.Setup(x => x.Map<List<OpleidingDto>>(It.IsAny<List<Opleiding>>()))
-            .Returns(new List<OpleidingDto>());
+
+        var eerdereVersies = new List<Opleiding>
+    {
+        new Opleiding { GroupId = groupId, Naam = "Opleiding 2" },
+        new Opleiding { GroupId = groupId, Naam = "Opleiding 3" }
+    };
+
+        var mappedOpleidingDto = new OpleidingMetVakkenDto // Example DTO, replace with your actual DTO
+        {
+            Naam = nieuwsteOpleiding.Naam
+        };
+
+        var mappedEerdereVersies = eerdereVersies.Select(x => new OpleidingDto
+        {
+            Naam = x.Naam
+        }).ToList();
+
+        // Set up mocks
+        this.mockOpleidingRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(groupId))
+            .ReturnsAsync(nieuwsteOpleiding);
+
+        this.mockOpleidingRepository
+            .Setup(repo => repo.Lijst(It.IsAny<Expression<Func<Opleiding, bool>>>()))
+            .ReturnsAsync(eerdereVersies);
+
+        this.mockMapper
+            .Setup(mapper => mapper.Map<OpleidingMetVakkenDto>(nieuwsteOpleiding))
+            .Returns(mappedOpleidingDto);
+
+        this.mockMapper
+            .Setup(mapper => mapper.Map<List<OpleidingDto>>(eerdereVersies))
+            .Returns(mappedEerdereVersies);
 
         // Act
-        var result = await service.ZoekOpleidingMetEerdereVersies(opleidingGroupId);
+        var result = await service.ZoekOpleidingMetEerdereVersies(groupId);
 
         // Assert
         Assert.NotNull(result);
-        this.mockRepository.VerifyAll();
+        Assert.Equal(mappedOpleidingDto, result.OpleidingDto);
+        Assert.Equal(mappedEerdereVersies, result.EerdereVersies);
+
+        this.mockOpleidingRepository.Verify(repo => repo.NieuwsteVoorGroepId(groupId), Times.Once);
+        this.mockOpleidingRepository.Verify(repo => repo.Lijst(It.IsAny<Expression<Func<Opleiding, bool>>>()), Times.Once);
+        this.mockMapper.Verify(mapper => mapper.Map<OpleidingMetVakkenDto>(nieuwsteOpleiding), Times.Once);
+        this.mockMapper.Verify(mapper => mapper.Map<List<OpleidingDto>>(eerdereVersies), Times.Once);
     }
 
     [Fact]
-    public async Task MaakKopie_StateUnderTest_ExpectedBehavior()
+    public async Task Update_ValidRequest_ReturnsTrue()
     {
         // Arrange
         var service = this.CreateService();
-        int versieNummer = 0;
 
-        Guid opleidingGroupId = Guid.NewGuid();
-        var dbOpleiding = new Opleiding()
+        var validRequest = new UpdateOpleidingDto
         {
-            GroupId = opleidingGroupId,
+            GroupId = Guid.NewGuid(),
+            Naam = "Updated Opleiding",
+            Beschrijving = "Updated Beschrijving"
         };
+
+        var existingOpleiding = new Opleiding
+        {
+            GroupId = validRequest.GroupId,
+            Naam = "Existing Opleiding",
+            Beschrijving = "Existing Beschrijving",
+            Vakken = new List<Vak>()
+        };
+
+        var updatedOpleiding = new Opleiding
+        {
+            GroupId = validRequest.GroupId,
+            Naam = "Updated Opleiding",
+            Beschrijving = "Updated Beschrijving",
+            Vakken = new List<Vak>(),
+            RelationshipChanged = true
+        };
+
+        // Mock repository methods
         mockOpleidingRepository
-            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
-            .ReturnsAsync(dbOpleiding);
+            .Setup(repo => repo.NieuwsteVoorGroepId(validRequest.GroupId))
+            .ReturnsAsync(existingOpleiding); // Simulate retrieving the existing opleiding
 
         mockOpleidingRepository
-            .Setup(x => x.Maak(It.IsAny<Opleiding>()))
-            .ReturnsAsync(new Opleiding()
-            {
-                GroupId = Guid.NewGuid(),
-            });
+            .Setup(repo => repo.Update(It.IsAny<Opleiding>()))
+            .ReturnsAsync(true) // Simulate successful update
+            .Verifiable();
 
         // Act
-        var result = await service.MaakKopie(
-            opleidingGroupId,
-            versieNummer);
+        var result = await service.Update(validRequest);
 
         // Assert
-        Assert.True(result != Guid.NewGuid());
-        this.mockRepository.VerifyAll();
-    }
-
-    [Fact]
-    public async Task Update_StateUnderTest_ExpectedBehavior()
-    {
-        // Arrange
-        var service = this.CreateService();
-        Guid opleidingGroupId = Guid.NewGuid();
-        UpdateOpleidingDto request = new UpdateOpleidingDto()
-        {
-            Naam = "Naam",
-            GroupId = opleidingGroupId,
-            Beschrijving = "Beschrijving"
-        };
-
-        var dbOpleiding = new Opleiding()
-        {
-            GroupId = opleidingGroupId,
-        };
-        mockOpleidingRepository
-            .Setup(x => x.NieuwsteVoorGroepId(It.Is<Guid>(x => x == dbOpleiding.GroupId)))
-            .ReturnsAsync(dbOpleiding);
-
-        mockOpleidingRepository
-            .Setup(x => x.Update(It.Is<Opleiding>(x => x == dbOpleiding)))
-            .ReturnsAsync(true);
-
-        // Act
-        var result = await service.Update(request);
-
-        // Assert
-        Assert.True(result);
-        this.mockRepository.VerifyAll();
+        Assert.True(result, "The update should return true for a valid request.");
+        mockOpleidingRepository.Verify(repo => repo.NieuwsteVoorGroepId(validRequest.GroupId), Times.Exactly(2));
+        mockOpleidingRepository.Verify(repo => repo.Update(It.IsAny<Opleiding>()), Times.Exactly(2));
     }
 }
