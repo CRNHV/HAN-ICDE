@@ -12,7 +12,7 @@
     <div class="col-md-4">
         <form method="post" enctype="multipart/form-data" asp-action="UpdateLeeruitkomst">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input name="Id" class="form-control" value="@Model.Leeruitkomst.Id" hidden />
+            <input name="GroupId" class="form-control" value="@Model.Leeruitkomst.GroupId" hidden />
             <div class="form-group">
                 <label asp-for="Leeruitkomst.Naam" class="control-label"></label>
                 <input name="Naam" class="form-control" value="@Model.Leeruitkomst.Naam" />

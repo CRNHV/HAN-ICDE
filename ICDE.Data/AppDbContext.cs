@@ -82,6 +82,10 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
             .WithOne()
             .HasForeignKey(pi => pi.StudentNummer);
 
+        modelBuilder.Entity<Cursus>()
+            .HasMany(x => x.Leeruitkomsten)
+            .WithMany();
+
         base.OnModelCreating(modelBuilder);
     }
 }

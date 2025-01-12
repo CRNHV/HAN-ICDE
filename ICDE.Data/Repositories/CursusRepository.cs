@@ -16,6 +16,7 @@ internal class CursusRepository : VersionableRepositoryBase<Cursus>, ICursusRepo
     public async Task<Cursus?> GetFullObjectTreeByGroupId(Guid vakGroupId)
     {
         return await _context.Cursussen
+                    .Include(x => x.Leeruitkomsten)
                     .Include(c => c.Planning)
                         .ThenInclude(p => p.PlanningItems)
                             .ThenInclude(pi => pi.Opdracht)

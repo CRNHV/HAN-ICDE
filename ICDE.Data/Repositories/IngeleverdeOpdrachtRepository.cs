@@ -1,6 +1,7 @@
 ﻿using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Base;
 using ICDE.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ICDE.Data.Repositories;
 internal class IngeleverdeOpdrachtRepository : CrudRepositoryBase<IngeleverdeOpdracht>, IIngeleverdeOpdrachtRepository
@@ -10,5 +11,13 @@ internal class IngeleverdeOpdrachtRepository : CrudRepositoryBase<IngeleverdeOpd
     public IngeleverdeOpdrachtRepository(AppDbContext context) : base(context)
     {
         _context = context;
+    }
+
+    public override async Task<IngeleverdeOpdracht?> VoorId(int id)
+    {
+        return await _context.IngeleverdeOpdrachten
+            .Include(x => x.Beoordelingen)
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
     }
 }

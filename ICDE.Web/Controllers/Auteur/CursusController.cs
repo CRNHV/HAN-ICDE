@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ICDE.Data.Entities;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Services.Interfaces;
@@ -15,10 +16,12 @@ namespace ICDE.Web.Controllers.Auteur;
 public class CursusController : ControllerBase
 {
     private readonly ICursusService _cursusService;
+    private readonly ILeeruitkomstService _leeruitkomstService;
 
-    public CursusController(ICursusService cursusService)
+    public CursusController(ICursusService cursusService, ILeeruitkomstService leeruitkomstService)
     {
         _cursusService = cursusService;
+        _leeruitkomstService = leeruitkomstService;
     }
 
     [HttpGet("Index")]
@@ -26,6 +29,18 @@ public class CursusController : ControllerBase
     {
         var cursussen = await _cursusService.AlleUnieke();
         return View("/Views/Auteur/Cursus/Index.cshtml", cursussen);
+    }
+
+    [HttpPost("Maak")]
+    public async Task<IActionResult> MaakCursus([FromForm] MaakCursusDto request)
+    {
+        var result = await _cursusService.Maak(request);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/cursus/get/{result.GroupId}");
     }
 
     [HttpGet("get/{cursusGroupId}")]
@@ -36,12 +51,40 @@ public class CursusController : ControllerBase
         {
             return NotFound();
         }
-        List<CursusDto> eerdereVersies = await _cursusService.EerdereVersies(cursusGroupId, cursus.VersieNummer);
+
+        var eerdereVersies = await _cursusService.EerdereVersies(cursusGroupId, cursus.VersieNummer);
+        var luks = await _leeruitkomstService.AlleUnieke();
+
         return View("/Views/Auteur/Cursus/BekijkCursus.cshtml", new BekijkCursusViewModel()
         {
             Cursus = cursus,
             EerderVersies = eerdereVersies,
+            Leeruitkomsten = luks,
         });
+    }
+
+    [HttpGet("{cursusGroupId}/koppelluk/{lukGroupId}")]
+    public async Task<IActionResult> KoppelLuk([FromRoute] Guid cursusGroupId, [FromRoute] Guid lukGroupId)
+    {
+        bool result = await _cursusService.KoppelLuk(cursusGroupId, lukGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/cursus/get/{cursusGroupId}");
+    }
+
+    [HttpGet("{cursusGroupId}/verwijderluk/{lukGroupId}")]
+    public async Task<IActionResult> OntkoppelLuk([FromRoute] Guid cursusGroupId, [FromRoute] Guid lukGroupId)
+    {
+        bool result = await _cursusService.OntkoppelLuk(cursusGroupId, lukGroupId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/cursus/get/{cursusGroupId}");
     }
 
     [HttpGet("{groupId}/bekijkversie/{versieId}")]
@@ -64,7 +107,6 @@ public class CursusController : ControllerBase
             return BadRequest();
         }
         return Redirect($"/auteur/cursus/get/{cursus}");
-
     }
 
     [HttpGet("delete/{groupId}/{versieId}")]

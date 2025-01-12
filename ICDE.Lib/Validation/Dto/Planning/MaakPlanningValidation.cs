@@ -6,6 +6,6 @@ internal class MaakPlanningValidation : AbstractValidator<MaakPlanningDto>
 {
     public MaakPlanningValidation()
     {
-        RuleFor(dto => dto.Naam).NotEmpty();
+        RuleFor(dto => dto.Name).NotEmpty();
     }
 }

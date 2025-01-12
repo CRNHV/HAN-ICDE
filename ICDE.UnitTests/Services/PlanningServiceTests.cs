@@ -6,6 +6,7 @@ using ICDE.Lib.Dto.Lessen;
 using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services;
+using ICDE.Lib.Validation.Dto.Planning;
 using Moq;
 
 namespace ICDE.UnitTests.Services;
@@ -19,7 +20,7 @@ public class PlanningServiceTests
     private Mock<IOpdrachtRepository> mockOpdrachtRepository;
     private Mock<ILesRepository> mockLesRepository;
     private Mock<IValidator<MaakPlanningDto>> mockValidatorMaakPlanningDto;
-    private Mock<IValidator<UpdatePlanningDto>> mockValidatorUpdatePlanningDto;
+    private IValidator<UpdatePlanningDto> mockValidatorUpdatePlanningDto;
 
     public PlanningServiceTests()
     {
@@ -30,7 +31,7 @@ public class PlanningServiceTests
         this.mockOpdrachtRepository = this.mockRepository.Create<IOpdrachtRepository>();
         this.mockLesRepository = this.mockRepository.Create<ILesRepository>();
         this.mockValidatorMaakPlanningDto = this.mockRepository.Create<IValidator<MaakPlanningDto>>();
-        this.mockValidatorUpdatePlanningDto = this.mockRepository.Create<IValidator<UpdatePlanningDto>>();
+        this.mockValidatorUpdatePlanningDto = new UpdatePlanningValidation();
     }
 
     private PlanningService CreateService()
@@ -42,7 +43,7 @@ public class PlanningServiceTests
             this.mockOpdrachtRepository.Object,
             this.mockLesRepository.Object,
             this.mockValidatorMaakPlanningDto.Object,
-            this.mockValidatorUpdatePlanningDto.Object
+            this.mockValidatorUpdatePlanningDto
             );
     }
 
@@ -246,8 +247,8 @@ public class PlanningServiceTests
 
         // Assert
         Assert.True(result);
-        this.mockPlanningRepository.Verify(repo => repo.VoorId(request.Id), Times.Exactly(2));
-        this.mockPlanningRepository.Verify(repo => repo.Update(It.IsAny<Planning>()), Times.Exactly(2));
+        this.mockPlanningRepository.Verify(repo => repo.VoorId(request.Id), Times.Exactly(1));
+        this.mockPlanningRepository.Verify(repo => repo.Update(It.IsAny<Planning>()), Times.Exactly(1));
         this.mockRepository.VerifyAll();
     }
 

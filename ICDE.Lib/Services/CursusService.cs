@@ -11,6 +11,7 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
 {
     private readonly ICursusRepository _cursusRepository;
     private readonly IPlanningRepository _planningRepository;
+    private readonly ILeeruitkomstRepository _leeruitkomstRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<UpdateCursusDto> _updateValidator;
 
@@ -18,12 +19,14 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
                          IMapper mapper,
                          IPlanningRepository planningRepository,
                          IValidator<UpdateCursusDto> updateValidator,
-                         IValidator<MaakCursusDto> createValidator) : base(cursusRepository, mapper, createValidator)
+                         IValidator<MaakCursusDto> createValidator,
+                         ILeeruitkomstRepository leeruitkomstRepository) : base(cursusRepository, mapper, createValidator)
     {
         _cursusRepository = cursusRepository;
         _mapper = mapper;
         _planningRepository = planningRepository;
         _updateValidator = updateValidator;
+        _leeruitkomstRepository = leeruitkomstRepository;
     }
 
 
@@ -75,9 +78,46 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
         if (dbCursus.Planning is null)
             return true;
 
+        updatedCursus.Leeruitkomsten.AddRange(dbCursus.Leeruitkomsten);
         updatedCursus.Planning = (Planning)dbCursus.Planning.Clone();
         updatedCursus.RelationshipChanged = true;
 
         return await _cursusRepository.Update(updatedCursus);
+    }
+
+    public async Task<bool> KoppelLuk(Guid cursusGroupId, Guid lukGroupId)
+    {
+        var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(cursusGroupId);
+        if (cursus is null)
+            return false;
+
+        var luk = await _leeruitkomstRepository.NieuwsteVoorGroepId(lukGroupId);
+        if (luk is null)
+            return false;
+
+        if (cursus.Leeruitkomsten.Contains(luk))
+            return true;
+
+        cursus.Leeruitkomsten.Add(luk);
+        cursus.RelationshipChanged = true;
+        return await _cursusRepository.Update(cursus);
+    }
+
+    public async Task<bool> OntkoppelLuk(Guid cursusGroupId, Guid lukGroupId)
+    {
+        var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(cursusGroupId);
+        if (cursus is null)
+            return false;
+
+        var luk = await _leeruitkomstRepository.NieuwsteVoorGroepId(lukGroupId);
+        if (luk is null)
+            return false;
+
+        if (!cursus.Leeruitkomsten.Contains(luk))
+            return true;
+
+        cursus.Leeruitkomsten.Remove(luk);
+        cursus.RelationshipChanged = true;
+        return await _cursusRepository.Update(cursus);
     }
 }

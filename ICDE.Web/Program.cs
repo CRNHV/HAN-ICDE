@@ -23,7 +23,6 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
         builder.Services.AddControllersWithViews();
 
         builder.Services
@@ -96,8 +95,6 @@ public class Program
 
     private static async void SeedDatabase(WebApplication app)
     {
-        return;
-
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
