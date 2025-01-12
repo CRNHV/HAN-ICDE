@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-4">
         <h2> Maak criterea </h2>
-        <form method="post" enctype="multipart/form-data" asp-action="MaakLes">
+        <form method="post" enctype="multipart/form-data" asp-action="Maak">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label for="Naam" class="control-label"></label>
@@ -25,7 +25,7 @@
                 <input type="submit" value="Maak" class="btn btn-primary" />
             </div>
         </form>
-    </div>    
+    </div>
     <div class="col-md-4">
         <h2> Andere critereas </h2>
         @if (Model.Count > 0)

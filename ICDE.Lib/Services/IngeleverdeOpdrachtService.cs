@@ -19,7 +19,6 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
     private readonly IValidator<LeverOpdrachtInDto> _leverOpdrachtInValidator;
     private readonly IValidator<OpdrachtBeoordelingDto> _opdrachtBeoordelingValidator;
 
-
     public IngeleverdeOpdrachtService(IIngeleverdeOpdrachtRepository ingeleverdeOpdrachtRepository,
                                       IOpdrachtRepository opdrachtRepository,
                                       IFileManager fileManager,
@@ -81,7 +80,7 @@ internal class IngeleverdeOpdrachtService : IIngeleverdeOpdrachtService
         if (dbOpdracht is null)
             return false;
 
-        int? studentNummer = await _studentRepository.ZoekStudentNummerVoorUserId(userId);
+        var studentNummer = await _studentRepository.ZoekStudentNummerVoorUserId(userId);
         if (studentNummer is null)
         {
             return false;

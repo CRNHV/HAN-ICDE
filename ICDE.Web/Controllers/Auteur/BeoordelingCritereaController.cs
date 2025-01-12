@@ -48,6 +48,18 @@ public class BeoordelingCritereaController : ControllerBase
         });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Maak([FromForm] MaakBeoordelingCritereaDto request)
+    {
+        var result = await _beoordelingCritereaService.Maak(request);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/criterea/get/{result.GroupId}");
+    }
+
     [HttpPost("update")]
     public async Task<IActionResult> UpdateBeoordelingCriterea([FromForm] UpdateBeoordelingCritereaDto request)
     {

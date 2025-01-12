@@ -18,6 +18,7 @@ public class CursusServiceTests
     private Mock<IPlanningRepository> mockPlanningRepository;
     private IValidator<UpdateCursusDto> mockValidatorUpdateCursusDto;
     private Mock<IValidator<MaakCursusDto>> mockValidatorMaakCursusDto;
+    private Mock<ILeeruitkomstRepository> mockLeeruitkomstRepository;
 
     public CursusServiceTests()
     {
@@ -28,6 +29,7 @@ public class CursusServiceTests
         this.mockPlanningRepository = this.mockRepository.Create<IPlanningRepository>();
         this.mockValidatorUpdateCursusDto = new UpdateCursusValidation();
         this.mockValidatorMaakCursusDto = this.mockRepository.Create<IValidator<MaakCursusDto>>();
+        this.mockLeeruitkomstRepository = this.mockRepository.Create<ILeeruitkomstRepository>();
     }
 
     private CursusService CreateService()
@@ -37,7 +39,8 @@ public class CursusServiceTests
             this.mockMapper.Object,
             this.mockPlanningRepository.Object,
             this.mockValidatorUpdateCursusDto,
-            this.mockValidatorMaakCursusDto.Object);
+            this.mockValidatorMaakCursusDto.Object,
+            this.mockLeeruitkomstRepository.Object);
     }
 
     [Fact]
@@ -265,5 +268,108 @@ public class CursusServiceTests
         Assert.False(result);
         mockCursusRepository.Verify(r => r.GetFullObjectTreeByGroupId(request.GroupId), Times.Once);
         mockCursusRepository.Verify(r => r.Update(It.IsAny<Cursus>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_ShouldReturnFalse_WhenCursusIsNull()
+    {
+        // Arrange
+        var service = CreateService();
+        var cursusGroupId = Guid.NewGuid();
+        var lukGroupId = Guid.NewGuid();
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync((Cursus)null);
+
+        // Act
+        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_ShouldReturnFalse_WhenLeeruitkomstIsNull()
+    {
+        // Arrange
+        var service = CreateService();
+        var cursusGroupId = Guid.NewGuid();
+        var lukGroupId = Guid.NewGuid();
+
+        var cursus = new Cursus { Leeruitkomsten = new List<Leeruitkomst>() };
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync(cursus);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(lukGroupId))
+            .ReturnsAsync((Leeruitkomst)null);
+
+        // Act
+        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_ShouldReturnTrue_WhenLeeruitkomstAlreadyExists()
+    {
+        // Arrange
+        var service = CreateService();
+        var cursusGroupId = Guid.NewGuid();
+        var lukGroupId = Guid.NewGuid();
+
+        var luk = new Leeruitkomst();
+        var cursus = new Cursus { Leeruitkomsten = new List<Leeruitkomst> { luk } };
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync(cursus);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(lukGroupId))
+            .ReturnsAsync(luk);
+
+        // Act
+        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_ShouldAddLeeruitkomstAndReturnTrue_WhenLeeruitkomstIsNew()
+    {
+        // Arrange
+        var service = CreateService();
+        var cursusGroupId = Guid.NewGuid();
+        var lukGroupId = Guid.NewGuid();
+
+        var luk = new Leeruitkomst();
+        var cursus = new Cursus { Leeruitkomsten = new List<Leeruitkomst>() };
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync(cursus);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(lukGroupId))
+            .ReturnsAsync(luk);
+
+        mockCursusRepository
+            .Setup(repo => repo.Update(cursus))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.True(result);
+        Assert.Contains(luk, cursus.Leeruitkomsten);
+        Assert.True(cursus.RelationshipChanged);
+        mockCursusRepository.Verify(repo => repo.Update(cursus), Times.Once);
     }
 }

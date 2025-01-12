@@ -71,6 +71,7 @@ public abstract class VersionableServiceBase<TEntity, TReadDto, TCreateDto, TUpd
         return _mapper.Map<TReadDto?>(result);
 
     }
+
     public async Task<Guid> MaakKopie(Guid groupId, int versieNummer)
     {
         var dbEntity = await _repository.Versie(groupId, versieNummer);

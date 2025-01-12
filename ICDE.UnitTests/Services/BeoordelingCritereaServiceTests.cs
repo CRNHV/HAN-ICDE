@@ -247,4 +247,118 @@ public class BeoordelingCritereaServiceTests
         Assert.True(result);
         mockRepository.VerifyAll();
     }
+
+    [Fact]
+    public async Task KoppelLuk_ReturnsFalse_WhenBeoordelingCritereaIsNull()
+    {
+        // Arrange
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync((BeoordelingCriterea)null);
+
+        var service = CreateService();
+
+        // Act
+        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_ReturnsFalse_WhenLeeruitkomstIsNull()
+    {
+        // Arrange
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        var beoordelingCriterea = new BeoordelingCriterea();
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync(beoordelingCriterea);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(leeruitkomstGroupId))
+            .ReturnsAsync((Leeruitkomst)null);
+
+        var service = CreateService();
+
+        // Act
+        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_ReturnsTrue_WhenLeeruitkomstAlreadyExists()
+    {
+        // Arrange
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        var leeruitkomst = new Leeruitkomst();
+        var beoordelingCriterea = new BeoordelingCriterea
+        {
+            Leeruitkomsten = new List<Leeruitkomst> { leeruitkomst }
+        };
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync(beoordelingCriterea);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(leeruitkomstGroupId))
+            .ReturnsAsync(leeruitkomst);
+
+        var service = CreateService();
+
+        // Act
+        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task KoppelLuk_AddsLeeruitkomstAndUpdates_WhenLeeruitkomstNotAlreadyExists()
+    {
+        // Arrange
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        var leeruitkomst = new Leeruitkomst();
+        var beoordelingCriterea = new BeoordelingCriterea
+        {
+            Leeruitkomsten = new List<Leeruitkomst>()
+        };
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync(beoordelingCriterea);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(leeruitkomstGroupId))
+            .ReturnsAsync(leeruitkomst);
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.Update(beoordelingCriterea))
+            .ReturnsAsync(true);
+
+        var service = CreateService();
+
+        // Act
+        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.True(result);
+        Assert.Contains(leeruitkomst, beoordelingCriterea.Leeruitkomsten);
+        Assert.True(beoordelingCriterea.RelationshipChanged);
+
+        mockBeoordelingCritereaRepository.Verify(repo => repo.Update(beoordelingCriterea), Times.Once);
+    }
 }

@@ -77,7 +77,8 @@ internal class AutoMapperConfigs : Profile
     private void CreateCursusMappings()
     {
         CreateMap<Cursus, CursusDto>().ReverseMap();
-
+        CreateMap<MaakCursusDto, Cursus>()
+            .ForMember(dest => dest.GroupId, opt => opt.MapFrom(_ => Guid.NewGuid()));
         CreateMap<Cursus, CursusMetPlanningDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Beschrijving, opt => opt.MapFrom(src => src.Beschrijving))

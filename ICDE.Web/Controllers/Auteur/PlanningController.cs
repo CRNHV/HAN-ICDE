@@ -84,14 +84,28 @@ public class PlanningController : ControllerBase
         return Redirect($"/auteur/planning/bekijk/{planningId}");
     }
 
-    public async Task<IActionResult> VerwijderPlanning()
+    [HttpGet("verwijder/{planningId}")]
+    public async Task<IActionResult> VerwijderPlanning([FromRoute] int planningId)
     {
-        return null;
+
+        bool result = await _planningService.VerwijderPlanning(planningId);
+        if (!result)
+        {
+            return BadRequest();
+        }
+        return RedirectToAction("Index");
     }
 
-    public async Task<IActionResult> UpdatePlanning()
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdatePlanning([FromForm] UpdatePlanningDto request)
     {
-        return null;
+        var result = await _planningService.Update(request);
+        if (!result)
+        {
+            return BadRequest();
+        }
+
+        return Redirect($"/auteur/planning/bekijk/{request.Id}");
     }
 
     [HttpGet("{planningId}/voegopdrachttoe/{groupId}")]

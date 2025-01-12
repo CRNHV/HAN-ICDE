@@ -86,6 +86,18 @@ public class OpdrachtController : ControllerBase
         return RedirectToAction("BekijkAlle");
     }
 
+    [HttpGet("{groupId}/bekijkversie/{versie}")]
+    public async Task<IActionResult> BekijkVersie([FromRoute] Guid groupId, [FromRoute] int versie)
+    {
+        var result = await _opdrachtService.BekijkVersie(groupId, versie);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+
+        return View("/Views/Auteur/Opdracht/BekijkOpdrachtVersie.cshtml");
+    }
+
     [HttpPost("update")]
     public async Task<IActionResult> UpdateOpdracht([FromForm] UpdateOpdrachtDto request)
     {

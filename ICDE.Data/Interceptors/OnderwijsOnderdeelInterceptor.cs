@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 namespace ICDE.Data.Interceptors;
 public class OnderwijsOnderdeelInterceptor : SaveChangesInterceptor
 {
-    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = default)
     {
         var context = eventData.Context;
 
