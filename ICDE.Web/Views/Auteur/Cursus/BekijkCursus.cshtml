@@ -15,14 +15,16 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input name="GroupId" class="form-control" value="@Model.Cursus.GroupId" hidden />
             <div class="form-group">
-                <label name="Naam" class="control-label"></label>
+                <label name="Naam" class="control-label">Naam</label>
                 <input name="Naam" class="form-control" value="@Model.Cursus.Naam" />
-                <span name="Naam" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label name="Beschrijving" class="control-label"></label>
+                <label name="Beschrijving" class="control-label">Beschrijving</label>
                 <input name="Beschrijving" class="form-control" value="@Model.Cursus.Beschrijving" />
-                <span name="Beschrijving" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label name="Beschrijving" class="control-label">CursusMateriaal</label>
+                <input name="Beschrijving" class="form-control" value="@Model.Cursus.CursusMateriaal" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Update" class="btn btn-primary" />

@@ -16,12 +16,16 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input name="GroupId" class="form-control" value="@Model.Opdracht.Opdracht.GroupId" hidden />
             <div class="form-group">
-                <label for="Naam" class="control-label"></label>
+                <label for="Naam" class="control-label">Naam</label>
                 <input name="Naam" class="form-control" value="@Model.Opdracht.Opdracht.Naam" />
             </div>
             <div class="form-group">
-                <label for="Beschrijving" class="control-label"></label>
+                <label for="Beschrijving" class="control-label">Beschrijving</label>
                 <input name="Beschrijving" class="form-control" value="@Model.Opdracht.Opdracht.Beschrijving" />
+            </div>           
+            <div class="form-group">
+                <label for="Deadline" class="control-label">Deadline</label>
+                <input name="Deadline" class="form-control" value="@Model.Opdracht.Opdracht.Deadline" />
             </div>
             <div>
                 <label>Is toets:</label>

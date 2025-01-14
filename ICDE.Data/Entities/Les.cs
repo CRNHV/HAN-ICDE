@@ -6,6 +6,7 @@ namespace ICDE.Data.Entities;
 public class Les : OnderwijsOnderdeel, IVersionable, ICloneable
 {
     public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
+    public string? LesInhoud { get; set; }
 
     public int VersieNummer { get; set; }
     public Guid GroupId { get; set; }
@@ -20,6 +21,7 @@ public class Les : OnderwijsOnderdeel, IVersionable, ICloneable
             Naam = Naam,
             Beschrijving = Beschrijving,
             Leeruitkomsten = Leeruitkomsten,
+            LesInhoud = LesInhoud,
         };
     }
 }

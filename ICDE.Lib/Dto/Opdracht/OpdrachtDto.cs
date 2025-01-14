@@ -12,6 +12,7 @@ public class OpdrachtDto
     public string Naam { get; set; }
     public string Beschrijving { get; set; }
     public int VersieNummer { get; set; }
+    public DateTime Deadline { get; set; }
     public string Type
     {
         get => isToets ? "Dit is een toets" : "Dit is een casus";

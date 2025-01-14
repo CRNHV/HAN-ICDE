@@ -6,6 +6,7 @@ namespace ICDE.Data.Entities;
 public class Opdracht : OnderwijsOnderdeel, IVersionable, ICloneable
 {
     public OpdrachtType Type { get; set; }
+    public DateTime DeadlineUtc { get; set; }
 
     public List<BeoordelingCriterea> BeoordelingCritereas { get; set; } = new List<BeoordelingCriterea>();
     public List<IngeleverdeOpdracht> IngeleverdeOpdrachten { get; set; } = new List<IngeleverdeOpdracht>();
