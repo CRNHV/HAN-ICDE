@@ -7,6 +7,7 @@ public class Cursus : OnderwijsOnderdeel, IVersionable, ICloneable
 {
     public Planning? Planning { get; set; }
     public List<Leeruitkomst> Leeruitkomsten { get; set; } = new();
+    public string? CursusMateriaal { get; set; }
 
     public int VersieNummer { get; set; }
     public Guid GroupId { get; set; }
@@ -22,6 +23,7 @@ public class Cursus : OnderwijsOnderdeel, IVersionable, ICloneable
             Leeruitkomsten = Leeruitkomsten,
             Beschrijving = Beschrijving,
             Naam = Naam,
+            CursusMateriaal = CursusMateriaal,
         };
     }
 }

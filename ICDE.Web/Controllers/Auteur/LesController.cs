@@ -45,16 +45,16 @@ public class LesController : Controller
     [HttpGet("get/{groupId}")]
     public async Task<IActionResult> BekijkLes([FromRoute] Guid groupId)
     {
-        LesMetEerdereVersies lmev = await _lesService.HaalLessenOpMetEerdereVersies(groupId);
-        if (lmev is null)
+        var lesMetEerdereVersies = await _lesService.HaalLessenOpMetEerdereVersies(groupId);
+        if (lesMetEerdereVersies is null)
         {
             return NotFound();
         }
         return View("/Views/Auteur/Les/BekijkLes.cshtml", new BekijkLesViewModel()
         {
-            Les = lmev.Les,
-            LesList = lmev.LesList,
-            LesLeeruitkomsten = lmev.LesLeeruitkomsten,
+            Les = lesMetEerdereVersies.Les,
+            LesList = lesMetEerdereVersies.LesList,
+            LesLeeruitkomsten = lesMetEerdereVersies.LesLeeruitkomsten,
             BeschrikbareLeeruitkomsten = await _leeruitkomstService.AlleUnieke()
         });
     }

@@ -231,7 +231,8 @@ public class Program
                         leeruitkomst1,
                         leeruitkomst2,
                         leeruitkomst4,
-                    }
+                    },
+                    CursusMateriaal = "1x Ak-47, 100x 7.62mm"
                 };
 
                 var cursus2 = new Cursus()
@@ -279,7 +280,8 @@ public class Program
                                 Leeruitkomsten = new List<Leeruitkomst>()
                                 {
                                     leeruitkomst2
-                                }
+                                },
+                                LesInhoud = "Quantum mechanics for babies."
                             }
                         },
                         new PlanningItem()
@@ -331,7 +333,8 @@ public class Program
                                          Locatie = "./Opdrachten/asjdhajksd.png",
                                          Naam = "Casus.zip",
                                      }
-                                 }
+                                 },
+                                 DeadlineUtc = DateTime.UtcNow,
                             }
                         }
                     }

@@ -14,12 +14,16 @@
         <form method="post" enctype="multipart/form-data" asp-action="MaakCursus">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label for="Naam" class="control-label"></label>
+                <label for="Naam" class="control-label">Naam</label>
                 <input name="Naam" class="form-control" />
             </div>
             <div class="form-group">
-                <label for="Beschrijving" class="control-label"></label>
+                <label for="Beschrijving" class="control-label">Beschrijving</label>
                 <input name="Beschrijving" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="CursusMateriaal" class="control-label">CursusMateriaal</label>
+                <input name="CursusMateriaal" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Maak" class="btn btn-primary" />

@@ -13,12 +13,16 @@
         <form method="post" enctype="multipart/form-data" asp-action="MaakLes">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label for="Naam" class="control-label"></label>
+                <label for="Naam" class="control-label">Naam</label>
                 <input name="Naam" class="form-control" />
             </div>
             <div class="form-group">
-                <label for="Beschrijving" class="control-label"></label>
+                <label for="Beschrijving" class="control-label">Beschrijving</label>
                 <input name="Beschrijving" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="LesInhoud" class="control-label">Lesinhoud</label>
+                <input name="LesInhoud" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Maak" class="btn btn-primary" />

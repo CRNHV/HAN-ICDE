@@ -29,18 +29,18 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
 
     public async Task<LesMetEerdereVersies?> HaalLessenOpMetEerdereVersies(Guid groupId)
     {
-        var currentVersion = await _lesRepository.NieuwsteVoorGroepId(groupId);
-        if (currentVersion is null)
+        var les = await _lesRepository.NieuwsteVoorGroepId(groupId);
+        if (les is null)
         {
             return null;
         }
 
-        var otherVersions = await _lesRepository.Lijst(x => x.GroupId == groupId && x.Id != currentVersion.Id);
+        var eerdereVersies = await _lesRepository.Lijst(x => x.GroupId == groupId && x.Id != les.Id);
         return new LesMetEerdereVersies()
         {
-            Les = _mapper.Map<LesDto>(currentVersion),
-            LesList = _mapper.Map<List<LesDto>>(otherVersions),
-            LesLeeruitkomsten = _mapper.Map<List<LeeruitkomstDto>>(currentVersion.Leeruitkomsten)
+            Les = _mapper.Map<LesDto>(les),
+            LesList = _mapper.Map<List<LesDto>>(eerdereVersies),
+            LesLeeruitkomsten = _mapper.Map<List<LeeruitkomstDto>>(les.Leeruitkomsten)
         };
     }
 
@@ -101,6 +101,7 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
 
         les.Naam = request.Naam;
         les.Beschrijving = request.Beschrijving;
+        les.LesInhoud = request.LesInhoud;
         await _lesRepository.Update(les);
 
         var updatedLes = await _lesRepository.NieuwsteVoorGroepId(request.GroupId);

@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <h2> Maak les </h2>
+        <h2> Update les </h2>
         <form method="post" enctype="multipart/form-data" asp-action="UpdateLes">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input name="GroupId" class="form-control" value="@Model.Les.GroupId" hidden />
@@ -23,7 +23,11 @@
                 <label name="Beschrijving" class="control-label">Beschrijving</label>
                 <input name="Beschrijving" class="form-control" value="@Model.Les.Beschrijving" />
             </div>
-            <button type="submit">Maak</button>
+            <div class="form-group">
+                <label name="LesInhoud" class="control-label">LesInhoud</label>
+                <input name="LesInhoud" class="form-control" value="@Model.Les.LesInhoud" />
+            </div>
+            <button type="submit">Update</button>
         </form>
     </div>
     <div class="col-md-6">

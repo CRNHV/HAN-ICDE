@@ -66,6 +66,7 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
 
         dbCursus.Naam = request.Naam;
         dbCursus.Beschrijving = request.Beschrijving;
+        dbCursus.CursusMateriaal = request.CursusMateriaal;
 
         var updateResult = await _cursusRepository.Update(dbCursus);
         if (!updateResult)
