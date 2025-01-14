@@ -262,7 +262,7 @@ public class BeoordelingCritereaServiceTests
         var service = CreateService();
 
         // Act
-        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        var result = await service.KoppelLeeruitkomst(beoordelingCritereaGroupId, leeruitkomstGroupId);
 
         // Assert
         Assert.False(result);
@@ -288,7 +288,7 @@ public class BeoordelingCritereaServiceTests
         var service = CreateService();
 
         // Act
-        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        var result = await service.KoppelLeeruitkomst(beoordelingCritereaGroupId, leeruitkomstGroupId);
 
         // Assert
         Assert.False(result);
@@ -318,7 +318,7 @@ public class BeoordelingCritereaServiceTests
         var service = CreateService();
 
         // Act
-        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        var result = await service.KoppelLeeruitkomst(beoordelingCritereaGroupId, leeruitkomstGroupId);
 
         // Assert
         Assert.True(result);
@@ -352,7 +352,7 @@ public class BeoordelingCritereaServiceTests
         var service = CreateService();
 
         // Act
-        var result = await service.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        var result = await service.KoppelLeeruitkomst(beoordelingCritereaGroupId, leeruitkomstGroupId);
 
         // Assert
         Assert.True(result);

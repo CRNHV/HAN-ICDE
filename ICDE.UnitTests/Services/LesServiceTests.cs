@@ -83,16 +83,16 @@ public class LesServiceTests
             Leeruitkomsten = new List<Leeruitkomst>()
         };
         var luk = new Leeruitkomst();
-        mockLesRepository.Setup(x => x.GetLessonsWithLearningGoals(lesGroupId)).ReturnsAsync(new List<Les> { les });
+        mockLesRepository.Setup(x => x.NieuwsteVoorGroepId(lesGroupId)).ReturnsAsync(les);
         mockLeeruitkomstRepository.Setup(x => x.NieuwsteVoorGroepId(lukGroupId)).ReturnsAsync(luk);
         mockLesRepository.Setup(x => x.Update(It.IsAny<Les>())).ReturnsAsync(true);
 
         // Act
-        var result = await CreateService().KoppelLukAanLes(lesGroupId, lukGroupId);
+        var result = await CreateService().KoppelLeeruitkomst(lesGroupId, lukGroupId);
 
         // Assert
         Assert.True(result);
-        mockLesRepository.Verify(x => x.GetLessonsWithLearningGoals(lesGroupId), Times.Once);
+        mockLesRepository.Verify(x => x.NieuwsteVoorGroepId(lesGroupId), Times.Once);
         mockLeeruitkomstRepository.Verify(x => x.NieuwsteVoorGroepId(lukGroupId), Times.Once);
         mockLesRepository.Verify(x => x.Update(les), Times.Once);
     }

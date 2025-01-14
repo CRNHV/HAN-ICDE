@@ -44,10 +44,10 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
         };
     }
 
-    public async Task<bool> KoppelLukAanLes(Guid lesGroupId, Guid lukGroupId)
+    public async Task<bool> KoppelLeeruitkomst(Guid lesGroupId, Guid lukGroupId)
     {
-        var lessen = await _lesRepository.GetLessonsWithLearningGoals(lesGroupId);
-        if (lessen.Count == 0)
+        var dbLes = await _lesRepository.NieuwsteVoorGroepId(lesGroupId);
+        if (dbLes is null)
         {
             return false;
         }
@@ -58,15 +58,12 @@ internal class LesService : VersionableServiceBase<Les, LesDto, MaakLesDto, Upda
             return false;
         }
 
-        foreach (var item in lessen)
-        {
-            if (item.Leeruitkomsten.Contains(luk))
-                continue;
+        if (dbLes.Leeruitkomsten.Contains(luk))
+            return true;
 
-            item.Leeruitkomsten.Add(luk);
-            item.RelationshipChanged = true;
-            await _lesRepository.Update(item);
-        }
+        dbLes.Leeruitkomsten.Add(luk);
+        dbLes.RelationshipChanged = true;
+        await _lesRepository.Update(dbLes);
 
         return true;
     }

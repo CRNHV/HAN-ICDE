@@ -5,6 +5,6 @@ namespace ICDE.Lib.Services.Interfaces;
 public interface IBeoordelingCritereaService : IVersionableServiceBase<BeoordelingCritereaDto, MaakBeoordelingCritereaDto, UpdateBeoordelingCritereaDto>
 {
     Task<BeoordelingCritereaMetEerdereVersiesDto?> HaalOpMetEerdereVersies(Guid critereaGroupId);
-    Task<bool> KoppelLuk(Guid beoordelingCritereaGroupId, Guid leeruitkomstGroupId);
+    Task<bool> KoppelLeeruitkomst(Guid beoordelingCritereaGroupId, Guid leeruitkomstGroupId);
     Task<bool> VerwijderLuk(Guid beoordelingCritereaGroupId, Guid leeruitkomstGroupId);
 }

@@ -45,7 +45,7 @@ internal class BeoordelingCritereaService : VersionableServiceBase<BeoordelingCr
         };
     }
 
-    public async Task<bool> KoppelLuk(Guid beoordelingCritereaGroupId, Guid leeruitkomstGroupId)
+    public async Task<bool> KoppelLeeruitkomst(Guid beoordelingCritereaGroupId, Guid leeruitkomstGroupId)
     {
         var beoordelingCriterea = await _beoordelingCritereaRepository.NieuwsteVoorGroepId(beoordelingCritereaGroupId);
         if (beoordelingCriterea is null)

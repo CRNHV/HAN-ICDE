@@ -16,7 +16,6 @@ public class ValidationManager : IValidationManager
     public List<ValidationResult> ValidateAll()
     {
         return _validators
-            .ConvertAll(v => v.Validate())
-;
+            .ConvertAll(v => v.Validate());
     }
 }

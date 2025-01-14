@@ -64,7 +64,7 @@ public class CursusController : ControllerBase
     [HttpGet("{cursusGroupId}/koppelluk/{lukGroupId}")]
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid cursusGroupId, [FromRoute] Guid lukGroupId)
     {
-        bool result = await _cursusService.KoppelLuk(cursusGroupId, lukGroupId);
+        bool result = await _cursusService.KoppelLeeruitkomst(cursusGroupId, lukGroupId);
         if (!result)
         {
             return BadRequest();

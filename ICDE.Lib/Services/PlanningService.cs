@@ -137,7 +137,7 @@ internal class PlanningService : CrudServiceBase<Planning, PlanningDto, MaakPlan
         }
         return _mapper.Map<List<PlanningZonderItemsDto>>(plannings);
     }
-
+        
     public async Task<PlanningDto?> VoorId(int planningId)
     {
         var planning = await _planningRepository.VoorId(planningId);

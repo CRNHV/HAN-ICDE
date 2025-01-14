@@ -106,7 +106,7 @@ public class LesController : Controller
     [HttpGet("koppelluk/{lesGroupId}/{lukGroupId}")]
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid lesGroupId, [FromRoute] Guid lukGroupId)
     {
-        var result = await _lesService.KoppelLukAanLes(lesGroupId, lukGroupId);
+        var result = await _lesService.KoppelLeeruitkomst(lesGroupId, lukGroupId);
         if (!result)
         {
             return BadRequest();

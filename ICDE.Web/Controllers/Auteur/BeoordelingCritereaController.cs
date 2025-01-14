@@ -75,7 +75,7 @@ public class BeoordelingCritereaController : ControllerBase
     [HttpGet("{beoordelingCritereaGroupId}/koppelluk/{leeruitkomstGroupId}")]
     public async Task<IActionResult> KoppelLuk([FromRoute] Guid beoordelingCritereaGroupId, [FromRoute] Guid leeruitkomstGroupId)
     {
-        bool result = await _beoordelingCritereaService.KoppelLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+        bool result = await _beoordelingCritereaService.KoppelLeeruitkomst(beoordelingCritereaGroupId, leeruitkomstGroupId);
         if (!result)
         {
             return BadRequest();

@@ -29,7 +29,6 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
         _leeruitkomstRepository = leeruitkomstRepository;
     }
 
-
     public async Task<CursusMetPlanningDto?> HaalAlleDataOp(Guid cursusGroupId)
     {
         var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(cursusGroupId);
@@ -86,7 +85,7 @@ internal class CursusService : VersionableServiceBase<Cursus, CursusDto, MaakCur
         return await _cursusRepository.Update(updatedCursus);
     }
 
-    public async Task<bool> KoppelLuk(Guid cursusGroupId, Guid lukGroupId)
+    public async Task<bool> KoppelLeeruitkomst(Guid cursusGroupId, Guid lukGroupId)
     {
         var cursus = await _cursusRepository.GetFullObjectTreeByGroupId(cursusGroupId);
         if (cursus is null)

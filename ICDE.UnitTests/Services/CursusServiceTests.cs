@@ -283,7 +283,7 @@ public class CursusServiceTests
             .ReturnsAsync((Cursus)null);
 
         // Act
-        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+        var result = await service.KoppelLeeruitkomst(cursusGroupId, lukGroupId);
 
         // Assert
         Assert.False(result);
@@ -308,7 +308,7 @@ public class CursusServiceTests
             .ReturnsAsync((Leeruitkomst)null);
 
         // Act
-        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+        var result = await service.KoppelLeeruitkomst(cursusGroupId, lukGroupId);
 
         // Assert
         Assert.False(result);
@@ -334,7 +334,7 @@ public class CursusServiceTests
             .ReturnsAsync(luk);
 
         // Act
-        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+        var result = await service.KoppelLeeruitkomst(cursusGroupId, lukGroupId);
 
         // Assert
         Assert.True(result);
@@ -364,7 +364,7 @@ public class CursusServiceTests
             .ReturnsAsync(true);
 
         // Act
-        var result = await service.KoppelLuk(cursusGroupId, lukGroupId);
+        var result = await service.KoppelLeeruitkomst(cursusGroupId, lukGroupId);
 
         // Assert
         Assert.True(result);
