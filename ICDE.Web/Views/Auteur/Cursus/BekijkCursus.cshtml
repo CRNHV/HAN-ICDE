@@ -123,6 +123,7 @@
                     <tr>
                         <th>#</th>
                         <th>Naam</th>
+                        <th>Leeruitkomsten</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -131,6 +132,7 @@
                         <tr>
                             <td>@item.Index</td>
                             <td>@item.PlanningItemNaam</td>
+                            <td>@string.Join(",", item.Leeruitkomsten)</td>
                         </tr>
                     }
                 </tbody>
