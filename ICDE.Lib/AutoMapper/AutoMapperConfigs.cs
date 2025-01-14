@@ -70,7 +70,12 @@ internal class AutoMapperConfigs : Profile
         CreateMap<PlanningItem, PlanningItemDto>()
             .ForMember(dest => dest.Index, opt => opt.MapFrom(src => src.Index))
             .ForMember(dest => dest.PlanningItemNaam, opt => opt.MapFrom(src =>
-                src.Les != null ? $"Les: {src.Les.Naam}" : $"Opdracht: {src.Opdracht.Naam}"));
+                src.Les != null ? $"Les: {src.Les.Naam}" : $"Opdracht: {src.Opdracht.Naam}"))
+            .ForMember(dest => dest.Leeruitkomsten, opt =>
+                opt.MapFrom(src => src.Les == null ?
+                src.Opdracht.BeoordelingCritereas.SelectMany(x => x.Leeruitkomsten).Select(x => x.Naam).Distinct().ToList() :
+                src.Les.Leeruitkomsten.Select(x => x.Naam).Distinct().ToList())
+            );
 
         CreateMap<MaakPlanningDto, Planning>();
     }

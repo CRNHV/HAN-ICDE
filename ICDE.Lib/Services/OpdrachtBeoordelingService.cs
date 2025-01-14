@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using ICDE.Data.Entities;
-using ICDE.Data.Repositories;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.OpdrachtBeoordeling;
-using ICDE.Lib.Dto.OpdrachtInzending;
 using ICDE.Lib.Services.Interfaces;
 
 namespace ICDE.Lib.Services;

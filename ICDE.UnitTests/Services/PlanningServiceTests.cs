@@ -3,7 +3,6 @@ using FluentValidation;
 using ICDE.Data.Entities;
 using ICDE.Data.Repositories.Interfaces;
 using ICDE.Lib.Dto.Lessen;
-using ICDE.Lib.Dto.Opdracht;
 using ICDE.Lib.Dto.Planning;
 using ICDE.Lib.Services;
 using ICDE.Lib.Validation.Dto.Planning;
