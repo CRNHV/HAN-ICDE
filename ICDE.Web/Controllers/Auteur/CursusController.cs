@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ICDE.Data.Entities;
 using ICDE.Lib.Domain.User;
 using ICDE.Lib.Dto.Cursus;
 using ICDE.Lib.Services.Interfaces;
