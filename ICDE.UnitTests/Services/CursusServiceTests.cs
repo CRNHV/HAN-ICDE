@@ -372,4 +372,120 @@ public class CursusServiceTests
         Assert.True(cursus.RelationshipChanged);
         mockCursusRepository.Verify(repo => repo.Update(cursus), Times.Once);
     }
+
+    [Fact]
+    public async Task OntkoppelLuk_ShouldReturnFalse_WhenCursusIsNull()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid cursusGroupId = Guid.NewGuid();
+        Guid lukGroupId = Guid.NewGuid();
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync((Cursus)null);
+
+        // Act
+        var result = await service.OntkoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.False(result);
+        mockCursusRepository.Verify(repo => repo.Update(It.IsAny<Cursus>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task OntkoppelLuk_ShouldReturnFalse_WhenLukIsNull()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid cursusGroupId = Guid.NewGuid();
+        Guid lukGroupId = Guid.NewGuid();
+
+        var cursus = new Cursus { Leeruitkomsten = new List<Leeruitkomst>() };
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync(cursus);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(lukGroupId))
+            .ReturnsAsync((Leeruitkomst)null);
+
+        // Act
+        var result = await service.OntkoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.False(result);
+        mockCursusRepository.Verify(repo => repo.Update(It.IsAny<Cursus>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task OntkoppelLuk_ShouldReturnTrue_WhenLukIsNotInCursus()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid cursusGroupId = Guid.NewGuid();
+        Guid lukGroupId = Guid.NewGuid();
+
+        var cursus = new Cursus
+        {
+            Leeruitkomsten = new List<Leeruitkomst>
+            {
+                new Leeruitkomst { GroupId = Guid.NewGuid() }
+            }
+        };
+
+        var luk = new Leeruitkomst { GroupId = lukGroupId };
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync(cursus);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(lukGroupId))
+            .ReturnsAsync(luk);
+
+        // Act
+        var result = await service.OntkoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.True(result);
+        mockCursusRepository.Verify(repo => repo.Update(It.IsAny<Cursus>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task OntkoppelLuk_ShouldRemoveLukAndReturnTrue_WhenLukExistsInCursus()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid cursusGroupId = Guid.NewGuid();
+        Guid lukGroupId = Guid.NewGuid();
+
+        var luk = new Leeruitkomst { GroupId = lukGroupId };
+        var cursus = new Cursus
+        {
+            Leeruitkomsten = new List<Leeruitkomst> { luk }
+        };
+
+        mockCursusRepository
+            .Setup(repo => repo.GetFullObjectTreeByGroupId(cursusGroupId))
+            .ReturnsAsync(cursus);
+
+        mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(lukGroupId))
+            .ReturnsAsync(luk);
+
+        mockCursusRepository
+            .Setup(repo => repo.Update(It.IsAny<Cursus>()))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await service.OntkoppelLuk(cursusGroupId, lukGroupId);
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(cursus.Leeruitkomsten);
+        Assert.True(cursus.RelationshipChanged);
+        mockCursusRepository.Verify(repo => repo.Update(It.Is<Cursus>(c => c.RelationshipChanged)), Times.Once);
+    }
 }

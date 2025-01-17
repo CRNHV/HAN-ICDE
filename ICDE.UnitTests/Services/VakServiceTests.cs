@@ -207,4 +207,184 @@ public class VakServiceTests
         Assert.True(result);
         this.mockRepository.VerifyAll();
     }
+
+    [Fact]
+    public async Task OntkoppelCursus_ReturnsFalse_WhenVakDoesNotExist()
+    {
+        // Arrange
+        var service = CreateService();
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync((Vak)null);
+
+        // Act
+        var result = await service.OntkoppelCursus(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task OntkoppelCursus_ReturnsFalse_WhenCursusDoesNotExist()
+    {
+        // Arrange
+        var service = CreateService();
+        var vak = new Vak();
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(vak);
+
+        this.mockCursusRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync((Cursus)null);
+
+        // Act
+        var result = await service.OntkoppelCursus(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task OntkoppelCursus_ReturnsTrue_WhenCursusNotLinkedToVak()
+    {
+        // Arrange
+        var service = CreateService();
+        var vak = new Vak { Cursussen = new List<Cursus>() };
+        var cursus = new Cursus();
+
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(vak);
+
+        this.mockCursusRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(cursus);
+
+        // Act
+        var result = await service.OntkoppelCursus(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(vak.Cursussen);
+    }
+
+    [Fact]
+    public async Task OntkoppelCursus_ReturnsTrue_WhenCursusSuccessfullyUnlinked()
+    {
+        // Arrange
+        var service = CreateService();
+        var cursus = new Cursus();
+        var vak = new Vak { Cursussen = new List<Cursus> { cursus } };
+
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(vak);
+
+        this.mockCursusRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(cursus);
+
+        this.mockVakRepository
+            .Setup(repo => repo.Update(It.IsAny<Vak>()))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await service.OntkoppelCursus(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(vak.Cursussen);
+        Assert.True(vak.RelationshipChanged);
+    }
+
+    [Fact]
+    public async Task OntkoppelLeeruitkomst_ReturnsFalse_WhenVakDoesNotExist()
+    {
+        // Arrange
+        var service = CreateService();
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync((Vak)null);
+
+        // Act
+        var result = await service.OntkoppelLeeruitkomst(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task OntkoppelLeeruitkomst_ReturnsFalse_WhenLeeruitkomstDoesNotExist()
+    {
+        // Arrange
+        var service = CreateService();
+        var vak = new Vak();
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(vak);
+
+        this.mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync((Leeruitkomst)null);
+
+        // Act
+        var result = await service.OntkoppelLeeruitkomst(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task OntkoppelLeeruitkomst_ReturnsTrue_WhenLeeruitkomstNotLinkedToVak()
+    {
+        // Arrange
+        var service = CreateService();
+        var vak = new Vak { Leeruitkomsten = new List<Leeruitkomst>() };
+        var leeruitkomst = new Leeruitkomst();
+
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(vak);
+
+        this.mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(leeruitkomst);
+
+        // Act
+        var result = await service.OntkoppelLeeruitkomst(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(vak.Leeruitkomsten);
+    }
+
+    [Fact]
+    public async Task OntkoppelLeeruitkomst_ReturnsTrue_WhenLeeruitkomstSuccessfullyUnlinked()
+    {
+        // Arrange
+        var service = CreateService();
+        var leeruitkomst = new Leeruitkomst();
+        var vak = new Vak { Leeruitkomsten = new List<Leeruitkomst> { leeruitkomst } };
+
+        this.mockVakRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(vak);
+
+        this.mockLeeruitkomstRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(It.IsAny<Guid>()))
+            .ReturnsAsync(leeruitkomst);
+
+        this.mockVakRepository
+            .Setup(repo => repo.Update(It.IsAny<Vak>()))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await service.OntkoppelLeeruitkomst(Guid.NewGuid(), Guid.NewGuid());
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(vak.Leeruitkomsten);
+        Assert.True(vak.RelationshipChanged);
+    }
 }

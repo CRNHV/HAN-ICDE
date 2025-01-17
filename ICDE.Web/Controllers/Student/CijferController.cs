@@ -22,7 +22,7 @@ public class CijferController : ControllerBase
     }
 
     [HttpGet("Index")]
-    public async Task<IActionResult> Index([FromRoute] Guid cursusGroupId)
+    public async Task<IActionResult> Index()
     {
         var userId = GetUserIdFromClaims();
         if (userId is null)

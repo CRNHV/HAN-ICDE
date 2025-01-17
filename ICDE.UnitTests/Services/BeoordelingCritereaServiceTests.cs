@@ -361,4 +361,92 @@ public class BeoordelingCritereaServiceTests
 
         mockBeoordelingCritereaRepository.Verify(repo => repo.Update(beoordelingCriterea), Times.Once);
     }
+
+    [Fact]
+    public async Task VerwijderLuk_ShouldReturnFalse_WhenBeoordelingCritereaIsNull()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync((BeoordelingCriterea)null);
+
+        // Act
+        var result = await service.VerwijderLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.False(result);
+        mockBeoordelingCritereaRepository.Verify(repo => repo.Update(It.IsAny<BeoordelingCriterea>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task VerwijderLuk_ShouldRemoveLeeruitkomstAndReturnTrue_WhenLeeruitkomstExists()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        var beoordelingCriterea = new BeoordelingCriterea
+        {
+            Leeruitkomsten = new List<Leeruitkomst>
+            {
+                new Leeruitkomst { GroupId = leeruitkomstGroupId },
+                new Leeruitkomst { GroupId = Guid.NewGuid() }
+            }
+        };
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync(beoordelingCriterea);
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.Update(It.IsAny<BeoordelingCriterea>()))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await service.VerwijderLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.True(result);
+        Assert.Single(beoordelingCriterea.Leeruitkomsten);
+        Assert.DoesNotContain(beoordelingCriterea.Leeruitkomsten, x => x.GroupId == leeruitkomstGroupId);
+        mockBeoordelingCritereaRepository.Verify(repo => repo.Update(It.Is<BeoordelingCriterea>(b => b.RelationshipChanged)), Times.Once);
+    }
+
+    [Fact]
+    public async Task VerwijderLuk_ShouldReturnTrue_WhenNoLeeruitkomstIsRemoved()
+    {
+        // Arrange
+        var service = CreateService();
+        Guid beoordelingCritereaGroupId = Guid.NewGuid();
+        Guid leeruitkomstGroupId = Guid.NewGuid();
+
+        var beoordelingCriterea = new BeoordelingCriterea
+        {
+            Leeruitkomsten = new List<Leeruitkomst>
+            {
+                new Leeruitkomst { GroupId = Guid.NewGuid() }
+            }
+        };
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.NieuwsteVoorGroepId(beoordelingCritereaGroupId))
+            .ReturnsAsync(beoordelingCriterea);
+
+        mockBeoordelingCritereaRepository
+            .Setup(repo => repo.Update(It.IsAny<BeoordelingCriterea>()))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await service.VerwijderLuk(beoordelingCritereaGroupId, leeruitkomstGroupId);
+
+        // Assert
+        Assert.True(result);
+        Assert.Single(beoordelingCriterea.Leeruitkomsten);
+        mockBeoordelingCritereaRepository.Verify(repo => repo.Update(It.Is<BeoordelingCriterea>(b => b.RelationshipChanged)), Times.Once);
+    }
 }
