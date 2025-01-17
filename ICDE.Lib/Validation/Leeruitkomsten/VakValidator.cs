@@ -1,6 +1,8 @@
 ﻿using ICDE.Data.Entities;
 using ICDE.Lib.Validation.Leeruitkomsten;
 
+namespace ICDE.Lib.Validation.Leeruitkomsten;
+
 public class VakValidator : IValidator
 {
     private readonly Vak _vak;
